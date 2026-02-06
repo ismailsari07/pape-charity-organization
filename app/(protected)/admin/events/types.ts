@@ -1,3 +1,15 @@
+import { DateTime } from "luxon";
+
+export enum Days {
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+}
+
 export type Event = {
   id: string;
   title: string;
@@ -19,9 +31,11 @@ export type EventRow = {
   id: string;
 
   title: string;
-  day: string;
+  day?: string;
   time: string;
+  date: DateTime | undefined;
 
+  is_recurring: boolean;
   is_active: boolean;
   is_featured: boolean;
 };
@@ -29,8 +43,9 @@ export type EventRow = {
 export type EventPayload = {
   title: string;
   description: string;
-  day: string;
+  day?: string;
   time: string;
+  date?: DateTime | undefined;
   phone?: string | null;
 
   is_recurring: boolean;

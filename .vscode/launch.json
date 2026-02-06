@@ -2,29 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Next.js (Server)",
-      "type": "pwa-node",
+      "type": "chrome",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
-      "args": ["dev"],
-      "cwd": "${workspaceFolder}",
-      "console": "integratedTerminal",
-      "env": { "NODE_OPTIONS": "--inspect" },
-      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
-      "autoAttachChildProcesses": true
-    },
-    {
-      "name": "Next.js (Chrome - Client)",
-      "type": "pwa-chrome",
-      "request": "launch",
-      "url": "http://localhost:3000",
+      "name": "Next.js: Debug",
+      "url": "http://localhost:3001",
       "webRoot": "${workspaceFolder}"
-    }
-  ],
-  "compounds": [
-    {
-      "name": "Next.js: Full-Stack Debug",
-      "configurations": ["Next.js (Server)", "Next.js (Chrome - Client)"]
     }
   ]
 }

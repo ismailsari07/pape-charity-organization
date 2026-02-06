@@ -1,6 +1,49 @@
+// lib/supabase/client.ts
+
 import { createBrowserClient } from "@supabase/ssr";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+let supabaseInstance: ReturnType<typeof createBrowserClient> | null = null;
+
+// ✅ Function export yerine direct export
+export function createClient() {
+  if (!supabaseInstance) {
+    console.log("🔧 Creating new Supabase client");
+    supabaseInstance = createBrowserClient(supabaseUrl, supabaseAnonKey);
+  }
+  return supabaseInstance;
+}
+
+// ✅ Reset function
+function resetClient() {
+  console.log("🔄 Resetting Supabase client");
+  supabaseInstance = null;
+}
+
+// ✅ Visibility change handler
+if (typeof window !== "undefined") {
+  let wasHidden = false;
+
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      wasHidden = true;
+      console.log("👁️ Tab hidden");
+    } else if (wasHidden) {
+      wasHidden = false;
+      console.log("👁️ Tab visible - will reset Supabase on next use");
+      resetClient();
+    }
+  };
+
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+}
+
+// ✅ Backward compatibility - mevcut kodların çalışması için
+export const supabase = new Proxy({} as ReturnType<typeof createBrowserClient>, {
+  get(target, prop) {
+    const client = createClient();
+    return client[prop as keyof typeof client];
+  },
+});

@@ -1,44 +1,26 @@
 "use client";
-import {
-  Calendar1Icon,
-  Clock,
-  InfoIcon,
-  LocateIcon,
-  PhoneCallIcon,
-  PhoneIcon,
-} from "lucide-react";
+import { Calendar1Icon, LocateIcon, PhoneCallIcon, PhoneIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 
 const events = [
   {
-    title: "Pazar Kahvaltısı",
-    description:
-      "Önümüzdeki pazar, tüm Türk toplumu için camimizde kahvaltı ikramı yapılacaktır.",
-    time: "Pazar — 10:00 AM",
-    phone: "(416) 778-0014",
-    priority: null,
-  },
-  {
     title: "Gençlik Sohbeti",
-    description:
-      "Her çarşamba yatsıdan sonra gençlerle sohbet, ardından yemek ikramı. Haftalık programdır.",
+    description: "Her çarşamba yatsıdan sonra gençlerle sohbet, ardından yemek ikramı. Haftalık programdır.",
     time: "Çarşamba — Yatsı Namazı",
     phone: "(416) 778-0014",
     priority: "weekly",
   },
   {
     title: "Aile Toplantısı",
-    description:
-      "Her perşembe yatsıdan sonra ailelerin buluşması, sohbet ve çay ikramı ile haftalık buluşma.",
+    description: "Her perşembe yatsıdan sonra ailelerin buluşması, sohbet ve çay ikramı ile haftalık buluşma.",
     time: "Perşembe — Yatsı Namazı",
     phone: "(416) 778-0014",
     priority: "weekly",
   },
   {
     title: "Kur’an Dersi",
-    description:
-      "Her pazar genç yetişkinler için Kur’an dersi, yatsı namazının ardından düzenlenmektedir.",
+    description: "Her pazar genç yetişkinler için Kur’an dersi, yatsı namazının ardından düzenlenmektedir.",
     time: "Pazar — Yatsı Namazı",
     phone: "(416) 778-0014",
     priority: "weekly",
@@ -77,57 +59,44 @@ export default function About() {
           Hizmetlerimiz
         </motion.p>
         <motion.p className="text-lg max-w-4xl" variants={item}>
-          Derneğimizin yerine getirdiği vazifelerden biri de Toronto ve
-          civarında vefat eden vatandaşlarımızın defin işleridir.
+          Derneğimizin yerine getirdiği vazifelerden biri de Toronto ve civarında vefat eden vatandaşlarımızın defin
+          işleridir.
         </motion.p>
         <motion.p className="text-3xl font-bold mt-7" variants={item}>
           Defin Hizmetleri
         </motion.p>
         <motion.p className="text-lg max-w-4xl" variants={item}>
-          Cenaze ve defin işlemlerinde, aşağıda belirtilen yöneticilerimiz
-          toplumumuza her konuda destek sağlamaktadır. Tüm hizmetler, dini
-          hassasiyetler gözetilerek ve yerine getirilmektedir.
+          Cenaze ve defin işlemlerinde, aşağıda belirtilen yöneticilerimiz toplumumuza her konuda destek sağlamaktadır.
+          Tüm hizmetler, dini hassasiyetler gözetilerek ve yerine getirilmektedir.
         </motion.p>
         <motion.p className="text-lg max-w-4xl" variants={item}>
-          Kanada Türk İslam Vakfı Mayıs 1993’de Pine Ridge Memorial Gardens’ın
-          Ajax, Ontario mezarlığından 200 adet mezar yeri aldı. Eylül 2004’da
-          alınan 120 mezar ile sayı 320 oldu. Mezarlığımızın etrafında diğer
-          cemaatlerin aldıkları mezarlarla takriben 10,000 kişilik bir müslüman
-          mezarlığı oluştu.Diğer dini gruplara da ayrılan kısımların bulunduğu
-          bu büyük mezarlık içinde son yıllarda yollar asfaltlanmış, çevresi
-          ağaçlarla donatılmıştır.
+          Kanada Türk İslam Vakfı Mayıs 1993’de Pine Ridge Memorial Gardens’ın Ajax, Ontario mezarlığından 200 adet
+          mezar yeri aldı. Eylül 2004’da alınan 120 mezar ile sayı 320 oldu. Mezarlığımızın etrafında diğer cemaatlerin
+          aldıkları mezarlarla takriben 10,000 kişilik bir müslüman mezarlığı oluştu.Diğer dini gruplara da ayrılan
+          kısımların bulunduğu bu büyük mezarlık içinde son yıllarda yollar asfaltlanmış, çevresi ağaçlarla
+          donatılmıştır.
         </motion.p>
         <motion.p className="text-lg max-w-4xl" variants={item}>
-          Cenaze ve defin işlemlerinde, aşağıda belirtilen yöneticilerimiz
-          toplumumuza her konuda destek sağlamaktadır. Tüm hizmetler, dini
-          hassasiyetler gözetilerek yerine getirilmektedir.
+          Cenaze ve defin işlemlerinde, aşağıda belirtilen yöneticilerimiz toplumumuza her konuda destek sağlamaktadır.
+          Tüm hizmetler, dini hassasiyetler gözetilerek yerine getirilmektedir.
         </motion.p>
 
         <div className="flex flex-col gap-2 flex-wrap">
-          <motion.div
-            className="flex items-center gap-2 text-lg font-bold"
-            variants={item}
-          >
+          <motion.div className="flex items-center gap-2 text-lg font-bold" variants={item}>
             <PhoneIcon size={16} className="text-green-400" />
             <span className="text-green-400">Fatih Sirinogullari:</span>
             <a href="tel:" className="underline">
               437 995 9470
             </a>
           </motion.div>
-          <motion.div
-            className="flex items-center gap-2 text-lg font-bold"
-            variants={item}
-          >
+          <motion.div className="flex items-center gap-2 text-lg font-bold" variants={item}>
             <PhoneIcon size={16} className="text-green-400" />
             <span className="text-green-400">Ahmet Er:</span>
             <a href="tel:" className="underline">
               647 709 7219
             </a>
           </motion.div>
-          <motion.div
-            className="flex items-center gap-2 text-lg font-bold"
-            variants={item}
-          >
+          <motion.div className="flex items-center gap-2 text-lg font-bold" variants={item}>
             <LocateIcon size={16} className="text-green-400" />
             Ajax Pine Ridge Memorial Gardens : 1757 Church St N Ajax, ON L1T 4T2
           </motion.div>
@@ -138,8 +107,8 @@ export default function About() {
           Faaliyetler
         </motion.p>
         <motion.p className="text-lg max-w-4xl" variants={item}>
-          Camimizde dini sohbetler, kültürel etkinlikler ve toplumsal buluşmalar
-          düzenlenmektedir. Tüm faaliyetlerimizi yakından takip edebilir.
+          Camimizde dini sohbetler, kültürel etkinlikler ve toplumsal buluşmalar düzenlenmektedir. Tüm faaliyetlerimizi
+          yakından takip edebilir.
         </motion.p>
 
         <div className="flex flex-col md:flex-row flex-wrap gap-3 justify-between md:mt-8">
@@ -158,9 +127,7 @@ export default function About() {
                 <div className="w-full flex gap-1 items-center">
                   <PhoneCallIcon size={"16"} /> {event.phone}
                   {event.priority && (
-                    <div className="px-2 rounded-2xl bg-blue-600 text-blue-100 text-sm ml-auto">
-                      {event.priority}
-                    </div>
+                    <div className="px-2 rounded-2xl bg-blue-600 text-blue-100 text-sm ml-auto">{event.priority}</div>
                   )}
                 </div>
               </div>

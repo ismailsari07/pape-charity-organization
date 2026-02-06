@@ -20,10 +20,11 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         table: "bg-transparent hover:bg-neutral-700/50",
         dashboard:
-          "bg-neutral-900/70 border border-neutral-700 text-neutral-50 hover:bg-neutral-800",
+          "bg-neutral-900/70 border border-neutral-800 text-neutral-50 hover:bg-neutral-800",
       },
       size: {
         default: "px-6 py-4 rounded-xl",
+        md: "h-9 rounded-md gap-1.5 px-3 py-5 has-[>svg]:px-2.5",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",

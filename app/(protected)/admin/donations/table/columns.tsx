@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DonationWithFund } from "../types";
+import { DonationWithFund, FundCode } from "../types";
 import { formatCurrency } from "../helper";
 import { formatDate } from "../helper";
 import { formatTime } from "../helper";
@@ -67,7 +67,14 @@ export const columns: ColumnDef<DonationWithFund>[] = [
     },
     cell: ({ row }) => {
       const donation = row.original;
-      return <Badge>{donation.funds.label}</Badge>;
+      const variants: Record<FundCode, "success" | "sky" | "yellow" | "blue" | "orange"> = {
+        general: "success",
+        cenaze: "blue",
+        fitre: "sky",
+        sadaka: "yellow",
+        zekat: "orange",
+      };
+      return <Badge variant={variants[donation.funds.code]}>{donation.funds.label}</Badge>;
     },
   },
   { accessorKey: "currency", header: "Para Birimi" },
@@ -95,11 +102,7 @@ export const columns: ColumnDef<DonationWithFund>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(donation.stripe_event_id)
-              }
-            >
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(donation.stripe_event_id)}>
               Copy payment ID
             </DropdownMenuItem>
           </DropdownMenuContent>

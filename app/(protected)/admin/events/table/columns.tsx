@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
+import { CopyIcon, Edit2, MoreHorizontal, Trash2 } from "lucide-react";
 
 export function createEventColumns({
   onClickEditButton,
@@ -28,7 +28,12 @@ export function createEventColumns({
     },
     {
       accessorKey: "day",
-      header: "Gün",
+      header: "Gün/Tarih",
+      cell: ({ row }) => {
+        const event = row.original;
+
+        return event.is_recurring ? row.getValue("day") : event.date;
+      },
     },
     {
       accessorKey: "time",
@@ -39,11 +44,7 @@ export function createEventColumns({
       header: "Öne Çıkan",
       cell: ({ row }) => {
         const isFeatured = row.getValue("is_featured");
-        return isFeatured ? (
-          <Badge variant="success">Evet</Badge>
-        ) : (
-          <Badge variant="neutral">Hayır</Badge>
-        );
+        return isFeatured ? <Badge variant="success">Evet</Badge> : <Badge variant="neutral">Hayır</Badge>;
       },
     },
     {
@@ -51,11 +52,7 @@ export function createEventColumns({
       header: "Aktif",
       cell: ({ row }) => {
         const isActive = row.getValue("is_active");
-        return isActive ? (
-          <Badge variant="success">Aktif</Badge>
-        ) : (
-          <Badge variant="neutral">Pasif</Badge>
-        );
+        return isActive ? <Badge variant="success">Aktif</Badge> : <Badge variant="neutral">Pasif</Badge>;
       },
     },
     {
@@ -75,19 +72,17 @@ export function createEventColumns({
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(event.id)}
-                >
+                <DropdownMenuItem onClick={() => navigator.clipboard.writeText(event.id)}>
+                  <CopyIcon className="mr-2 h-4 w-4" />
                   Copy Event ID
                 </DropdownMenuItem>
 
                 <DropdownMenuItem onSelect={() => onClickEditButton(event.id)}>
+                  <Edit2 className="mr-2 h-4 w-4" />
                   Edit Event
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-red-400"
-                  onSelect={() => onClickDeleteButton(event.id)}
-                >
+                <DropdownMenuItem className="text-red-400" onSelect={() => onClickDeleteButton(event.id)}>
+                  <Trash2 className="mr-2 h-4 w-4" />
                   Delete Event
                 </DropdownMenuItem>
               </DropdownMenuContent>

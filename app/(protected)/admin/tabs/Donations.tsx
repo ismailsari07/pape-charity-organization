@@ -30,10 +30,7 @@ export default function Donations() {
 
   return (
     <div className="space-y-6">
-      <TabHeader
-        title="Bağışlar"
-        description="Stripe üzerinden yapılan tüm bağışlar."
-      />
+      <TabHeader title="Bağışlar" description="Stripe üzerinden yapılan tüm bağışlar." />
 
       {stats && (
         <>
@@ -41,14 +38,10 @@ export default function Donations() {
             {/* Total Donations Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-neutral-400">
-                  Toplam Bağış Tutarı
-                </CardTitle>
+                <CardTitle className="text-neutral-400">Toplam Bağış Tutarı</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl text-neutral-50 font-semibold">
-                  {formatCurrency(stats.total, "CAD")}
-                </p>
+                <p className="text-2xl text-neutral-50 font-semibold">{formatCurrency(stats.total, "CAD")}</p>
               </CardContent>
             </Card>
             {/* Total Donations Card */}
@@ -56,15 +49,10 @@ export default function Donations() {
             {/* Donation Count */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-neutral-400">
-                  {" "}
-                  Bağış Sayısı
-                </CardTitle>
+                <CardTitle className="text-neutral-400"> Bağış Sayısı</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl text-neutral-50 font-semibold">
-                  {stats.count}
-                </p>
+                <p className="text-2xl text-neutral-50 font-semibold">{stats.count}</p>
               </CardContent>
             </Card>
             {/* Donation Count */}
@@ -72,9 +60,7 @@ export default function Donations() {
             {/* Average Donation */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-neutral-400">
-                  Ortalama Miktar
-                </CardTitle>
+                <CardTitle className="text-neutral-400">Ortalama Miktar</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-2xl text-neutral-50 font-semibold">
@@ -88,14 +74,10 @@ export default function Donations() {
             {/* Zekat */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-neutral-400">
-                  Zekat Toplamı
-                </CardTitle>
+                <CardTitle className="text-neutral-400">Zekat Toplamı</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl text-neutral-50 font-semibold">
-                  {formatCurrency(stats.byFund.zekat, "CAD")}
-                </p>
+                <p className="text-2xl text-neutral-50 font-semibold">{formatCurrency(stats.byFund.zekat, "CAD")}</p>
               </CardContent>
             </Card>
             {/* Zekat */}
@@ -103,14 +85,10 @@ export default function Donations() {
             {/* Sadaka */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-neutral-400">
-                  Sadaka Toplamı
-                </CardTitle>
+                <CardTitle className="text-neutral-400">Sadaka Toplamı</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl text-neutral-50 font-semibold">
-                  {formatCurrency(stats.byFund.sadaka, "CAD")}
-                </p>
+                <p className="text-2xl text-neutral-50 font-semibold">{formatCurrency(stats.byFund.sadaka, "CAD")}</p>
               </CardContent>
             </Card>
             {/* Sadaka */}
@@ -118,14 +96,10 @@ export default function Donations() {
             {/* Kimsesizler Cenaze Fonu */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-neutral-400">
-                  Kimsesizler Cenaze Fonu Toplamı
-                </CardTitle>
+                <CardTitle className="text-neutral-400">Kimsesizler Cenaze Fonu Toplamı</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl text-neutral-50 font-semibold">
-                  {formatCurrency(stats.byFund.cenaze, "CAD")}
-                </p>
+                <p className="text-2xl text-neutral-50 font-semibold">{formatCurrency(stats.byFund.cenaze, "CAD")}</p>
               </CardContent>
             </Card>
             {/* Kimsesizler Cenaze Fonu */}
@@ -133,14 +107,10 @@ export default function Donations() {
             {/* Cami Fonu Toplami */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-neutral-400">
-                  Cami Fonu Toplamı
-                </CardTitle>
+                <CardTitle className="text-neutral-400">Cami Fonu Toplamı</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl text-neutral-50 font-semibold">
-                  {formatCurrency(stats.byFund.general, "CAD")}
-                </p>
+                <p className="text-2xl text-neutral-50 font-semibold">{formatCurrency(stats.byFund.general, "CAD")}</p>
               </CardContent>
             </Card>
             {/* Cami Fonu Toplami */}
@@ -149,11 +119,7 @@ export default function Donations() {
       )}
 
       {/* Donations Table */}
-      <DataTable
-        columns={columns}
-        data={donations}
-        renderToolbar={(table) => <DataTableToolbar table={table} />}
-      />
+      <DataTable columns={columns} data={donations} renderToolbar={(table) => <DataTableToolbar table={table} />} />
     </div>
   );
 }

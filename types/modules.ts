@@ -4,3 +4,9 @@ export type PrayerItem = {
   iqamah?: string;
   ampm: "a.m" | "p.m";
 };
+
+export interface CreateSubscriberInput {
+  name: string;
+  email: string;
+  phone?: string;
+}

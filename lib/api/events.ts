@@ -3,11 +3,7 @@ import { supabase } from "@/lib/supabase/client";
 
 // Get The Event
 export async function getEvent(id: string): Promise<EventPayload> {
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const { data, error } = await supabase.from("events").select("*").eq("id", id).single();
 
   if (error) throw error;
   return data;
@@ -15,10 +11,7 @@ export async function getEvent(id: string): Promise<EventPayload> {
 
 // Get All Events
 export async function getAllEvents(): Promise<EventRow[]> {
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .order("display_order", { ascending: true });
+  const { data, error } = await supabase.from("events").select("*").order("display_order", { ascending: true });
 
   if (error) throw error;
   return data;
@@ -26,11 +19,7 @@ export async function getAllEvents(): Promise<EventRow[]> {
 
 // Insert Event
 export async function createEvent(event: EventPayload) {
-  const { data, error } = await supabase
-    .from("events")
-    .insert(event)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("events").insert(event).select().single();
 
   if (error) throw error;
   return data;
@@ -38,12 +27,7 @@ export async function createEvent(event: EventPayload) {
 
 // Update Event
 export async function updateEvent(id: string, event: EventPayload) {
-  const { data, error } = await supabase
-    .from("events")
-    .update(event)
-    .eq("id", id)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("events").update(event).eq("id", id).select().single();
 
   if (error) throw error;
   return data;
