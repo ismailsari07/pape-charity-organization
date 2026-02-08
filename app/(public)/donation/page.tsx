@@ -18,7 +18,7 @@ import {
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { getAllDonationFunds } from "@/lib/api/funds";
+import { getDonationFunds } from "@/lib/api/funds";
 import { useQuery } from "@tanstack/react-query";
 import { DonationFund } from "@/types/modules";
 
@@ -53,8 +53,7 @@ export default function Donation() {
 
   const { data: funds = [], isLoading } = useQuery<DonationFund[]>({
     queryKey: ["donation-funds"],
-    queryFn: getAllDonationFunds,
-    staleTime: 1000 * 60 * 5, // 5 dk
+    queryFn: getDonationFunds,
   });
   const chunkFunds = <T,>(arr: T[], size = 2): T[][] => {
     const chunks: T[][] = [];

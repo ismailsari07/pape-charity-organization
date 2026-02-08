@@ -33,3 +33,15 @@ export async function bulkUpdateDonationFunds(updates: Array<{ id: string; is_ac
 
   return true;
 }
+
+// Get active donation funds (public)
+export async function getDonationFunds() {
+  const { data, error } = await supabase
+    .from("donation_funds")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order", { ascending: true });
+
+  if (error) throw error;
+  return data as DonationFund[];
+}
