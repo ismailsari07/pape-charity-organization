@@ -18,36 +18,11 @@ import {
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import { getDonationFunds } from "@/lib/api/funds";
+import { useQuery } from "@tanstack/react-query";
+import { DonationFund } from "@/types/modules";
 
 type Fund = "zekat" | "sadaka" | "general" | "cenaze" | "fitre";
-
-type FundMeta = {
-  title: string;
-  description: string;
-};
-
-const FUND_META_TR: Record<Fund, FundMeta> = {
-  zekat: {
-    title: "Zekât",
-    description: "Zekât ibadetinizi camimiz üzerinden gerçekleştirme.",
-  },
-  sadaka: {
-    title: "Sadaka",
-    description: "Sadakanızı camimiz aracılığıyla ihtiyaç sahiplerine iletme.",
-  },
-  general: {
-    title: "Cami Yardımı",
-    description: "Camimizin bakım, hizmet ve ihtiyaç giderleri için bağış.",
-  },
-  cenaze: {
-    title: "Cenaze Hizmetleri",
-    description: "Cenaze düzenlemeleri, defin ve ilgili hizmetler için bağış.",
-  },
-  fitre: {
-    title: "Fitre",
-    description: "Ramazan ayında fitre vermek isteyenler bu seçenek üzerinden bağışlarını gerçekleştirebilir.",
-  },
-} as const;
 
 type Values = {
   email: string;
@@ -75,6 +50,22 @@ export default function Donation() {
 
   const [selectedFund, setSelectedFund] = useState<Fund>("zekat");
   const [open, setOpen] = useState(false);
+
+  const { data: funds = [], isLoading } = useQuery<DonationFund[]>({
+    queryKey: ["donation-funds"],
+    queryFn: getDonationFunds,
+    staleTime: 1000 * 60 * 5, // 5 dk
+  });
+  const chunkFunds = <T,>(arr: T[], size = 2): T[][] => {
+    const chunks: T[][] = [];
+    for (let i = 0; i < arr.length; i += size) {
+      chunks.push(arr.slice(i, i + size));
+    }
+    return chunks;
+  };
+  const fundGroups = chunkFunds(funds, 2);
+
+  const selectedFundData = funds.find((f) => f.slug === selectedFund);
 
   function openFor(f: Fund) {
     setSelectedFund(f);
@@ -129,88 +120,75 @@ export default function Donation() {
         isteyenler, uygun bağış seçeneklerinden dilediklerini tercih ederek destek olabilirler.
       </motion.p>
 
-      <div className="flex flex-col lg:flex-row justify-between items-center gap-12 mt-10">
-        <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
-          <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
-            Cami Yardımı
-          </motion.p>
-          <motion.p className="font-semibold" variants={item}>
-            Camimizin bakım, hizmet ve ihtiyaç giderleri için bağışınızı bu bölümden yapabilirsiniz.
-          </motion.p>
-          <motion.div variants={item}>
-            <Button size={"lg"} onClick={() => openFor("general")}>
-              Cami Yardımı <ArrowRight size={20} />
-            </Button>
-          </motion.div>
-        </div>
-        <motion.hr variants={item} className="hidden md:block w-[1px] h-72 lg:block bg-gray-200" />
-        <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
-          <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
-            Sadaka
-          </motion.p>
-          <motion.p className="font-semibold" variants={item}>
-            Sadakanızı camimiz üzerinden iletmek için bu seçeneği kullanabilirsiniz.
-          </motion.p>
-          <motion.div variants={item}>
-            <Button size={"lg"} onClick={() => openFor("sadaka")}>
-              Sadaka <ArrowRight size={20} />
-            </Button>
-          </motion.div>
-        </div>
-      </div>
+      {fundGroups.map((group, index) => {
+        // ÇİFT (2 tane fund)
+        if (group.length === 2) {
+          const [left, right] = group;
 
-      <div className="flex flex-col lg:flex-row justify-between items-center gap-12 mt-10">
-        <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
-          <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
-            Zekat
-          </motion.p>
-          <motion.p className="font-semibold" variants={item}>
-            Zekât vermek isteyenler bu seçenek üzerinden bağışlarını gerçekleştirebilir.
-          </motion.p>
-          <motion.div variants={item}>
-            <Button size={"lg"} onClick={() => openFor("zekat")}>
-              Zekat <ArrowRight size={20} />
-            </Button>
-          </motion.div>
-        </div>
-        <motion.hr variants={item} className="hidden md:block w-[1px] h-72 lg:block bg-gray-200" />
-        <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
-          <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
-            Kimsesizler Cenaze Fonu
-          </motion.p>
-          <motion.p className="font-semibold" variants={item}>
-            Kimsesizler fonuna katkıda bulunmak için bağışınızı buradan yapabilirsiniz.
-          </motion.p>
-          <motion.div variants={item}>
-            <Button size={"lg"} onClick={() => openFor("cenaze")}>
-              Cenaze Fonu <ArrowRight size={20} />
-            </Button>
-          </motion.div>
-        </div>
-      </div>
+          return (
+            <div key={index} className="flex flex-col lg:flex-row justify-between items-center gap-12 mt-10">
+              {/* LEFT */}
+              <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
+                <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
+                  {left.title}
+                </motion.p>
+                <motion.p className="font-semibold" variants={item}>
+                  {left.description}
+                </motion.p>
+                <motion.div variants={item}>
+                  <Button size="lg" onClick={() => openFor(left.slug)}>
+                    {left.title} <ArrowRight size={20} />
+                  </Button>
+                </motion.div>
+              </div>
 
-      <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3 mr-auto mt-10">
-        <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
-          Fitre
-        </motion.p>
-        <motion.p className="font-semibold" variants={item}>
-          Ramazan ayında fitre vermek isteyenler bu seçenek üzerinden bağışlarını gerçekleştirebilir.
-        </motion.p>
-        <motion.div variants={item}>
-          <Button size={"lg"} onClick={() => openFor("zekat")}>
-            Fitre <ArrowRight size={20} />
-          </Button>
-        </motion.div>
-      </div>
+              <motion.hr variants={item} className="hidden md:block w-[1px] h-72 lg:block bg-gray-200" />
+
+              {/* RIGHT */}
+              <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
+                <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
+                  {right.title}
+                </motion.p>
+                <motion.p className="font-semibold" variants={item}>
+                  {right.description}
+                </motion.p>
+                <motion.div variants={item}>
+                  <Button size="lg" onClick={() => openFor(right.slug)}>
+                    {right.title} <ArrowRight size={20} />
+                  </Button>
+                </motion.div>
+              </div>
+            </div>
+          );
+        }
+
+        // TEK (son kalan)
+        const fund = group[0];
+
+        return (
+          <div key={index} className="md:w-2/5 flex flex-col items-start lg:items-center gap-3 mr-auto mt-10">
+            <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
+              {fund.title}
+            </motion.p>
+            <motion.p className="font-semibold" variants={item}>
+              {fund.description}
+            </motion.p>
+            <motion.div variants={item}>
+              <Button size="lg" onClick={() => openFor(fund.slug)}>
+                {fund.title} <ArrowRight size={20} />
+              </Button>
+            </motion.div>
+          </div>
+        );
+      })}
 
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent className="md:w-1/3 mx-auto bg-foreground text-background border-2 border-gray-200 rounded-3xl! px-4 overflow-hidden mb-1">
           <DrawerHeader>
-            <DrawerTitle className="text-2xl font-semibold text-background">
-              {FUND_META_TR[selectedFund].title}
-            </DrawerTitle>
+            <DrawerTitle className="text-2xl font-semibold text-background">{selectedFundData?.title}</DrawerTitle>
+
             <DrawerDescription className="font-semibold text-background">
-              {FUND_META_TR[selectedFund].description}
+              {selectedFundData?.description}
             </DrawerDescription>
           </DrawerHeader>
           <Form {...form}>

@@ -10,3 +10,12 @@ export interface CreateSubscriberInput {
   email: string;
   phone?: string;
 }
+
+export type DonationFund = {
+  id: string;
+  slug: "zekat" | "sadaka" | "general" | "cenaze" | "fitre";
+  title: string;
+  description: string;
+  display_order: number;
+  is_active: boolean;
+};

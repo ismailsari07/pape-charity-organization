@@ -14,9 +14,11 @@ export type Event = {
   id: string;
   title: string;
   description: string;
+
   day: string;
   time: string;
   phone: string | null;
+  date: DateTime | undefined;
 
   is_recurring: boolean;
   is_featured: boolean;
