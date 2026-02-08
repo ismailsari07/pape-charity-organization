@@ -182,7 +182,7 @@ export function EventEditSheet({ open, onOpenChange, defaultValues, onSubmit, mo
                   type="time"
                   step="1"
                   defaultValue="10:30:00"
-                  className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none border-neutral-800 text-white bg-neutral-900 flex text-center px-3 h-11"
+                  className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none border-neutral-800 text-white bg-neutral-900 flex px-3 h-11 py-0"
                   {...form.register("time")}
                 />
               </div>
