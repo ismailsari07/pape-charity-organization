@@ -18,7 +18,7 @@ import {
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { getDonationFunds } from "@/lib/api/funds";
+import { getAllDonationFunds } from "@/lib/api/funds";
 import { useQuery } from "@tanstack/react-query";
 import { DonationFund } from "@/types/modules";
 
@@ -53,7 +53,7 @@ export default function Donation() {
 
   const { data: funds = [], isLoading } = useQuery<DonationFund[]>({
     queryKey: ["donation-funds"],
-    queryFn: getDonationFunds,
+    queryFn: getAllDonationFunds,
     staleTime: 1000 * 60 * 5, // 5 dk
   });
   const chunkFunds = <T,>(arr: T[], size = 2): T[][] => {
@@ -126,37 +126,29 @@ export default function Donation() {
           const [left, right] = group;
 
           return (
-            <div key={index} className="flex flex-col lg:flex-row justify-between items-center gap-12 mt-10">
+            <div key={index} className="w-full flex flex-col lg:flex-row justify-between items-center gap-12 mt-10">
               {/* LEFT */}
-              <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
-                <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
-                  {left.title}
-                </motion.p>
-                <motion.p className="font-semibold" variants={item}>
-                  {left.description}
-                </motion.p>
-                <motion.div variants={item}>
+              <div className="md:w-2/5 flex flex-col justify-center items-start lg:items-center gap-3">
+                <p className="text-4xl md:text-6xl font-bold">{left.title}</p>
+                <p className="font-semibold">{left.description}</p>
+                <div>
                   <Button size="lg" onClick={() => openFor(left.slug)}>
                     {left.title} <ArrowRight size={20} />
                   </Button>
-                </motion.div>
+                </div>
               </div>
 
-              <motion.hr variants={item} className="hidden md:block w-[1px] h-72 lg:block bg-gray-200" />
+              <hr className="hidden md:block w-[1px] h-72 lg:block bg-gray-200" />
 
               {/* RIGHT */}
-              <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
-                <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
-                  {right.title}
-                </motion.p>
-                <motion.p className="font-semibold" variants={item}>
-                  {right.description}
-                </motion.p>
-                <motion.div variants={item}>
+              <div className="md:w-2/5 flex flex-col justify-center items-start lg:items-center gap-3">
+                <p className="text-4xl md:text-6xl font-bold">{right.title}</p>
+                <p className="font-semibold">{right.description}</p>
+                <div>
                   <Button size="lg" onClick={() => openFor(right.slug)}>
                     {right.title} <ArrowRight size={20} />
                   </Button>
-                </motion.div>
+                </div>
               </div>
             </div>
           );
@@ -167,17 +159,13 @@ export default function Donation() {
 
         return (
           <div key={index} className="md:w-2/5 flex flex-col items-start lg:items-center gap-3 mr-auto mt-10">
-            <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
-              {fund.title}
-            </motion.p>
-            <motion.p className="font-semibold" variants={item}>
-              {fund.description}
-            </motion.p>
-            <motion.div variants={item}>
+            <p className="text-4xl md:text-6xl font-bold">{fund.title}</p>
+            <p className="font-semibold">{fund.description}</p>
+            <div>
               <Button size="lg" onClick={() => openFor(fund.slug)}>
                 {fund.title} <ArrowRight size={20} />
               </Button>
-            </motion.div>
+            </div>
           </div>
         );
       })}

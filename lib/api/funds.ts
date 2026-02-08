@@ -1,40 +1,35 @@
 import { supabase } from "@/lib/supabase/client";
 import { DonationFund } from "@/types/modules";
 
-export async function getFunds() {
-  const { data, error } = await supabase.from("funds").select("*").eq("is_active", true).order("created_at");
-
-  if (error) throw error;
-
-  return data;
-}
-
-export async function createFund(input: { code: string; label: string; color: string; ramadan_only: boolean }) {
-  const { data, error } = await supabase.from("funds").insert(input);
-
-  if (error) throw error;
-
-  return data;
-}
-
-export async function toggleRamadan(code: string, value: boolean) {
-  const { data, error } = await supabase.from("funds").update({ ramadan_only: value }).eq("code", code);
-
-  if (error) throw error;
-
-  return data;
-}
-
-export async function getDonationFunds(): Promise<DonationFund[]> {
-  const { data, error } = await supabase
-    .from("donation_funds")
-    .select("*")
-    .eq("is_active", true)
-    .order("display_order", { ascending: true });
+export async function getAllDonationFunds(): Promise<DonationFund[]> {
+  const { data, error } = await supabase.from("donation_funds").select("*").order("display_order", { ascending: true });
 
   if (error) {
     throw new Error(error.message);
   }
 
   return data;
+}
+
+export async function updateDonationFund(id: string, isActive: boolean) {
+  const { data, error } = await supabase.from("donation_funds").update({ is_active: isActive }).eq("id", id);
+  if (error) throw error;
+
+  return data;
+}
+
+// Bulk update donation funds
+export async function bulkUpdateDonationFunds(updates: Array<{ id: string; is_active: boolean }>) {
+  const promises = updates.map(({ id, is_active }) =>
+    supabase.from("donation_funds").update({ is_active }).eq("id", id),
+  );
+
+  const results = await Promise.all(promises);
+
+  const errors = results.filter((r) => r.error);
+  if (errors.length > 0) {
+    throw errors[0].error;
+  }
+
+  return true;
 }
