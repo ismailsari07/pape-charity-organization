@@ -2,30 +2,9 @@
 import { Calendar1Icon, LocateIcon, PhoneCallIcon, PhoneIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
-
-const events = [
-  {
-    title: "Gençlik Sohbeti",
-    description: "Her çarşamba yatsıdan sonra gençlerle sohbet, ardından yemek ikramı. Haftalık programdır.",
-    time: "Çarşamba — Yatsı Namazı",
-    phone: "(416) 778-0014",
-    priority: "weekly",
-  },
-  {
-    title: "Aile Toplantısı",
-    description: "Her perşembe yatsıdan sonra ailelerin buluşması, sohbet ve çay ikramı ile haftalık buluşma.",
-    time: "Perşembe — Yatsı Namazı",
-    phone: "(416) 778-0014",
-    priority: "weekly",
-  },
-  {
-    title: "Kur’an Dersi",
-    description: "Her pazar genç yetişkinler için Kur’an dersi, yatsı namazının ardından düzenlenmektedir.",
-    time: "Pazar — Yatsı Namazı",
-    phone: "(416) 778-0014",
-    priority: "weekly",
-  },
-];
+import { getActiveEvents } from "@/lib/api/events";
+import { Event } from "@/app/(protected)/admin/events/types";
+import { useQuery } from "@tanstack/react-query";
 
 export default function About() {
   const container = {
@@ -44,6 +23,26 @@ export default function About() {
       transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
     },
   };
+
+  const { data: events, isLoading } = useQuery({
+    queryKey: ["featured-events"],
+    queryFn: getActiveEvents,
+  });
+
+  if (isLoading) {
+    return (
+      <section className="flex flex-col gap-3 items-center text-center py-16 lg:py-32">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-64 mx-auto"></div>
+          <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!events || events.length === 0) {
+    return null;
+  }
 
   return (
     <motion.section
@@ -112,7 +111,7 @@ export default function About() {
         </motion.p>
 
         <div className="flex flex-col md:flex-row flex-wrap gap-3 justify-between md:mt-8">
-          {events.map((event, i) => (
+          {events.map((event: Event, i: number) => (
             <motion.div
               variants={item}
               key={i}
@@ -126,8 +125,8 @@ export default function About() {
                 </div>
                 <div className="w-full flex gap-1 items-center">
                   <PhoneCallIcon size={"16"} /> {event.phone}
-                  {event.priority && (
-                    <div className="px-2 rounded-2xl bg-blue-600 text-blue-100 text-sm ml-auto">{event.priority}</div>
+                  {event.is_recurring && (
+                    <div className="px-2 rounded-2xl bg-blue-600 text-blue-100 text-sm ml-auto">haftalık</div>
                   )}
                 </div>
               </div>

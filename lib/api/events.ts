@@ -53,3 +53,16 @@ export async function getFeaturedEvents() {
   if (error) throw error;
   return data;
 }
+
+// Service sayfasinda gösterilecek etkinlikler (all)
+export async function getActiveEvents() {
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order", { ascending: true })
+    .limit(3);
+
+  if (error) throw error;
+  return data;
+}
