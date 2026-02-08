@@ -5,6 +5,28 @@ import { getFeaturedEvents } from "@/lib/api/events";
 import { Calendar1Icon, PhoneCallIcon } from "lucide-react";
 import { Event, EventRow } from "@/app/(protected)/admin/events/types";
 
+/**
+ * 24 saatlik formatı (HH:mm:ss) 12 saatlik formata (h:mm a.m./p.m.) çevirir.
+ * @param timeStr - Örn: "19:00:00"
+ * @returns Örn: "7:00 p.m."
+ */
+function formatToTwelveHour(timeStr: string): string {
+  // String'i parçalara ayırıp bir Date objesi oluşturuyoruz
+  const [hours, minutes, seconds] = timeStr.split(":").map(Number);
+
+  const date = new Date();
+  date.setHours(hours, minutes, seconds);
+
+  // Tarayıcı/Node.js yerel ayarlarını kullanarak formatlıyoruz
+  return date
+    .toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .toLowerCase();
+}
+
 export default function UpcomingEvents() {
   const { data: events, isLoading } = useQuery({
     queryKey: ["featured-events"],
@@ -43,7 +65,9 @@ export default function UpcomingEvents() {
             <p>{event.description}</p>
             <div className="flex gap-1 justify-center items-center md:mt-4">
               <Calendar1Icon size={"16"} />
-              {event.is_recurring ? `${event.day} — ${event.time}` : `${event.date} — ${event.time}`}
+              {event.is_recurring
+                ? `${event.day} — ${formatToTwelveHour(event.time)}`
+                : `${event.date} — ${formatToTwelveHour(event.time)}`}
             </div>
             <div className="w-full flex gap-1 items-center">
               {/* add a tag to phone number */}

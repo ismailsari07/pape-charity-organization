@@ -6,6 +6,28 @@ import { getActiveEvents } from "@/lib/api/events";
 import { Event } from "@/app/(protected)/admin/events/types";
 import { useQuery } from "@tanstack/react-query";
 
+/**
+ * 24 saatlik formatı (HH:mm:ss) 12 saatlik formata (h:mm a.m./p.m.) çevirir.
+ * @param timeStr - Örn: "19:00:00"
+ * @returns Örn: "7:00 p.m."
+ */
+function formatToTwelveHour(timeStr: string): string {
+  // String'i parçalara ayırıp bir Date objesi oluşturuyoruz
+  const [hours, minutes, seconds] = timeStr.split(":").map(Number);
+
+  const date = new Date();
+  date.setHours(hours, minutes, seconds);
+
+  // Tarayıcı/Node.js yerel ayarlarını kullanarak formatlıyoruz
+  return date
+    .toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .toLowerCase();
+}
+
 export default function About() {
   const container = {
     hidden: { opacity: 1 },
@@ -110,7 +132,7 @@ export default function About() {
           yakından takip edebilir.
         </motion.p>
 
-        <div className="flex flex-col md:flex-row flex-wrap gap-3 justify-between md:mt-8">
+        <div className="flex flex-col md:flex-row flex-wrap gap-3 md:mt-8">
           {events.map((event: Event, i: number) => (
             <motion.div
               variants={item}
@@ -120,8 +142,11 @@ export default function About() {
               <h4 className="text-3xl font-semibold">{event.title}</h4>
               <motion.p variants={item}>{event.description}</motion.p>
               <div className="w-full mt-auto">
-                <div className="flex gap-1 justify-start items-center md:mt-4">
-                  <Calendar1Icon size={"16"} /> {event.time}
+                <div className="flex gap-1 items-center md:mt-4">
+                  <Calendar1Icon size={"16"} />
+                  {event.is_recurring
+                    ? `${event.day} — ${formatToTwelveHour(event.time)}`
+                    : `${event.date} — ${formatToTwelveHour(event.time)}`}
                 </div>
                 <div className="w-full flex gap-1 items-center">
                   <PhoneCallIcon size={"16"} /> {event.phone}
