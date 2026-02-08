@@ -101,9 +101,9 @@ export async function getSubscriberStats(): Promise<SubscriberStats> {
 
     const stats = {
       total: data?.length || 0,
-      active: data?.filter((s) => s.status === "active").length || 0,
-      inactive: data?.filter((s) => s.status === "inactive").length || 0,
-      unsubscribed: data?.filter((s) => s.status === "unsubscribed").length || 0,
+      active: data?.filter((s: Subscriber) => s.status === "active").length || 0,
+      inactive: data?.filter((s: Subscriber) => s.status === "inactive").length || 0,
+      unsubscribed: data?.filter((s: Subscriber) => s.status === "unsubscribed").length || 0,
     };
 
     return stats;

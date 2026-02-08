@@ -2,7 +2,8 @@ import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function UnsubscribeSuccess({ searchParams }: { searchParams: { email?: string } }) {
+export default async function UnsubscribeSuccess(props: { searchParams: Promise<{ email?: string }> }) {
+  const searchParams = await props.searchParams;
   const email = searchParams.email;
 
   return (

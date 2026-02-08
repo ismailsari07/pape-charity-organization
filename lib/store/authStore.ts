@@ -3,8 +3,8 @@ import { persist } from "zustand/middleware";
 
 interface User {
   id: string;
-  email: string;
-  role: "admin" | "user";
+  email?: string | undefined;
+  role?: "admin" | "user" | undefined | string;
 }
 
 interface AuthState {
@@ -27,11 +27,9 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
 
       // Actions
-      setUser: (user) =>
-        set({ user, isAuthenticated: !!user, isLoading: false }),
+      setUser: (user) => set({ user, isAuthenticated: !!user, isLoading: false }),
       setLoading: (loading) => set({ isLoading: loading }),
-      logout: () =>
-        set({ user: null, isAuthenticated: false, isLoading: false }),
+      logout: () => set({ user: null, isAuthenticated: false, isLoading: false }),
       reset: () => set({ user: null, isAuthenticated: false, isLoading: true }),
     }),
     {

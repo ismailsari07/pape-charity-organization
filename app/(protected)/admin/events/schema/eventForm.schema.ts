@@ -15,7 +15,7 @@ export const eventSchema = z
       .string()
       .min(10, "Description must be at least 10 characters")
       .max(500, "Description must be at most 500 characters"),
-    date: z.instanceof(DateTime).optional(),
+    date: z.custom<DateTime>((val) => val instanceof DateTime).optional(),
     day: z.string().optional(),
     time: z.string().min(1, "Time is required"),
     phone: z.string().regex(phoneRegex, "Phone must be in format: (xxx) xxx-xxxx"),
@@ -36,8 +36,9 @@ export const eventSchema = z
   )
   .refine(
     (data) => {
-      if ((!data.is_recurring && data.date >= oneYearLater) || data.date <= today) return false;
-
+      if (!data.is_recurring && data.date) {
+        if (data.date >= oneYearLater || data.date <= today) return false;
+      }
       return true;
     },
     {

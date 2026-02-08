@@ -4,14 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Drawer,
@@ -26,7 +19,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 
-type Fund = "zekat" | "sadaka" | "general" | "cenaze";
+type Fund = "zekat" | "sadaka" | "general" | "cenaze" | "fitre";
 
 type FundMeta = {
   title: string;
@@ -50,16 +43,19 @@ const FUND_META_TR: Record<Fund, FundMeta> = {
     title: "Cenaze Hizmetleri",
     description: "Cenaze düzenlemeleri, defin ve ilgili hizmetler için bağış.",
   },
+  fitre: {
+    title: "Fitre",
+    description: "Ramazan ayında fitre vermek isteyenler bu seçenek üzerinden bağışlarını gerçekleştirebilir.",
+  },
 } as const;
 
 type Values = {
   email: string;
-  amount: string; // CAD olarak (örn: "50")
+  amount: string;
   mode: "payment" | "subscription";
 };
 
 export default function Donation() {
-  //#region motion options
   const container = {
     hidden: { opacity: 1 },
     show: {
@@ -76,7 +72,6 @@ export default function Donation() {
       transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
     },
   };
-  //#endregion motion options
 
   const [selectedFund, setSelectedFund] = useState<Fund>("zekat");
   const [open, setOpen] = useState(false);
@@ -130,9 +125,8 @@ export default function Donation() {
         Bağış
       </motion.p>
       <motion.p className="text-lg text-center" variants={item}>
-        Sadaka ve zekâtlarını camimiz üzerinden yapmak isteyenler ile camimizin
-        ihtiyaçlarına katkıda bulunmak isteyenler, uygun bağış seçeneklerinden
-        dilediklerini tercih ederek destek olabilirler.
+        Sadaka ve zekâtlarını camimiz üzerinden yapmak isteyenler ile camimizin ihtiyaçlarına katkıda bulunmak
+        isteyenler, uygun bağış seçeneklerinden dilediklerini tercih ederek destek olabilirler.
       </motion.p>
 
       <div className="flex flex-col lg:flex-row justify-between items-center gap-12 mt-10">
@@ -141,8 +135,7 @@ export default function Donation() {
             Cami Yardımı
           </motion.p>
           <motion.p className="font-semibold" variants={item}>
-            Camimizin bakım, hizmet ve ihtiyaç giderleri için bağışınızı bu
-            bölümden yapabilirsiniz.
+            Camimizin bakım, hizmet ve ihtiyaç giderleri için bağışınızı bu bölümden yapabilirsiniz.
           </motion.p>
           <motion.div variants={item}>
             <Button size={"lg"} onClick={() => openFor("general")}>
@@ -150,17 +143,13 @@ export default function Donation() {
             </Button>
           </motion.div>
         </div>
-        <motion.hr
-          variants={item}
-          className="hidden md:block w-[1px] h-72 lg:block bg-gray-200"
-        />
+        <motion.hr variants={item} className="hidden md:block w-[1px] h-72 lg:block bg-gray-200" />
         <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
           <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
             Sadaka
           </motion.p>
           <motion.p className="font-semibold" variants={item}>
-            Sadakanızı camimiz üzerinden iletmek için bu seçeneği
-            kullanabilirsiniz.
+            Sadakanızı camimiz üzerinden iletmek için bu seçeneği kullanabilirsiniz.
           </motion.p>
           <motion.div variants={item}>
             <Button size={"lg"} onClick={() => openFor("sadaka")}>
@@ -176,8 +165,7 @@ export default function Donation() {
             Zekat
           </motion.p>
           <motion.p className="font-semibold" variants={item}>
-            Zekât vermek isteyenler bu seçenek üzerinden bağışlarını
-            gerçekleştirebilir.
+            Zekât vermek isteyenler bu seçenek üzerinden bağışlarını gerçekleştirebilir.
           </motion.p>
           <motion.div variants={item}>
             <Button size={"lg"} onClick={() => openFor("zekat")}>
@@ -185,17 +173,13 @@ export default function Donation() {
             </Button>
           </motion.div>
         </div>
-        <motion.hr
-          variants={item}
-          className="hidden md:block w-[1px] h-72 lg:block bg-gray-200"
-        />
+        <motion.hr variants={item} className="hidden md:block w-[1px] h-72 lg:block bg-gray-200" />
         <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3">
           <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
             Kimsesizler Cenaze Fonu
           </motion.p>
           <motion.p className="font-semibold" variants={item}>
-            Kimsesizler fonuna katkıda bulunmak için bağışınızı buradan
-            yapabilirsiniz.
+            Kimsesizler fonuna katkıda bulunmak için bağışınızı buradan yapabilirsiniz.
           </motion.p>
           <motion.div variants={item}>
             <Button size={"lg"} onClick={() => openFor("cenaze")}>
@@ -203,6 +187,20 @@ export default function Donation() {
             </Button>
           </motion.div>
         </div>
+      </div>
+
+      <div className="md:w-2/5 flex flex-col items-start lg:items-center gap-3 mr-auto mt-10">
+        <motion.p className="text-4xl md:text-6xl font-bold" variants={item}>
+          Fitre
+        </motion.p>
+        <motion.p className="font-semibold" variants={item}>
+          Ramazan ayında fitre vermek isteyenler bu seçenek üzerinden bağışlarını gerçekleştirebilir.
+        </motion.p>
+        <motion.div variants={item}>
+          <Button size={"lg"} onClick={() => openFor("zekat")}>
+            Fitre <ArrowRight size={20} />
+          </Button>
+        </motion.div>
       </div>
 
       <Drawer open={open} onOpenChange={setOpen}>
@@ -226,12 +224,7 @@ export default function Donation() {
                   <FormItem>
                     <FormLabel>E-mail *</FormLabel>
                     <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="ornek@eposta.com"
-                        required
-                        {...field}
-                      />
+                      <Input type="email" placeholder="ornek@eposta.com" required {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -247,14 +240,7 @@ export default function Donation() {
                   <FormItem>
                     <FormLabel>Tutar (CAD) *</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        min={1}
-                        step="0.01"
-                        placeholder="50"
-                        required
-                        {...field}
-                      />
+                      <Input type="number" min={1} step="0.01" placeholder="50" required {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -271,9 +257,7 @@ export default function Donation() {
                     <FormControl>
                       <RadioGroup
                         className="flex items-center gap-6"
-                        onValueChange={(v) =>
-                          field.onChange(v as Values["mode"])
-                        }
+                        onValueChange={(v) => field.onChange(v as Values["mode"])}
                         value={field.value}
                       >
                         <div className="flex items-center space-x-2">

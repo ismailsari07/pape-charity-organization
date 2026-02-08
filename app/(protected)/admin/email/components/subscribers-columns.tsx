@@ -21,12 +21,13 @@ import { tr } from "date-fns/locale";
 export const subscribersColumns: ColumnDef<Subscriber>[] = [
   {
     id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
+    header: (/*{ table }*/) => (
+      // <Checkbox
+      //   checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+      //   onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      //   aria-label="Select all"
+      // />
+      <></>
     ),
     cell: ({ row }) => (
       <Checkbox
@@ -97,10 +98,6 @@ export const subscribersColumns: ColumnDef<Subscriber>[] = [
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(subscriber.email)}>
               <CopyIcon className="mr-2 h-4 w-4" />
               Copy email
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDelete?.(subscriber)} className="text-red-600">
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

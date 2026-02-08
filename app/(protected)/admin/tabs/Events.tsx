@@ -28,7 +28,7 @@ function mapEventToFormValues(event: EventPayload): EventFormValues | undefined 
     day: event.day,
     time: event.time,
     phone: event.phone ?? "",
-    date: DateTime.fromISO(event.date, { zone: "America/Toronto" }),
+    date: DateTime.fromISO(String(event.date ?? ""), { zone: "America/Toronto" }),
     is_active: event.is_active,
     is_featured: event.is_featured,
     is_recurring: event.is_recurring,

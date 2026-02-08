@@ -33,15 +33,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        // ✅ Tab gizlendiğinde: Tüm in-flight request'leri iptal et
-        console.log("👁️ Tab hidden - cancelling queries");
-        queryClient.cancelQueries(); // Tüm aktif query'leri iptal et
+        queryClient.cancelQueries();
       } else {
-        // ✅ Tab visible olduğunda: Sadece stale query'leri refetch et
-        console.log("👁️ Tab visible - refetching stale queries");
-
         if (isMounted) {
-          // 300ms bekle (browser throttle'dan kurtul)
           setTimeout(() => {
             if (isMounted) {
               queryClient.invalidateQueries({
@@ -56,14 +50,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     // Online/Offline event handling
     const handleOnline = () => {
-      console.log("🌐 Back online - refetching");
       if (isMounted && !document.hidden) {
         queryClient.refetchQueries({ type: "active" });
       }
     };
 
     const handleOffline = () => {
-      console.log("🌐 Gone offline");
       queryClient.cancelQueries();
     };
 

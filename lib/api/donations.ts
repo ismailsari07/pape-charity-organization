@@ -19,11 +19,7 @@ export async function getAllDonations(): Promise<DonationWithFund[]> {
 
 // Tek bağış çek
 export async function getDonation(id: string) {
-  const { data, error } = await supabase
-    .from("donations")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const { data, error } = await supabase.from("donations").select("*").eq("id", id).single();
 
   if (error) throw error;
   return data;
@@ -31,17 +27,15 @@ export async function getDonation(id: string) {
 
 // İstatistikler
 export async function getDonationStats() {
-  const { data, error } = await supabase
-    .from("donations")
-    .select("amount_cents, fund_code");
+  const { data, error } = await supabase.from("donations").select("amount_cents, fund_code");
 
   if (error) throw error;
 
   // Toplam
-  const total = data.reduce((sum, d) => sum + d.amount_cents, 0);
+  const total = data.reduce((sum: number, d: { amount_cents: number }) => sum + d.amount_cents, 0);
 
   // Fon bazında
-  const byFund = data.reduce((acc: any, d) => {
+  const byFund = data.reduce((acc: any, d: { fund_code: string; amount_cents: number }) => {
     if (!acc[d.fund_code]) acc[d.fund_code] = 0;
     acc[d.fund_code] += d.amount_cents;
     return acc;

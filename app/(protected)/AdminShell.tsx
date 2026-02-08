@@ -2,22 +2,15 @@
 
 import { useAuthStore } from "@/lib/store/authStore";
 import { signOut } from "@/lib/supabase/auth";
-import Link from "next/link";
-import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 const TABS = [
   { id: "events", label: "Events" },
-  // { id: "users", label: "Users" },
   { id: "email", label: "Send Email" },
   { id: "donations", label: "Donations" },
 ];
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAuthStore();
 
   const router = useRouter();
@@ -36,9 +29,9 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen bg-neutral-950">
-      <div className="min-h-screen mx-auto p-5 flex gap-3 md:w-8/10">
+      <div className="min-h-screen mx-auto p-5 flex gap-3 overflow-y-scroll">
         {/* SideBar */}
-        <div className="w-80 flex flex-col items-start bg-neutral-900 border border-neutral-800/70 shadow rounded-lg p-5 text-neutral-50">
+        <div className="w-80 h-screen fixed flex flex-col items-start bg-neutral-900 border border-neutral-800/70 shadow rounded-lg p-5 text-neutral-50">
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-xl font-bold">Turkish Islamic Trust</h1>
@@ -53,10 +46,7 @@ export default function AdminLayout({
                 <button
                   key={tab.id}
                   onClick={() => router.push(`/admin?tab=${tab.id}`)}
-                  className={`
-              px-4 py-2 text-neutral-50 w-full text-start
-            ${activeTab === tab.id ? "bg-neutral-50 text-neutral-900 rounded-lg font-semibold" : ""}
-            `}
+                  className={`px-4 py-2 text-neutral-50 w-full text-start ${activeTab === tab.id ? "bg-neutral-50 text-neutral-900 rounded-lg font-semibold" : ""}`}
                 >
                   {tab.label}
                 </button>
@@ -67,14 +57,12 @@ export default function AdminLayout({
             onClick={handleLogout}
             className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 mt-auto"
           >
-            Çıkış Yap
+            Sign Out
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 bg-neutral-950 shadow rounded-lg p-5 text-neutral-50">
-          {children}
-        </div>
+        <div className="flex-1 bg-neutral-950 rounded-lg p-5 text-neutral-50 ml-80">{children}</div>
       </div>
     </div>
   );

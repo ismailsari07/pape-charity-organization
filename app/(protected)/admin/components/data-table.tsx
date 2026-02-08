@@ -3,6 +3,7 @@ import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
+  Row,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -19,9 +20,19 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   renderToolbar: (table: any) => React.ReactNode;
+  onRowSelect?: (rows: Row<TData>[]) => void;
+  rowSelection?: Record<string, boolean>;
+  onRowSelectionChange?: (updater: any) => void;
 }
 
-export function DataTable<TData, TValue>({ columns, data, renderToolbar }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  renderToolbar,
+  onRowSelect,
+  rowSelection = {},
+  onRowSelectionChange,
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
@@ -34,11 +45,30 @@ export function DataTable<TData, TValue>({ columns, data, renderToolbar }: DataT
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onRowSelectionChange,
+
     state: {
       sorting,
       columnFilters,
+      rowSelection,
     },
   });
+
+  const prevSelectionRef = React.useRef<string>("");
+
+  React.useEffect(() => {
+    if (onRowSelect) {
+      const selectedRows = table.getFilteredSelectedRowModel().rows;
+      const currentSelection = JSON.stringify(selectedRows.map((r) => r.id));
+
+      // Only call onRowSelect if selection actually changed
+      if (currentSelection !== prevSelectionRef.current) {
+        prevSelectionRef.current = currentSelection;
+        onRowSelect(selectedRows);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowSelection, onRowSelect]);
 
   return (
     <div>

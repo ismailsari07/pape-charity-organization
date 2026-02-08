@@ -147,21 +147,23 @@ export function EventEditSheet({ open, onOpenChange, defaultValues, onSubmit, mo
                 <Controller
                   control={form.control}
                   name="date"
-                  render={({ field }: { field: DateTime }) => {
+                  render={({ field }) => {
+                    const dateValue = field.value as unknown as DateTime;
                     return (
                       <div>
                         <Label>Date</Label>
                         <Popover open={openDate} onOpenChange={setOpenDate}>
                           <PopoverTrigger asChild>
                             <Button size={"md"} variant="dashboard" className="w-full justify-between">
-                              {field.value.toFormat("dd-MM-yyyy")}
+                              {dateValue?.toFormat ? dateValue.toFormat("dd-MM-yyyy") : "Tarih Seçin"}
+                              {/*field.value.toFormat("dd-MM-yyyy")*/}
                               <ChevronDownIcon />
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
-                              selected={field.value as DateTime}
+                              selected={dateValue?.toJSDate ? dateValue.toJSDate() : undefined}
                               onSelect={(date) => {
                                 field.onChange(DateTime.fromJSDate(date!));
                                 setOpenDate(false);
