@@ -1,18 +1,24 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getAllDonations, getDonationStats } from "@/lib/api/donations";
+import { getAllDonations, getDailyDonations, getDonationStats } from "@/lib/api/donations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "../components/data-table";
 import { DataTableToolbar } from "../donations/components/data-table-toolbar";
 import { columns } from "../donations/table/columns";
 import { formatCurrency } from "../donations/helper";
 import TabHeader from "../components/TabHeader";
+import ChartArea from "../donations/components/ChartArea";
 
 export default function Donations() {
   const { data: donations = [], isLoading } = useQuery({
     queryKey: ["admin-donations"],
     queryFn: getAllDonations,
+  });
+
+  const { data: dailyDonations = [] } = useQuery({
+    queryKey: ["admin-daily-donations"],
+    queryFn: getDailyDonations,
   });
 
   const { data: stats } = useQuery({
@@ -117,6 +123,8 @@ export default function Donations() {
           </div>
         </>
       )}
+
+      <ChartArea dailyDonation={dailyDonations} />
 
       {/* Donations Table */}
       <DataTable columns={columns} data={donations} renderToolbar={(table) => <DataTableToolbar table={table} />} />

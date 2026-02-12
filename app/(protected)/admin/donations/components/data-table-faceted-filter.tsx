@@ -14,11 +14,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
@@ -46,11 +42,7 @@ export function DataTableFacetedFilter<TData, TValue>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 border-dashed text-md bg-neutral-900"
-        >
+        <Button variant="outline" size="sm" className="h-8 border-dashed text-md bg-neutral-900">
           <PlusCircle />
           {title}
           {selectedValues.size > 0 && (
@@ -59,10 +51,7 @@ export function DataTableFacetedFilter<TData, TValue>({
               <Badge className="lg:hidden">{selectedValues.size}</Badge>
               <div className="hidden gap-1 lg:flex">
                 {selectedValues.size > 2 ? (
-                  <Badge
-                    variant="secondary"
-                    className="rounded-sm px-1 font-normal"
-                  >
+                  <Badge variant="secondary" className="rounded-sm px-1 font-normal">
                     {selectedValues.size} selected
                   </Badge>
                 ) : (
@@ -98,22 +87,18 @@ export function DataTableFacetedFilter<TData, TValue>({
                         selectedValues.add(option.value);
                       }
                       const filterValues = Array.from(selectedValues);
-                      column?.setFilterValue(
-                        filterValues.length ? filterValues : undefined,
-                      );
+                      column?.setFilterValue(filterValues.length ? filterValues : undefined);
                     }}
                   >
                     <div
                       className={cn(
                         "flex size-4 items-center justify-center rounded-[4px] border",
-                        isSelected
-                          ? "bg-neutral-50 border-primary"
-                          : "border-input [&_svg]:invisible",
+                        isSelected ? "bg-neutral-50 border-primary" : "border-input [&_svg]:invisible",
                       )}
                     >
                       <Check className="size-3" />
                     </div>
-                    <span className="  text-neutral-900">{option.label}</span>
+                    <span className="  text-neutral-50">{option.label}</span>
                     {facets?.get(option.value) && (
                       <span className="text-neutral-900 ml-auto flex size-4 items-center justify-center text-xs">
                         {facets.get(option.value)}
@@ -129,9 +114,9 @@ export function DataTableFacetedFilter<TData, TValue>({
                 <CommandGroup>
                   <CommandItem
                     onSelect={() => column?.setFilterValue(undefined)}
-                    className="justify-center text-center text-neutral-900"
+                    className="justify-center text-center text-neutral-50"
                   >
-                    Clear filters
+                    <span className="text-neutral-50">Clear filters</span>
                   </CommandItem>
                 </CommandGroup>
               </>

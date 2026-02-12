@@ -1,4 +1,4 @@
-import { DonationWithFund } from "@/app/(protected)/admin/donations/types";
+import { DailyDonation, DonationWithFund } from "@/app/(protected)/admin/donations/types";
 import { supabase } from "@/lib/supabase/client";
 
 // Tüm bağışları çek (Admin için)
@@ -20,6 +20,13 @@ export async function getAllDonations(): Promise<DonationWithFund[]> {
 // Tek bağış çek
 export async function getDonation(id: string) {
   const { data, error } = await supabase.from("donations").select("*").eq("id", id).single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getDailyDonations(): Promise<DailyDonation[]> {
+  const { data, error } = await supabase.from("daily_donation_totals").select("*");
 
   if (error) throw error;
   return data;

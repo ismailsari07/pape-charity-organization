@@ -31,3 +31,12 @@ export type Fund = {
 };
 
 export type FundCode = "general" | "zekat" | "sadaka" | "cenaze" | "fitre";
+
+export type DailyDonation = {
+  date_only: string;
+  zekat: number;
+  sadaka: number;
+  general: number;
+  cenaze: number;
+  fitre: number;
+};

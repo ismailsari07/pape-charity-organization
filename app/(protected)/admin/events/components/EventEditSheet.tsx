@@ -123,10 +123,10 @@ export function EventEditSheet({ open, onOpenChange, defaultValues, onSubmit, mo
                       <div>
                         <Label>Day</Label>
                         <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger className="w-full border-neutral-800 text-white bg-neutral-900">
+                          <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select a day" />
                           </SelectTrigger>
-                          <SelectContent className="bg-neutral-900 border border-neutral-800">
+                          <SelectContent className="">
                             <SelectGroup>
                               <SelectLabel>Days</SelectLabel>
                               <SelectItem value="Monday">Monday</SelectItem>
