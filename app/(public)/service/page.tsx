@@ -47,7 +47,7 @@ export default function About() {
   };
 
   const { data: events, isLoading } = useQuery({
-    queryKey: ["featured-events"],
+    queryKey: ["active-events"],
     queryFn: getActiveEvents,
   });
 
