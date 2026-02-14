@@ -18,7 +18,7 @@ function todayInToronto(): string {
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function getPrayerTimes() {
   const date = todayInToronto();
 
   const { data, error } = await supabase
@@ -28,5 +28,5 @@ export async function GET() {
     .single();
 
   if (error) throw error;
-  return Response.json({ data });
+  return data;
 }
