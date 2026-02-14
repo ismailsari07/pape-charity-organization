@@ -1,4 +1,3 @@
-// app/api/prayer/refresh/route.ts
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
@@ -92,19 +91,11 @@ export async function POST(req: Request) {
     // 1) Güvenlik: secret header kontrolü
     const provided = extractCronSecret(req);
     if (!CRON_SECRET) {
-      return NextResponse.json(
-        { error: "server misconfig: CRON_SECRET missing" },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: "server misconfig: CRON_SECRET missing" }, { status: 500 });
     }
 
     if (provided !== CRON_SECRET) {
-      console.log(
-        "cron provided len:",
-        provided?.length,
-        "expected len:",
-        process.env.CRON_SECRET?.length,
-      );
+      console.log("cron provided len:", provided?.length, "expected len:", process.env.CRON_SECRET?.length);
 
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
@@ -116,10 +107,7 @@ export async function POST(req: Request) {
     const startedAt = Date.now();
     const res = await fetchWithRetry(PRAYER_API_URL);
     if (!res.ok) {
-      return NextResponse.json(
-        { error: "upstream_failed", status: res.status },
-        { status: 502 },
-      );
+      return NextResponse.json({ error: "upstream_failed", status: res.status }, { status: 502 });
     }
 
     const payload = await res.json();
@@ -143,25 +131,17 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error("DB insert failed:", error);
-      return NextResponse.json(
-        { error: "db_upsert_failed", detail: error.message },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: "db_upsert_failed", detail: error.message }, { status: 500 });
     }
 
     const tookMs = Date.now() - startedAt;
     return NextResponse.json({ ok: true, date, tookMs });
   } catch (err: any) {
     // AbortError vs diğer hatalar aynı yerden döner
-    return NextResponse.json(
-      { error: "internal_error", detail: String(err?.message ?? err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "internal_error", detail: String(err?.message ?? err) }, { status: 500 });
   }
 }
 
-// app/api/prayer/refresh/route.ts
 export async function GET(req: Request) {
-  // Cron GET ile gelir → aynı doğrulamayı kullan
-  return POST(req); // POST'taki aynı mantığı çalıştır
+  return POST(req);
 }
