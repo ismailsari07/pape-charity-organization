@@ -10,6 +10,8 @@ const TABS = [
   { id: "email", label: "Send Email" },
   { id: "donations", label: "Donations" },
   { id: "donation_funds", label: "Donation Funds" },
+  { id: "contacts", label: "Contacts" },
+  { id: "announcement", label: "Announcement" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

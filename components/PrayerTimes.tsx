@@ -11,7 +11,7 @@ export default function PrayerTimes() {
 
   console.log("Prayer Times Data:", data);
 
-  if (isLoading) return <div>Yükleniyor…</div>;
+  if (isLoading || data === undefined) return <div>Yükleniyor…</div>;
 
   return (
     <section id="prayer-times" className="flex flex-col gap-4 py-16 lg:py-32">

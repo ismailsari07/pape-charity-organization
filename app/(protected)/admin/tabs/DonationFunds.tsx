@@ -11,15 +11,15 @@ import TabHeader from "../components/TabHeader";
 import { toast } from "sonner";
 
 export default function DonationFunds() {
+  const [localFunds, setLocalFunds] = useState<DonationFund[]>([]);
+  const [changes, setChanges] = useState<Map<string, boolean>>(new Map());
+
   const queryClient = useQueryClient();
 
   const { data: funds = [], isLoading } = useQuery<DonationFund[]>({
     queryKey: ["admin-donation-funds"],
     queryFn: getAllDonationFunds,
   });
-
-  const [localFunds, setLocalFunds] = useState<DonationFund[]>([]);
-  const [changes, setChanges] = useState<Map<string, boolean>>(new Map());
 
   useEffect(() => {
     setLocalFunds(funds);
