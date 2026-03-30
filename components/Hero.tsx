@@ -79,7 +79,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-6 md:gap-8">
+        {/*<div className="flex flex-col items-center justify-center gap-6 md:gap-8">
           <motion.div variants={item} className="flex flex-col lg:flex-row gap-4">
             <Image
               src="/imsakiye2026.jpeg"
@@ -98,7 +98,7 @@ export default function Hero() {
               </Button>
             </a>
           </motion.div>
-        </div>
+        </div>*/}
       </div>
 
       <motion.video variants={item} className="w-fit rounded-xl" autoPlay muted loop>
