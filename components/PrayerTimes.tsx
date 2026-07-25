@@ -4,14 +4,31 @@ import { useQuery } from "@tanstack/react-query";
 import { MoonIcon, SunIcon, SunriseIcon, SunsetIcon } from "lucide-react";
 
 export default function PrayerTimes() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["prayerToday"],
     queryFn: getPrayerTimes,
   });
 
-  console.log("Prayer Times Data:", data);
+  // 1) Yükleniyor (retry: 2, refetchOnWindowFocus: false ile sınırlı)
+  if (isLoading) return <div className="py-16 lg:py-32 text-center text-lg">Yükleniyor…</div>;
 
-  if (isLoading || data === undefined) return <div>Yükleniyor…</div>;
+  // 2) Gerçek hata (ağ/sorgu hatası) — no-data durumundan farklı, belirgin bir mesaj
+  if (isError)
+    return (
+      <div className="py-16 lg:py-32 text-center text-lg">
+        Namaz vakitleri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.
+      </div>
+    );
+
+  // 3) Bugün için henüz veri yok (maybeSingle null döndü) — sakin bilgilendirme mesajı
+  if (!data)
+    return (
+      <div className="py-16 lg:py-32 text-center text-lg">
+        Namaz vakitleri güncelleniyor, lütfen daha sonra tekrar deneyin.
+      </div>
+    );
+
+  // 4) Başarılı (veri var) — aşağıdaki render
 
   return (
     <section id="prayer-times" className="flex flex-col gap-4 py-16 lg:py-32">

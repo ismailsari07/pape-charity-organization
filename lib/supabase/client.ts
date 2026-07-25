@@ -10,7 +10,7 @@ let supabaseInstance: ReturnType<typeof createBrowserClient> | null = null;
 // ✅ Function export yerine direct export
 export function createClient() {
   if (!supabaseInstance) {
-    console.log("🔧 Creating new Supabase client");
+    if (process.env.NODE_ENV !== "production") console.log("🔧 Creating new Supabase client");
     supabaseInstance = createBrowserClient(supabaseUrl, supabaseAnonKey);
   }
   return supabaseInstance;
@@ -18,7 +18,7 @@ export function createClient() {
 
 // ✅ Reset function
 function resetClient() {
-  console.log("🔄 Resetting Supabase client");
+  if (process.env.NODE_ENV !== "production") console.log("🔄 Resetting Supabase client");
   supabaseInstance = null;
 }
 
@@ -29,10 +29,10 @@ if (typeof window !== "undefined") {
   const handleVisibilityChange = () => {
     if (document.hidden) {
       wasHidden = true;
-      console.log("👁️ Tab hidden");
+      if (process.env.NODE_ENV !== "production") console.log("👁️ Tab hidden");
     } else if (wasHidden) {
       wasHidden = false;
-      console.log("👁️ Tab visible - will reset Supabase on next use");
+      if (process.env.NODE_ENV !== "production") console.log("👁️ Tab visible - will reset Supabase on next use");
       resetClient();
     }
   };
