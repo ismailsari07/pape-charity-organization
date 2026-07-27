@@ -46,12 +46,33 @@ async function fetchWithTimeout(url: string, ms = 60000) {
   }
 }
 
+// pape-api'nin yapısal hata gövdesini (status + detail) taşıyan özel hata tipi
+class UpstreamError extends Error {
+  status: number | null;
+  detail: unknown;
+  constructor(message: string, status: number | null, detail: unknown) {
+    super(message);
+    this.name = "UpstreamError";
+    this.status = status;
+    this.detail = detail;
+  }
+}
+
 async function fetchWithRetry(url: string, timeoutsMs = [45000, 60000, 90000]) {
   let lastErr: any = null;
   for (let i = 0; i < timeoutsMs.length; i++) {
     try {
       const res = await fetchWithTimeout(url, timeoutsMs[i]);
-      if (!res.ok) throw new Error(`upstream status ${res.status}`);
+      if (!res.ok) {
+        // pape-api yapısal hata döndürebilir (502/504) — gövdeyi koru
+        let detail: unknown = null;
+        try {
+          detail = await res.json();
+        } catch {
+          /* gövde JSON değilse yok say */
+        }
+        throw new UpstreamError(`upstream status ${res.status}`, res.status, detail);
+      }
       return res;
     } catch (err) {
       lastErr = err;
@@ -103,17 +124,27 @@ export async function POST(req: Request) {
     // 2) Toronto gününü hesapla
     const date = todayInToronto();
 
-    // 3) Dış API'dan veriyi çek
+    // 3) Dış API'dan veriyi çek — başarısız olursa prayer_cache'e HİÇBİR ŞEY yazma
     const startedAt = Date.now();
-    const res = await fetchWithRetry(PRAYER_API_URL);
-    if (!res.ok) {
-      return NextResponse.json({ error: "upstream_failed", status: res.status }, { status: 502 });
+    let res: Response;
+    try {
+      res = await fetchWithRetry(PRAYER_API_URL);
+    } catch (err: any) {
+      const status = err instanceof UpstreamError ? err.status : null;
+      const detail = err instanceof UpstreamError ? err.detail : null;
+      console.error("[prayer/refresh] pape-api failed — skipping prayer_cache write", {
+        status,
+        detail,
+        message: String(err?.message ?? err),
+      });
+      return NextResponse.json({ error: "upstream_failed", status, detail }, { status: 502 });
     }
 
     const payload = await res.json();
 
-    // 4) Minimal doğrulama
+    // 4) Minimal doğrulama — geçersizse yazma
     if (!minimalValidatePayload(payload)) {
+      console.error("[prayer/refresh] invalid payload from pape-api — skipping prayer_cache write");
       return NextResponse.json({ error: "invalid_payload" }, { status: 422 });
     }
 

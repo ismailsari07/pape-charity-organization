@@ -25,8 +25,10 @@ export async function getPrayerTimes() {
     .from("prayer_cache")
     .select("payload, fetched_at, status")
     .eq("date", date)
-    .single();
+    .maybeSingle();
 
+  // "Bugün için henüz satır yok" beklenen bir durum: maybeSingle null döner (hata değil).
+  // Sadece gerçek sorgu/ağ hatalarında fırlat.
   if (error) throw error;
   return data;
 }

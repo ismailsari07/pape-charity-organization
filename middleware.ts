@@ -36,6 +36,20 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getSession();
   const user = session?.user;
 
+  // --- TEMPORARY security mitigation (remove with the admin panel) ---
+  // These API routes have no auth check of their own and were not covered
+  // by the matcher below, leaving them reachable by anyone on the internet
+  // (full subscriber list, subscriber delete, and bulk email from our
+  // verified domain). Block them outright for now. When the admin panel is
+  // removed these routes should go with it — delete this block at that time.
+  const pathname = request.nextUrl.pathname;
+  if (pathname.startsWith("/api/admin") || pathname === "/api/send/bulk") {
+    return NextResponse.json(
+      { error: "This endpoint is temporarily disabled." },
+      { status: 403 },
+    );
+  }
+
   // Admin route'ları koru
   if (request.nextUrl.pathname.startsWith("/admin")) {
     if (!user) {
@@ -76,5 +90,7 @@ export const config = {
   matcher: [
     "/admin/:path*", // Tüm /admin/* route'ları koru
     "/login", // Login sayfası
+    "/api/admin/:path*", // TEMP: block open admin API routes (see mitigation above)
+    "/api/send/bulk", // TEMP: block open bulk-email route (see mitigation above)
   ],
 };
