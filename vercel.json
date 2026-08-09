@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/prayer/refresh?cron_secret=25025b232b3ad553291193897b197edc070703842bd450de6bce15f8b5975663",
+      "path": "/api/prayer/refresh",
       "schedule": "1 7 * * *"
     }
   ]

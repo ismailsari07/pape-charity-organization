@@ -93,16 +93,11 @@ function extractCronSecret(req: Request): string | null {
   const h = req.headers.get("x-cron-secret");
   if (h) return h;
 
-  // 2) Authorization: Bearer <token>
+  // 2) Authorization: Bearer <token> — Vercel Cron sends this automatically
   const auth = req.headers.get("authorization");
   if (auth && auth.toLowerCase().startsWith("bearer ")) {
     return auth.slice(7).trim();
   }
-
-  // 3) ?cron_secret=...
-  const url = new URL(req.url);
-  const qs = url.searchParams.get("cron_secret");
-  if (qs) return qs;
 
   return null;
 }
@@ -116,8 +111,6 @@ export async function POST(req: Request) {
     }
 
     if (provided !== CRON_SECRET) {
-      console.log("cron provided len:", provided?.length, "expected len:", process.env.CRON_SECRET?.length);
-
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
 
