@@ -4,6 +4,9 @@
 /node_modules
 /.pnp
 .pnp.*
+# pnpm is the package manager for this project — an npm lockfile would
+# create ambiguity about what CI/Vercel installs from. Keep it out.
+package-lock.json
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
