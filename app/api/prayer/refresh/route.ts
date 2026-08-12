@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { applyOverrides, fetchOverridesForDate } from "@/lib/prayer/overrides";
 
 export const runtime = "nodejs";
 
@@ -141,12 +142,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "invalid_payload" }, { status: 422 });
     }
 
-    // 5) Supabase'e upsert
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // 5) İnsan tarafından girilen override'ları bindir.
+    // Override sistemi çökerse bile ham Diyanet verisi yazılmalı:
+    // eksik veri, hiç veri olmamasından iyidir.
+    let merged = payload;
+    let appliedOverrides = 0;
+    try {
+      const overrides = await fetchOverridesForDate(supabase, date);
+      merged = applyOverrides(payload, overrides);
+      appliedOverrides = overrides.length;
+    } catch (err: any) {
+      console.error("[prayer/refresh] override sorgusu başarısız — ham veri yazılıyor", {
+        message: String(err?.message ?? err),
+      });
+      merged = payload;
+    }
+
+    // 6) Supabase'e upsert — yazılan yapı eskisiyle birebir aynı
     const { error } = await supabase.from("prayer_cache").upsert(
       {
         date,
-        payload,
+        payload: merged,
         fetched_at: new Date().toISOString(),
         status: "ok",
       },
@@ -159,7 +177,7 @@ export async function POST(req: Request) {
     }
 
     const tookMs = Date.now() - startedAt;
-    return NextResponse.json({ ok: true, date, tookMs });
+    return NextResponse.json({ ok: true, date, tookMs, appliedOverrides });
   } catch (err: any) {
     // AbortError vs diğer hatalar aynı yerden döner
     return NextResponse.json({ error: "internal_error", detail: String(err?.message ?? err) }, { status: 500 });
