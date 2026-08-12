@@ -15,6 +15,7 @@ import {
   publishAnnouncement,
   archiveAnnouncement,
 } from "@/lib/api/announcements";
+import { endOfDay } from "date-fns";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -111,7 +112,9 @@ export default function AnnouncementsTab() {
         button_url: announcement.button_url || null,
         display_type: announcement.display_type,
         priority: announcement.priority,
-        expires_at: announcement.expires_at,
+        // Normalize whatever the source row holds (legacy midnight values, or an
+        // arbitrary mid-day instant) to end-of-day, matching AnnouncementSheet.
+        expires_at: endOfDay(new Date(announcement.expires_at)),
         status: "draft",
       };
       return createAnnouncement(newData);
@@ -146,13 +149,13 @@ export default function AnnouncementsTab() {
     archived: announcements.filter((a) => a.status === "archived").length,
   };
 
+  const handleEditClick = (announcement: Announcement) => {
+    handleOpenSheet(announcement);
+  };
+
   const handleOpenSheet = (announcement?: Announcement) => {
     setSelectedAnnouncement(announcement || null);
     setSheetOpen(true);
-  };
-
-  const handleEditClick = (announcement: Announcement) => {
-    handleOpenSheet(announcement);
   };
 
   const handleDeleteClick = (announcement: Announcement) => {

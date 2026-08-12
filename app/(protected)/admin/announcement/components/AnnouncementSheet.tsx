@@ -1,5 +1,3 @@
-// components/admin/tabs/AnnouncementSheet.tsx
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,14 +10,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Announcement, AnnouncementFormData } from "@/types/announcement";
 import { uploadImage, validateImage, deleteImage } from "@/lib/utils";
-import { format } from "date-fns";
+import { endOfDay, format, parseISO } from "date-fns";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 const announcementFormSchema = z.object({
-  title: z.string().min(1, "Başlık gereklidir").max(255),
+  title: z.string().min(1, "Başlık gereklidir").max(50, "Başlık en fazla 50 karakter olabilir"),
   description: z.string().min(1, "Açıklama gereklidir"),
   image_url: z.string().optional().nullable(),
   image_alt_text: z.string().optional(),
@@ -33,20 +32,6 @@ const announcementFormSchema = z.object({
 });
 
 type AnnouncementFormValues = z.infer<typeof announcementFormSchema>;
-
-interface AnnouncementSheetProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  announcement: Announcement | null;
-  onSave: (data: AnnouncementFormData) => Promise<void>;
-  isLoading: boolean;
-}
-
-const getPriorityLabel = (value: number): string => {
-  if (value >= 8) return "🔥 Çok Yüksek";
-  if (value >= 5) return "⭐ Orta";
-  return "💤 Düşük";
-};
 
 const getDefaultExpiryDate = (option: string): string => {
   const date = new Date();
@@ -63,6 +48,14 @@ const getDefaultExpiryDate = (option: string): string => {
   }
   return format(date, "yyyy-MM-dd");
 };
+
+interface AnnouncementSheetProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  announcement: Announcement | null;
+  onSave: (data: AnnouncementFormData) => Promise<void>;
+  isLoading: boolean;
+}
 
 export default function AnnouncementSheet({
   open,
@@ -95,7 +88,10 @@ export default function AnnouncementSheet({
   // Reset form when announcement changes or sheet opens/closes
   useEffect(() => {
     if (announcement) {
-      const expiryDate = announcement.expires_at.split("T")[0];
+      // expires_at is stored as an end-of-day instant (see onSubmit), so read it
+      // back in local time — splitting the raw UTC string would land on the next
+      // day and walk the date forward on every edit.
+      const expiryDate = format(new Date(announcement.expires_at), "yyyy-MM-dd");
       form.reset({
         title: announcement.title,
         description: announcement.description,
@@ -191,7 +187,10 @@ export default function AnnouncementSheet({
       button_url: values.hasButton ? values.button_url : null,
       display_type: values.display_type,
       priority: values.priority,
-      expires_at: values.expires_at,
+      // The date input yields "yyyy-MM-dd", which Postgres would coerce to 00:00
+      // on that date — leaving the announcement expired for the whole day it was
+      // meant to be shown. Expire at the end of the chosen day instead.
+      expires_at: endOfDay(parseISO(values.expires_at)),
       status: values.status || "draft",
     };
 
@@ -199,7 +198,6 @@ export default function AnnouncementSheet({
   };
 
   const hasButton = form.watch("hasButton");
-  const priority = form.watch("priority");
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -249,6 +247,7 @@ export default function AnnouncementSheet({
             />
 
             {/* Image Upload */}
+            {/* FIX: it doesn't work. */}
             <FormField
               control={form.control}
               name="image_url"
@@ -402,10 +401,30 @@ export default function AnnouncementSheet({
                 name="priority"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel>Öncelik (1-10) *</FormLabel>
-                      <span className="text-sm font-semibold text-blue-600">{getPriorityLabel(field.value)}</span>
-                    </div>
+                    <FormLabel htmlFor="input-badge">
+                      Öncelik (1-10) *
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button type="button" variant={"table"} size={"sm"} className="ml-auto">
+                            <Info />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Duyuru Öncelik Derecesi Belirleme (1-10)
+                          <br />
+                          <br />
+                          🔥 8-10: KRİTİK – Cami kapanması, acil bildirimler, Bayram duyuruları ve önemli dini günler.
+                          <br />
+                          ⭐ 5-7: ORTA – Yeni Kur'an kursu kayıtları, konferanslar, ziyaretler ve özel etkinlikler.
+                          <br />
+                          💤 1-4: DÜŞÜK – Haftalık namaz vakitleri, rutin dersler ve genel bilgilendirmeler.
+                          <br />
+                          <br />
+                          Not: Sıralama önce puan derecesine, puanlar eşitse en güncel tarihe göre otomatik
+                          belirlenir.{" "}
+                        </TooltipContent>
+                      </Tooltip>
+                    </FormLabel>
                     <FormControl>
                       <div className="space-y-3">
                         <input
@@ -424,11 +443,6 @@ export default function AnnouncementSheet({
                         </div>
                       </div>
                     </FormControl>
-                    <FormDescription>
-                      {priority >= 8 && "Yüksek: Hero banner'a uygun"}
-                      {priority >= 5 && priority < 8 && "Orta: Widget'e ideal"}
-                      {priority < 5 && "Düşük: Arka plan duyurusu"}
-                    </FormDescription>
                   </FormItem>
                 )}
               />
