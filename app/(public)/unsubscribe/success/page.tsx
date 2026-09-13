@@ -30,7 +30,7 @@ export default async function UnsubscribeSuccess(props: { searchParams: Promise<
             <Button className="w-full">Ana Sayfaya Dön</Button>
           </Link>
 
-          <Link href="/subscribe">
+          <Link href="/#news">
             <Button variant="outline" className="w-full">
               Tekrar Abone Ol
             </Button>

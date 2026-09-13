@@ -38,7 +38,7 @@ export default function Contact() {
 
       <motion.div className="flex items-center gap-2 text-green-500 font-semibold text-lg mt-5" variants={item}>
         <LucideMailbox size={16} />{" "}
-        <a href="emailto:info@papecami.com" className="underline">
+        <a href="mailto:info@papecami.com" className="underline">
           info@papecami.com
         </a>
       </motion.div>

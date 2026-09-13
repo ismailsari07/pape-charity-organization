@@ -13,7 +13,7 @@ export const mosqueJsonLd = {
     postalCode: "M4M 2W7",
     addressCountry: "CA",
   },
-  image: "https://papemosque.ca/og.jpeg",
+  image: "https://papemosque.ca/opengraph-image",
   logo: "https://papemosque.ca/logo.jpeg",
   openingHoursSpecification: [
     {

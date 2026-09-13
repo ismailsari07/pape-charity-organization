@@ -38,21 +38,12 @@ export const metadata: Metadata = {
     title: "Turkish Islamic Center Canada",
     description:
       "Turkish Islamic Center Canada (Pape Camii), Toronto’da 24 saat açık ibadet imkânı, Kur’an dersleri, cemaat buluşmaları ve bağış bilgileri sunar.",
-    images: [
-      {
-        url: "/og.jpeg",
-        width: 1200,
-        height: 630,
-        alt: "Turkish Islamic Center Canada - Pape Camii",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Turkish Islamic Center Canada",
     description:
       "Turkish Islamic Center Canada (Pape Camii), Toronto’da 24 saat açık ibadet imkânı, Kur’an dersleri, cemaat buluşmaları ve bağış bilgileri sunar.",
-    images: ["/og.jpeg"],
   },
   icons: {
     icon: [

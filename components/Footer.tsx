@@ -61,7 +61,7 @@ export default function Footer() {
               </li>
               <li className="flex gap-2">
                 <MailIcon />
-                <a href="emailto:info@papecami.com">info@papecami.com</a>
+                <a href="mailto:info@papecami.com">info@papecami.com</a>
               </li>
             </ul>
           </div>
