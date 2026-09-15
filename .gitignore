@@ -41,6 +41,9 @@ yarn-error.log*
 *.csv
 *.xlsx
 
+# supabase CLI local state (created by `supabase link`: project ref, pooler URL)
+supabase/.temp/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
