@@ -39,11 +39,17 @@ export async function middleware(request: NextRequest) {
   // --- TEMPORARY security mitigation (remove with the admin panel) ---
   // These API routes have no auth check of their own and were not covered
   // by the matcher below, leaving them reachable by anyone on the internet
-  // (full subscriber list, subscriber delete, and bulk email from our
-  // verified domain). Block them outright for now. When the admin panel is
+  // (full subscriber list, subscriber delete, bulk email from our verified
+  // domain, and /api/send — a single-email route that takes to/subject/body
+  // from the request, i.e. an open relay for phishing from our domain; nothing
+  // in the app calls it). Block them outright for now. When the admin panel is
   // removed these routes should go with it — delete this block at that time.
   const pathname = request.nextUrl.pathname;
-  if (pathname.startsWith("/api/admin") || pathname === "/api/send/bulk") {
+  if (
+    pathname.startsWith("/api/admin") ||
+    pathname === "/api/send/bulk" ||
+    pathname === "/api/send"
+  ) {
     return NextResponse.json(
       { error: "This endpoint is temporarily disabled." },
       { status: 403 },
@@ -92,5 +98,6 @@ export const config = {
     "/login", // Login sayfası
     "/api/admin/:path*", // TEMP: block open admin API routes (see mitigation above)
     "/api/send/bulk", // TEMP: block open bulk-email route (see mitigation above)
+    "/api/send", // TEMP: block open single-email relay route (see mitigation above)
   ],
 };
