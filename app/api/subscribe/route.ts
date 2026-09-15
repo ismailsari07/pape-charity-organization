@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSubscriber } from "@/lib/api/subscribers";
+import { createSubscriber } from "@/lib/server/subscribers";
 import { subscribeSchema } from "@/app/(protected)/admin/email/schema/subscribe.schema";
 import { ZodError } from "zod";
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { unsubscribeByEmail } from "@/lib/api/subscribers";
+import { unsubscribeByEmail } from "@/lib/server/subscribers";
 
 export async function GET(request: NextRequest) {
   try {
