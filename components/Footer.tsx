@@ -102,6 +102,14 @@ export default function Footer() {
                   İletişim
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  className="hover:text-green-500 transition-colors"
+                >
+                  Gizlilik Politikası
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
