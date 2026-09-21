@@ -32,7 +32,7 @@ export default function Hero() {
       id="header"
       className="flex flex-col items-center gap-6 lg:gap-12 text-center py-8 lg:py-32"
     >
-      <div className="w-full flex flex-col md:flex-row justify-between gap-12 items-center mb-12">
+      <div className="w-full flex flex-col md:flex-row justify-center gap-12 items-center mb-12">
         <div className="flex flex-col items-center justify-center gap-6 md:gap-8">
           <h1 className="text-5xl md:text-8xl">
             <motion.span variants={item} className="text-[#E30A17]">
