@@ -59,6 +59,15 @@ class UpstreamError extends Error {
   }
 }
 
+// Sadece geçici hatalar tekrar denenir: 504 (pape-api zaman aşımı / ağ hatası)
+// ve fetch'in kendisinin fırlattığı hatalar (timeout AbortError, ağ hatası —
+// Render cold start). 502/500/4xx kesin cevaptır; tekrar denemek Diyanet'e
+// boşuna yük bindirir.
+function isRetryable(err: unknown): boolean {
+  if (err instanceof UpstreamError) return err.status === 504;
+  return true;
+}
+
 async function fetchWithRetry(url: string, timeoutsMs = [45000, 60000, 90000]) {
   let lastErr: any = null;
   for (let i = 0; i < timeoutsMs.length; i++) {
@@ -77,6 +86,7 @@ async function fetchWithRetry(url: string, timeoutsMs = [45000, 60000, 90000]) {
       return res;
     } catch (err) {
       lastErr = err;
+      if (!isRetryable(err)) throw err;
       // küçük artan bekleme (1s, 2s, 3s…)
       await new Promise((r) => setTimeout(r, (i + 1) * 1000));
     }
