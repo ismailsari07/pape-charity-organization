@@ -1,3 +1,6 @@
+-- SUPERSEDED (2026-10): the overrides schema, its checks and the merge now
+-- live in the pape-admin repo (supabase/migrations/). Kept for history only;
+-- do not run this file.
 -- Human-entered overrides for daily prayer data.
 --
 -- Read ONLY by /api/prayer/refresh (service-role key) at cron time, merged into
