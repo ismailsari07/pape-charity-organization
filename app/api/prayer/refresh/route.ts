@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { applyOverrides, fetchOverridesForDate } from "@/lib/prayer/overrides";
 
 export const runtime = "nodejs";
 
@@ -154,27 +153,31 @@ export async function POST(req: Request) {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // 5) İnsan tarafından girilen override'ları bindir.
-    // Override sistemi çökerse bile ham Diyanet verisi yazılmalı:
-    // eksik veri, hiç veri olmamasından iyidir.
-    let merged = payload;
-    let appliedOverrides = 0;
-    try {
-      const overrides = await fetchOverridesForDate(supabase, date);
-      merged = applyOverrides(payload, overrides);
-      appliedOverrides = overrides.length;
-    } catch (err: any) {
-      console.error("[prayer/refresh] override sorgusu başarısız — ham veri yazılıyor", {
-        message: String(err?.message ?? err),
-      });
-      merged = payload;
+    // 5) Kaydet: veritabanı pape-api verisini source_payload olarak saklar ve
+    // yönetim panelinin override'larını uygular (prayer_payload_merge). Birleştirme
+    // mantığı tek yerde, veritabanında; şema pape-admin reposunun.
+    const tookMs = () => Date.now() - startedAt;
+    const { data: ingest, error: ingestError } = await supabase.rpc("ingest_prayer_day", {
+      p_day: date,
+      p_source: payload,
+    });
+
+    if (!ingestError) {
+      const overridden = Boolean((ingest as { overridden?: boolean } | null)?.overridden);
+      return NextResponse.json({ ok: true, date, tookMs: tookMs(), overridden });
     }
 
-    // 6) Supabase'e upsert — yazılan yapı eskisiyle birebir aynı
+    // 6) Yedek yol: RPC başarısızsa ham veriyi doğrudan yaz. Veritabanındaki
+    // tetikleyici bunu yine kaynak olarak kaydeder ve override'ları uygular.
+    // Eksik veri, hiç veri olmamasından iyidir.
+    console.error("[prayer/refresh] ingest_prayer_day failed — falling back to raw upsert", {
+      code: ingestError.code,
+      message: ingestError.message,
+    });
     const { error } = await supabase.from("prayer_cache").upsert(
       {
         date,
-        payload: merged,
+        payload,
         fetched_at: new Date().toISOString(),
         status: "ok",
       },
@@ -186,8 +189,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "db_upsert_failed", detail: error.message }, { status: 500 });
     }
 
-    const tookMs = Date.now() - startedAt;
-    return NextResponse.json({ ok: true, date, tookMs, appliedOverrides });
+    return NextResponse.json({ ok: true, date, tookMs: tookMs(), fallback: true });
   } catch (err: any) {
     // AbortError vs diğer hatalar aynı yerden döner
     return NextResponse.json({ error: "internal_error", detail: String(err?.message ?? err) }, { status: 500 });

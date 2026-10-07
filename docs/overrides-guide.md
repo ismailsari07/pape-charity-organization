@@ -1,5 +1,17 @@
 # How to add a prayer override via the Supabase dashboard
 
+> **Updated 2026-10:** overrides are now merged **in the database**
+> (`prayer_payload_merge`), not in this repo, and will be managed from the
+> Pape admin panel. The schema lives in the `pape-admin` repo
+> (`supabase/migrations/`). What changed for anyone still editing rows by hand:
+>
+> - A change takes effect **immediately** on the rows already in `prayer_cache`
+>   (today included); you no longer wait for the next cron run.
+> - The database **rejects** wrongly formatted times. Fajr must be zero-padded
+>   (`05:45`, not `5:45`); afternoon/evening times stay 12-hour without a.m./p.m.
+> - Removing or editing an override restores pape-api's original value
+>   (kept in `prayer_cache.source_payload`).
+
 Overrides let you hand-adjust iqamah times or replace the day's notices, without the
 daily cron overwriting your change.
 
@@ -8,8 +20,8 @@ Diyanet, then looks for override rows covering that day and applies them before 
 Your override wins. Nothing else changes — the website, the mosque display screen, and
 the mobile app all keep reading the same place as always.
 
-**Enter overrides ahead of time.** An override added *today* for *today* will not appear
-until tomorrow's cron run, because today's data was already written this morning.
+~~**Enter overrides ahead of time.** An override added *today* for *today* will not appear
+until tomorrow's cron run.~~ No longer true: changes apply immediately (see the note above).
 
 ---
 
@@ -26,10 +38,10 @@ the system.**
 | `5:45` | `5:45 p.m.` | the suffix is added automatically — don't type it |
 
 The website adds `a.m` / `p.m` itself based on which prayer it is. If you type `19:30`
-for Asr, the site will show **"19:30 p.m"** to everyone. There is no validation that
-catches this — please double-check before saving.
+for Asr, the site will show **"19:30 p.m"** to everyone. The database now rejects
+such values, so the save fails instead.
 
-Morning times (Fajr) may be zero-padded like `05:45`. Both `5:45` and `05:45` work.
+Morning times (Fajr) must be zero-padded like `05:45`; `5:45` is rejected.
 
 > Note: this rule is about the **iqamah time fields**. Notice *text* is free-form —
 > writing "Isha will begin at 10:15 p.m." inside a notice is perfectly fine.
