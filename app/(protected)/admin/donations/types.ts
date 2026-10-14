@@ -4,15 +4,20 @@ export type Donation = {
   amount_cents: number;
   currency: string;
   fund_code: FundCode;
-  stripe_event_id: string;
+  mode: "payment" | "subscription";
+  stripe_ref: string;
+  stripe_event_id: string | null;
+  stripe_payment_intent: string | null;
+  refunded_amount_cents: number | null;
+  refunded_at: string | null;
   created_at: string;
 };
 
 export type DonationWithFund = Donation & {
-  funds: {
-    code: FundCode;
-    label: string;
-    color: string;
+  donation_funds: {
+    slug: FundCode;
+    title: string;
+    color: string | null;
   };
 };
 
@@ -30,7 +35,7 @@ export type Fund = {
   is_active: boolean;
 };
 
-export type FundCode = "general" | "zekat" | "sadaka" | "cenaze" | "fitre";
+export type FundCode = "general" | "zekat" | "sadaka" | "cenaze" | "fitre" | "unassigned";
 
 export type DailyDonation = {
   date_only: string;

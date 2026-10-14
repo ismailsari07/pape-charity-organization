@@ -90,7 +90,6 @@ export default function Donation() {
       });
 
       const data = await res.json();
-      console.log(data);
       if (!res.ok) throw new Error(data?.error ?? "Checkout error");
 
       // API { url: session.url } döndürüyor → yönlendir

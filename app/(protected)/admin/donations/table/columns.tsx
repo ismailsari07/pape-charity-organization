@@ -67,14 +67,15 @@ export const columns: ColumnDef<DonationWithFund>[] = [
     },
     cell: ({ row }) => {
       const donation = row.original;
-      const variants: Record<FundCode, "success" | "sky" | "yellow" | "blue" | "orange"> = {
+      const variants: Record<FundCode, "success" | "sky" | "yellow" | "blue" | "orange" | "neutral"> = {
         general: "success",
         cenaze: "blue",
         fitre: "sky",
         sadaka: "yellow",
         zekat: "orange",
+        unassigned: "neutral",
       };
-      return <Badge variant={variants[donation.funds.code]}>{donation.funds.label}</Badge>;
+      return <Badge variant={variants[donation.donation_funds.slug]}>{donation.donation_funds.title}</Badge>;
     },
   },
   { accessorKey: "currency", header: "Para Birimi" },
@@ -82,8 +83,19 @@ export const columns: ColumnDef<DonationWithFund>[] = [
     accessorKey: "amount_cents",
     header: () => <div className="text-right">Bağış Miktarı</div>,
     cell: ({ row }) => {
-      const amountCents = formatCurrency(row.getValue("amount_cents"), "CAD");
-      return <div className="text-right">{amountCents}</div>;
+      const donation = row.original;
+      const amountCents = formatCurrency(donation.amount_cents, "CAD");
+      const refund = donation.refunded_at
+        ? "İade edildi"
+        : donation.refunded_amount_cents
+          ? `Kısmi iade: ${formatCurrency(donation.refunded_amount_cents, "CAD")}`
+          : null;
+      return (
+        <div className="text-right">
+          <span className={donation.refunded_at ? "line-through" : undefined}>{amountCents}</span>
+          {refund && <div className="text-xs text-neutral-400">{refund}</div>}
+        </div>
+      );
     },
   },
   {
@@ -102,7 +114,7 @@ export const columns: ColumnDef<DonationWithFund>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(donation.stripe_event_id)}>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(donation.stripe_ref)}>
               Copy payment ID
             </DropdownMenuItem>
           </DropdownMenuContent>
