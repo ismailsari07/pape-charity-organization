@@ -15,7 +15,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { getDonationFunds } from "@/lib/api/funds";
@@ -69,6 +69,26 @@ export default function Donation() {
   function openFor(f: Fund) {
     setSelectedFund(f);
     setOpen(true);
+  }
+
+  // Deep link: /donation?fund=<slug> opens that fund's drawer once (active funds only)
+  const deepLinkHandled = useRef(false);
+  useEffect(() => {
+    if (deepLinkHandled.current || funds.length === 0) return;
+    deepLinkHandled.current = true;
+    const slug = new URLSearchParams(window.location.search).get("fund")?.trim().toLowerCase();
+    const match = funds.find((f) => f.slug === slug);
+    if (match) openFor(match.slug);
+  }, [funds]);
+
+  function handleOpenChange(next: boolean) {
+    setOpen(next);
+    if (next) return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("fund")) {
+      url.searchParams.delete("fund");
+      window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+    }
   }
 
   const form = useForm<Values>({
@@ -168,7 +188,7 @@ export default function Donation() {
         );
       })}
 
-      <Drawer open={open} onOpenChange={setOpen}>
+      <Drawer open={open} onOpenChange={handleOpenChange}>
         <DrawerContent className="md:w-1/3 mx-auto bg-foreground text-background border-2 border-gray-200 rounded-3xl! px-4 overflow-hidden mb-1">
           <DrawerHeader>
             <DrawerTitle className="text-2xl font-semibold text-background">{selectedFundData?.title}</DrawerTitle>
@@ -250,7 +270,7 @@ export default function Donation() {
                 variant="secondary"
                 className="w-full"
                 onClick={() => {
-                  setOpen(false);
+                  handleOpenChange(false);
                 }}
               >
                 Iptal Et
