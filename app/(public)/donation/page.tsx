@@ -15,12 +15,13 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { getDonationFunds } from "@/lib/api/funds";
 import { useQuery } from "@tanstack/react-query";
 import { DonationFund } from "@/types/modules";
+import { useVisualViewportInset } from "@/hooks/use-visual-viewport-inset";
 
 type Fund = "zekat" | "sadaka" | "general" | "cenaze" | "fitre";
 
@@ -90,6 +91,26 @@ export default function Donation() {
       window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
     }
   }
+
+  // iOS keyboard: keep the drawer inside the visible area and the focused field in view.
+  // vaul's repositionInputs is disabled because it ignores Safari's viewport panning (drawer slid off the top).
+  const viewportInset = useVisualViewportInset(open);
+  const drawerBodyRef = useRef<HTMLDivElement>(null);
+  const revealFocusedField = useCallback(() => {
+    const body = drawerBodyRef.current;
+    const el = document.activeElement;
+    if (!body || !(el instanceof HTMLElement) || !body.contains(el)) return;
+    const field = el.closest<HTMLElement>('[data-slot="form-item"]') ?? el;
+    const b = body.getBoundingClientRect();
+    const f = field.getBoundingClientRect();
+    const pad = 12;
+    if (f.top < b.top + pad) body.scrollTop -= b.top + pad - f.top;
+    else if (f.bottom > b.bottom - pad) body.scrollTop += f.bottom - (b.bottom - pad);
+  }, []);
+  useEffect(() => {
+    const id = requestAnimationFrame(revealFocusedField);
+    return () => cancelAnimationFrame(id);
+  }, [viewportInset?.bottom, viewportInset?.height, revealFocusedField]);
 
   const form = useForm<Values>({
     defaultValues: { email: "", amount: "", mode: "payment" },
@@ -188,95 +209,108 @@ export default function Donation() {
         );
       })}
 
-      <Drawer open={open} onOpenChange={handleOpenChange}>
-        <DrawerContent className="md:w-1/3 mx-auto bg-foreground text-background border-2 border-gray-200 rounded-3xl! px-4 overflow-hidden mb-1">
-          <DrawerHeader>
+      <Drawer open={open} onOpenChange={handleOpenChange} repositionInputs={false}>
+        <DrawerContent
+          className="md:w-1/3 mx-auto bg-foreground text-background border-2 border-gray-200 rounded-3xl! px-4 overflow-hidden mb-1"
+          style={
+            viewportInset
+              ? { bottom: viewportInset.bottom, maxHeight: `min(80vh, ${viewportInset.height - 16}px)` }
+              : undefined
+          }
+        >
+          <DrawerHeader className="shrink-0">
             <DrawerTitle className="text-2xl font-semibold text-background">{selectedFundData?.title}</DrawerTitle>
 
             <DrawerDescription className="font-semibold text-background">
               {selectedFundData?.description}
             </DrawerDescription>
           </DrawerHeader>
-          <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-5">
-              {/* email */}
-              <FormField
-                control={form.control}
-                name="email"
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>E-mail *</FormLabel>
-                    <FormControl>
-                      <Input className="bg-background/10 border-background/30 text-background placeholder:text-background/50 focus-visible:border-background/60 focus-visible:ring-background/20" type="email" placeholder="ornek@eposta.com" required {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* amount (CAD) */}
-              <FormField
-                control={form.control}
-                name="amount"
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tutar (CAD) *</FormLabel>
-                    <FormControl>
-                      <Input className="bg-background/10 border-background/30 text-background placeholder:text-background/50 focus-visible:border-background/60 focus-visible:ring-background/20" type="number" min={1} step="0.01" placeholder="50" required {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* mode */}
-              <FormField
-                control={form.control}
-                name="mode"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tür *</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        className="flex items-center gap-6"
-                        onValueChange={(v) => field.onChange(v as Values["mode"])}
-                        value={field.value}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem id="once" value="payment" />
-                          <label htmlFor="once">Tek sefer</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem id="monthly" value="subscription" />
-                          <label htmlFor="monthly">Aylık</label>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button variant={"secondary"} type="submit" className="w-full">
-                Devam et
-              </Button>
-            </form>
-          </Form>
-          <DrawerFooter className="px-0">
-            <DrawerClose asChild>
-              <Button
-                variant="secondary"
-                className="w-full"
-                onClick={() => {
-                  handleOpenChange(false);
-                }}
-              >
-                Iptal Et
-              </Button>
-            </DrawerClose>
-          </DrawerFooter>
+          <div
+            ref={drawerBodyRef}
+            onFocus={() => requestAnimationFrame(revealFocusedField)}
+            className="min-h-0 overflow-y-auto overscroll-contain"
+          >
+            <Form {...form}>
+              <form onSubmit={onSubmit} className="space-y-5">
+                {/* email */}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>E-mail *</FormLabel>
+                      <FormControl>
+                        <Input className="bg-background/10 border-background/30 text-background placeholder:text-background/50 focus-visible:border-background/60 focus-visible:ring-background/20" type="email" placeholder="ornek@eposta.com" required {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+  
+                {/* amount (CAD) */}
+                <FormField
+                  control={form.control}
+                  name="amount"
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tutar (CAD) *</FormLabel>
+                      <FormControl>
+                        <Input className="bg-background/10 border-background/30 text-background placeholder:text-background/50 focus-visible:border-background/60 focus-visible:ring-background/20" type="number" min={1} step="0.01" placeholder="50" required {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+  
+                {/* mode */}
+                <FormField
+                  control={form.control}
+                  name="mode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tür *</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          className="flex items-center gap-6"
+                          onValueChange={(v) => field.onChange(v as Values["mode"])}
+                          value={field.value}
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem id="once" value="payment" />
+                            <label htmlFor="once">Tek sefer</label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem id="monthly" value="subscription" />
+                            <label htmlFor="monthly">Aylık</label>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+  
+                <Button variant={"secondary"} type="submit" className="w-full">
+                  Devam et
+                </Button>
+              </form>
+            </Form>
+            <DrawerFooter className="px-0">
+              <DrawerClose asChild>
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  onClick={() => {
+                    handleOpenChange(false);
+                  }}
+                >
+                  Iptal Et
+                </Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </div>
         </DrawerContent>
       </Drawer>
     </motion.section>
