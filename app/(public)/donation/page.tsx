@@ -208,7 +208,7 @@ export default function Donation() {
                   <FormItem>
                     <FormLabel>E-mail *</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="ornek@eposta.com" required {...field} />
+                      <Input className="bg-background/10 border-background/30 text-background placeholder:text-background/50 focus-visible:border-background/60 focus-visible:ring-background/20" type="email" placeholder="ornek@eposta.com" required {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -224,7 +224,7 @@ export default function Donation() {
                   <FormItem>
                     <FormLabel>Tutar (CAD) *</FormLabel>
                     <FormControl>
-                      <Input type="number" min={1} step="0.01" placeholder="50" required {...field} />
+                      <Input className="bg-background/10 border-background/30 text-background placeholder:text-background/50 focus-visible:border-background/60 focus-visible:ring-background/20" type="number" min={1} step="0.01" placeholder="50" required {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
