@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { rangeRefresh } from "@/lib/prayer/range-refresh";
 
 export const runtime = "nodejs";
 
@@ -122,6 +123,20 @@ export async function POST(req: Request) {
 
     if (provided !== CRON_SECRET) {
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
+    // 30 günlük pencere (lib/prayer/range-refresh.ts): PRAYER_RANGE_ENABLED=true
+    // iken her çalıştırmada; ?dry=1 ile bayraktan bağımsız, prayer_cache'e
+    // yazmadan ve e-posta göndermeden. Kapalıyken aşağıdaki tek günlük yol aynen çalışır.
+    const dry = new URL(req.url).searchParams.get("dry") === "1";
+    if (dry || process.env.PRAYER_RANGE_ENABLED === "true") {
+      const report = await rangeRefresh({
+        db: createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY),
+        prayerApiUrl: PRAYER_API_URL,
+        dry,
+      });
+      const status = report.writeError ? 500 : report.failure ? 502 : 200;
+      return NextResponse.json(report, { status });
     }
 
     // 2) Toronto gününü hesapla
