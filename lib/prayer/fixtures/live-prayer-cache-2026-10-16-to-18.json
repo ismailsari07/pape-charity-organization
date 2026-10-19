@@ -1,0 +1,178 @@
+{
+  "2026-10-16": {
+    "RamadanPrayerTimes": null,
+    "cityId": 9118,
+    "cityName": "Toronto",
+    "dailyPrayerTimes": [
+      {
+        "iqamah": "07:00",
+        "name": "Fajr",
+        "time": "05:57"
+      },
+      {
+        "name": "Sunrise",
+        "time": "07:25"
+      },
+      {
+        "iqamah": "2:00",
+        "name": "Dhuhr",
+        "time": "1:08"
+      },
+      {
+        "iqamah": "4:30",
+        "name": "Asr",
+        "time": "4:08"
+      },
+      {
+        "iqamah": "6:41",
+        "name": "Maghrib",
+        "time": "6:41"
+      },
+      {
+        "iqamah": "8:15",
+        "name": "Isha",
+        "time": "7:58"
+      }
+    ],
+    "eidPrayerTimes": {
+      "eidAdha": {
+        "date": "27 Mayıs 2026 Çarşamba",
+        "firstIqamah": "07:00",
+        "hijriDate": "10 Zilhicce 1447",
+        "secondIqamah": "07:30",
+        "time": "06:19:00"
+      },
+      "eidFitr": {
+        "date": "20 Mart 2026 Cuma",
+        "firstIqamah": "08:00",
+        "hijriDate": "1 Şevval 1447",
+        "secondIqamah": "08:30",
+        "time": "07:54:00"
+      }
+    },
+    "gregorianDate": "16.10.2026",
+    "hijriDate": "5.5.1448",
+    "jumaaPrayerTime": "2:00",
+    "message": "Prayer times fetched successfully.",
+    "notices": [
+      "* Starting from tomorrow, Isha will begin at 8:00 p.m."
+    ],
+    "success": true
+  },
+  "2026-10-17": {
+    "RamadanPrayerTimes": null,
+    "cityId": 9118,
+    "cityName": "Toronto",
+    "dailyPrayerTimes": [
+      {
+        "iqamah": "07:00",
+        "name": "Fajr",
+        "time": "05:58"
+      },
+      {
+        "name": "Sunrise",
+        "time": "07:27"
+      },
+      {
+        "iqamah": "2:00",
+        "name": "Dhuhr",
+        "time": "1:08"
+      },
+      {
+        "iqamah": "4:30",
+        "name": "Asr",
+        "time": "4:06"
+      },
+      {
+        "iqamah": "6:39",
+        "name": "Maghrib",
+        "time": "6:39"
+      },
+      {
+        "iqamah": "8:00",
+        "name": "Isha",
+        "time": "7:57"
+      }
+    ],
+    "eidPrayerTimes": {
+      "eidAdha": {
+        "date": "27 Mayıs 2026 Çarşamba",
+        "firstIqamah": "07:00",
+        "hijriDate": "10 Zilhicce 1447",
+        "secondIqamah": "07:30",
+        "time": "06:19:00"
+      },
+      "eidFitr": {
+        "date": "20 Mart 2026 Cuma",
+        "firstIqamah": "08:00",
+        "hijriDate": "1 Şevval 1447",
+        "secondIqamah": "08:30",
+        "time": "07:54:00"
+      }
+    },
+    "gregorianDate": "17.10.2026",
+    "hijriDate": "6.5.1448",
+    "jumaaPrayerTime": "2:00",
+    "message": "Prayer times fetched successfully.",
+    "notices": [],
+    "success": true
+  },
+  "2026-10-18": {
+    "RamadanPrayerTimes": null,
+    "cityId": 9118,
+    "cityName": "Toronto",
+    "dailyPrayerTimes": [
+      {
+        "iqamah": "07:00",
+        "name": "Fajr",
+        "time": "05:59"
+      },
+      {
+        "name": "Sunrise",
+        "time": "07:28"
+      },
+      {
+        "iqamah": "2:00",
+        "name": "Dhuhr",
+        "time": "1:08"
+      },
+      {
+        "iqamah": "4:30",
+        "name": "Asr",
+        "time": "4:05"
+      },
+      {
+        "iqamah": "6:38",
+        "name": "Maghrib",
+        "time": "6:38"
+      },
+      {
+        "iqamah": "8:00",
+        "name": "Isha",
+        "time": "7:55"
+      }
+    ],
+    "eidPrayerTimes": {
+      "eidAdha": {
+        "date": "27 Mayıs 2026 Çarşamba",
+        "firstIqamah": "07:00",
+        "hijriDate": "10 Zilhicce 1447",
+        "secondIqamah": "07:30",
+        "time": "06:19:00"
+      },
+      "eidFitr": {
+        "date": "20 Mart 2026 Cuma",
+        "firstIqamah": "08:00",
+        "hijriDate": "1 Şevval 1447",
+        "secondIqamah": "08:30",
+        "time": "07:54:00"
+      }
+    },
+    "gregorianDate": "18.10.2026",
+    "hijriDate": "7.5.1448",
+    "jumaaPrayerTime": "2:00",
+    "message": "Prayer times fetched successfully.",
+    "notices": [],
+    "success": true
+  }
+}
