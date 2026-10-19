@@ -41,7 +41,7 @@ export default function Privacy() {
       {/* ---------- English ---------- */}
       <div id="english" className="flex flex-col gap-3 scroll-mt-24">
         <h1 className="text-4xl lg:text-6xl font-bold">Privacy Policy — Pape Mosque App</h1>
-        <p className="text-lg font-bold">Last updated: 19 September 2026</p>
+        <p className="text-lg font-bold">Last updated: 19 October 2026</p>
 
         <P>
           This Privacy Policy explains how the Pape Mosque mobile application (&quot;the app&quot;), provided by the
@@ -53,28 +53,57 @@ export default function Privacy() {
           papemosque.ca website, please contact us using the details at the bottom of this page.
         </P>
         <P>
-          We keep this simple: the app collects very little, does not track you, and does not share your information
-          with advertisers or third parties.
+          We keep this simple: the app collects only what its features need, does not track you, does not show
+          advertising, and does not sell your information.
         </P>
 
         <H2>Information we collect</H2>
         <P>
-          <span className="font-bold">Only if you choose to create an account</span>, we collect and store:
+          <span className="font-bold">Only if you choose to create an account</span>, we collect and store your
+          profile information:
         </P>
         <List>
           <li>Your name</li>
           <li>Your email address</li>
-          <li>Your phone number</li>
-          <li>Your date of birth</li>
+          <li>Your phone number (optional)</li>
+          <li>Your date of birth (optional)</li>
         </List>
         <P>
-          This information is provided by you during sign-up and is stored securely by our service provider, Supabase.
-          It is used only to create and manage your account within the app.
+          You can sign up with an email address and password, or with Sign in with Apple. If you use Sign in with
+          Apple, we receive the name and email address that Apple shares with us. If you choose to hide your email,
+          this is a private relay address created by Apple.
+        </P>
+        <P>
+          This information is stored securely by our service provider, Supabase. It is used to create and manage your
+          account and to provide the features described below.
         </P>
         <P>
           <span className="font-bold">You can use the app without an account.</span> Prayer times, prayer reminders,
           events, and announcements are all available without signing in. An account is only needed for features tied
           to your profile.
+        </P>
+
+        <H2>Event registration</H2>
+        <P>
+          When you register for an event, we store your answers to that event&apos;s registration form together with
+          your name, email address and phone number. Only authorized mosque administrators can see registrations, and
+          they may export them to organize and run the event.
+        </P>
+        <P>
+          Registrations cannot be cancelled in the app. To change or cancel a registration, please contact us using the
+          details at the bottom of this page.
+        </P>
+
+        <H2>Marriage service</H2>
+        <P>
+          If you use the marriage service, you may upload a CV or other document. It is stored privately and can be
+          seen only by you and authorized mosque administrators.
+        </P>
+
+        <H2>Event views</H2>
+        <P>
+          When you open an event, we record that it was viewed (once per user or device) so we can show an approximate
+          view count for the event.
         </P>
 
         <H2>Information stored on your device</H2>
@@ -84,20 +113,44 @@ export default function Privacy() {
           <li>The time you last viewed announcements (used to show which announcements are new)</li>
         </List>
 
+        <H2>Push notifications</H2>
+        <P>
+          If you allow notifications, we store a push token for your device (from Firebase Cloud Messaging) and your
+          notification settings. We use them to send you notifications about events, announcements and prayer time
+          data. You can turn notifications off at any time in the app or in your device&apos;s iOS Settings.
+        </P>
+
         <H2>Prayer reminders</H2>
         <P>
-          If you enable prayer reminders, the app schedules local notifications on your device (5 minutes before each
-          iqamah). These notifications are generated on your device. We do not send push notifications and we do not
-          track whether or when reminders appear.
+          If you enable prayer reminders, the app schedules local notifications on your device. These reminders are
+          generated on your device, and we do not track whether or when they appear.
+        </P>
+
+        <H2>Donations</H2>
+        <P>
+          Donations are made on our website, papemosque.ca, and processed by Stripe. The app only opens the website;
+          it does not collect or process any payment information itself.
         </P>
 
         <H2>Information we do NOT collect</H2>
         <List>
           <li>We do not collect your location.</li>
-          <li>We do not use analytics or tracking tools.</li>
+          <li>We do not track you across other companies&apos; apps or websites.</li>
           <li>We do not show advertising.</li>
-          <li>We do not sell or share your personal information with third parties.</li>
+          <li>We do not sell your personal information.</li>
           <li>We do not use your data for advertising or marketing profiling.</li>
+        </List>
+
+        <H2>Service providers</H2>
+        <P>
+          We share information only with the service providers we use to run the app, and only as needed for them to
+          provide their service to us:
+        </P>
+        <List>
+          <li>Supabase: database, sign-in and file storage</li>
+          <li>Firebase Cloud Messaging (Google): push notifications</li>
+          <li>Apple: Sign in with Apple</li>
+          <li>Stripe: donations made on our website</li>
         </List>
 
         <H2>Prayer time data</H2>
@@ -108,16 +161,16 @@ export default function Privacy() {
 
         <H2>Deleting your account</H2>
         <P>
-          You can permanently delete your account and all associated profile information (name, email, phone, date of
-          birth) directly within the app, at any time, from{" "}
-          <span className="font-bold">Profile → Settings → Delete account</span>. Deletion is immediate and cannot be
-          undone.
+          You can delete your account at any time directly within the app, from{" "}
+          <span className="font-bold">Profile → Delete account</span>. This permanently deletes your account and its
+          personal data. If you signed in with Apple, we also revoke the Apple sign-in token for the app. Deletion
+          cannot be undone.
         </P>
 
         <H2>Data retention</H2>
         <P>
           We keep your account information for as long as you have an account. When you delete your account, your
-          profile information is permanently removed from our systems.
+          account and its personal data are permanently removed from our systems.
         </P>
 
         <H2>Children&apos;s privacy</H2>
@@ -151,7 +204,7 @@ export default function Privacy() {
       {/* ---------- Türkçe ---------- */}
       <div id="turkce" className="flex flex-col gap-3 scroll-mt-24">
         <h1 className="text-4xl lg:text-6xl font-bold">Gizlilik Politikası — Pape Camii Uygulaması</h1>
-        <p className="text-lg font-bold">Son güncelleme: 19 Eylül 2026</p>
+        <p className="text-lg font-bold">Son güncelleme: 19 Ekim 2026</p>
 
         <P>
           Bu Gizlilik Politikası, Kanada Türk İslam Vakfı (Pape Camii) (&quot;biz&quot;) tarafından sağlanan Pape Camii
@@ -162,28 +215,57 @@ export default function Privacy() {
           sorunuz varsa, sayfanın altındaki iletişim bilgilerinden bize ulaşabilirsiniz.
         </P>
         <P>
-          Basit tutuyoruz: uygulama çok az veri toplar, sizi takip etmez ve bilgilerinizi reklam verenlerle veya üçüncü
-          taraflarla paylaşmaz.
+          Basit tutuyoruz: uygulama yalnızca özelliklerinin ihtiyaç duyduğu bilgileri toplar, sizi takip etmez, reklam
+          göstermez ve bilgilerinizi satmaz.
         </P>
 
         <H2>Topladığımız bilgiler</H2>
         <P>
-          <span className="font-bold">Yalnızca bir hesap oluşturmayı seçerseniz</span>, şunları toplar ve saklarız:
+          <span className="font-bold">Yalnızca bir hesap oluşturmayı seçerseniz</span>, şu profil bilgilerinizi toplar
+          ve saklarız:
         </P>
         <List>
           <li>Adınız</li>
           <li>E-posta adresiniz</li>
-          <li>Telefon numaranız</li>
-          <li>Doğum tarihiniz</li>
+          <li>Telefon numaranız (isteğe bağlı)</li>
+          <li>Doğum tarihiniz (isteğe bağlı)</li>
         </List>
         <P>
-          Bu bilgiler kayıt sırasında sizin tarafınızdan sağlanır ve hizmet sağlayıcımız Supabase tarafından güvenli
-          şekilde saklanır. Yalnızca uygulama içindeki hesabınızı oluşturmak ve yönetmek için kullanılır.
+          E-posta adresi ve şifreyle ya da Apple ile Giriş Yap (Sign in with Apple) ile kayıt olabilirsiniz. Apple ile
+          giriş yaparsanız, Apple&apos;ın bizimle paylaştığı ad ve e-posta adresini alırız. E-postanızı gizlemeyi
+          seçerseniz bu, Apple tarafından oluşturulan özel bir yönlendirme (private relay) adresidir.
+        </P>
+        <P>
+          Bu bilgiler hizmet sağlayıcımız Supabase tarafından güvenli şekilde saklanır. Hesabınızı oluşturmak ve
+          yönetmek ve aşağıda anlatılan özellikleri sunmak için kullanılır.
         </P>
         <P>
           <span className="font-bold">Uygulamayı hesap olmadan kullanabilirsiniz.</span> Namaz vakitleri, namaz
           hatırlatmaları, etkinlikler ve duyurular giriş yapmadan da kullanılabilir. Hesap yalnızca profilinize bağlı
           özellikler için gereklidir.
+        </P>
+
+        <H2>Etkinlik kaydı</H2>
+        <P>
+          Bir etkinliğe kayıt olduğunuzda, o etkinliğin kayıt formuna verdiğiniz cevapları adınız, e-posta adresiniz
+          ve telefon numaranızla birlikte saklarız. Kayıtları yalnızca yetkili cami yöneticileri görebilir ve
+          etkinliği düzenlemek ve yürütmek için dışa aktarabilirler.
+        </P>
+        <P>
+          Kayıtlar uygulama içinden iptal edilemez. Bir kaydı değiştirmek veya iptal etmek için sayfanın altındaki
+          iletişim bilgilerinden bize ulaşabilirsiniz.
+        </P>
+
+        <H2>Evlilik hizmeti</H2>
+        <P>
+          Evlilik hizmetini kullanırsanız bir CV veya başka bir belge yükleyebilirsiniz. Bu belge gizli olarak saklanır
+          ve yalnızca siz ve yetkili cami yöneticileri tarafından görülebilir.
+        </P>
+
+        <H2>Etkinlik görüntülemeleri</H2>
+        <P>
+          Bir etkinliği açtığınızda, etkinlik için yaklaşık bir görüntülenme sayısı gösterebilmek amacıyla etkinliğin
+          görüntülendiğini kaydederiz (kullanıcı veya cihaz başına bir kez).
         </P>
 
         <H2>Cihazınızda saklanan bilgiler</H2>
@@ -193,20 +275,45 @@ export default function Privacy() {
           <li>Duyuruları en son görüntülediğiniz zaman (hangi duyuruların yeni olduğunu göstermek için kullanılır)</li>
         </List>
 
+        <H2>Anlık (push) bildirimler</H2>
+        <P>
+          Bildirimlere izin verirseniz, cihazınız için bir push token&apos;ı (Firebase Cloud Messaging&apos;den) ve
+          bildirim ayarlarınızı saklarız. Bunları size etkinlikler, duyurular ve namaz vakti verileriyle ilgili
+          bildirimler göndermek için kullanırız. Bildirimleri istediğiniz zaman uygulama içinden veya cihazınızın iOS
+          Ayarları&apos;ndan kapatabilirsiniz.
+        </P>
+
         <H2>Namaz hatırlatmaları</H2>
         <P>
-          Namaz hatırlatmalarını etkinleştirirseniz, uygulama cihazınızda yerel bildirimler planlar (her iqamet
-          vaktinden 5 dakika önce). Bu bildirimler cihazınızda oluşturulur. Push bildirimi göndermiyoruz ve
-          hatırlatmaların görünüp görünmediğini takip etmiyoruz.
+          Namaz hatırlatmalarını etkinleştirirseniz, uygulama cihazınızda yerel bildirimler planlar. Bu hatırlatmalar
+          cihazınızda oluşturulur ve görünüp görünmediklerini takip etmiyoruz.
+        </P>
+
+        <H2>Bağışlar</H2>
+        <P>
+          Bağışlar web sitemiz papemosque.ca üzerinden yapılır ve Stripe tarafından işlenir. Uygulama yalnızca web
+          sitesini açar; ödeme bilgisi toplamaz veya işlemez.
         </P>
 
         <H2>Toplamadığımız bilgiler</H2>
         <List>
           <li>Konumunuzu toplamıyoruz.</li>
-          <li>Analitik veya takip araçları kullanmıyoruz.</li>
+          <li>Sizi başka şirketlerin uygulamaları veya web siteleri arasında takip etmiyoruz.</li>
           <li>Reklam göstermiyoruz.</li>
-          <li>Kişisel bilgilerinizi üçüncü taraflarla satmıyor veya paylaşmıyoruz.</li>
+          <li>Kişisel bilgilerinizi satmıyoruz.</li>
           <li>Verilerinizi reklam veya pazarlama profillemesi için kullanmıyoruz.</li>
+        </List>
+
+        <H2>Hizmet sağlayıcılar</H2>
+        <P>
+          Bilgilerinizi yalnızca uygulamayı çalıştırmak için kullandığımız hizmet sağlayıcılarla ve yalnızca bize
+          hizmet verebilmeleri için gerektiği kadar paylaşırız:
+        </P>
+        <List>
+          <li>Supabase: veritabanı, giriş ve dosya depolama</li>
+          <li>Firebase Cloud Messaging (Google): anlık bildirimler</li>
+          <li>Apple: Apple ile Giriş Yap</li>
+          <li>Stripe: web sitemiz üzerinden yapılan bağışlar</li>
         </List>
 
         <H2>Namaz vakti verileri</H2>
@@ -217,15 +324,16 @@ export default function Privacy() {
 
         <H2>Hesabınızı silme</H2>
         <P>
-          Hesabınızı ve ilişkili tüm profil bilgilerinizi (ad, e-posta, telefon, doğum tarihi) istediğiniz zaman
-          doğrudan uygulama içinden <span className="font-bold">Profil → Ayarlar → Hesabı sil</span> yolundan kalıcı
-          olarak silebilirsiniz. Silme işlemi anında gerçekleşir ve geri alınamaz.
+          Hesabınızı istediğiniz zaman doğrudan uygulama içinden{" "}
+          <span className="font-bold">Profil → Hesabı sil</span> yolundan silebilirsiniz. Bu işlem hesabınızı ve
+          hesabınıza ait kişisel verileri kalıcı olarak siler. Apple ile giriş yaptıysanız, uygulamaya ait Apple giriş
+          token&apos;ını da iptal ederiz. Silme işlemi geri alınamaz.
         </P>
 
         <H2>Veri saklama</H2>
         <P>
-          Hesap bilgilerinizi hesabınız var olduğu sürece saklarız. Hesabınızı sildiğinizde, profil bilgileriniz
-          sistemlerimizden kalıcı olarak kaldırılır.
+          Hesap bilgilerinizi hesabınız var olduğu sürece saklarız. Hesabınızı sildiğinizde, hesabınız ve hesabınıza
+          ait kişisel veriler sistemlerimizden kalıcı olarak kaldırılır.
         </P>
 
         <H2>Çocukların gizliliği</H2>
