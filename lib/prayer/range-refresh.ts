@@ -4,7 +4,9 @@ import {
   addDays,
   alertReasons,
   changeKind,
+  daySummary,
   eidDue,
+  payloadDiff,
   selectDays,
   torontoDate,
   withEid,
@@ -97,11 +99,11 @@ class Counter {
 }
 
 async function storedContext(db: SupabaseClient, today: string) {
-  const [rows, eidRows, lastEid] = await Promise.all([
+  const [rows, eidRows, lastEid, firstCall] = await Promise.all([
     db.from("prayer_cache").select("date, source_payload").gte("date", addDays(today, -1)).order("date"),
     db
       .from("prayer_cache")
-      .select("date, eid:source_payload->eidPrayerTimes")
+      .select("date, fetched_at, eid:source_payload->eidPrayerTimes")
       .order("date", { ascending: false })
       .limit(60),
     db
@@ -111,13 +113,26 @@ async function storedContext(db: SupabaseClient, today: string) {
       .eq("outcome", "ok")
       .order("called_at", { ascending: false })
       .limit(1),
+    db.from("prayer_api_calls").select("called_at").order("called_at").limit(1),
   ]);
-  for (const r of [rows, eidRows, lastEid]) {
+  for (const r of [rows, eidRows, lastEid, firstCall]) {
     if (r.error) throw new Error(`reading stored state failed: ${r.error.message}`);
   }
   const stored = new Map<string, unknown>((rows.data ?? []).map((r) => [r.date as string, r.source_payload]));
-  const storedEid = (eidRows.data ?? []).find((r) => r.eid && typeof r.eid === "object")?.eid ?? null;
-  const lastEidAt = lastEid.data?.[0]?.called_at as string | undefined;
+  const withEidRows = (eidRows.data ?? []).filter((r) => r.eid && typeof r.eid === "object");
+  const storedEid = withEidRows[0]?.eid ?? null;
+  // Before prayer_api_calls has an ok Eid call, the one-day path's rows show
+  // when Eid was last fetched (it fetched Eid on every run). Only rows written
+  // before the counter's first entry count: later rows may carry copied Eid.
+  let lastEidAt = lastEid.data?.[0]?.called_at as string | undefined;
+  if (!lastEidAt) {
+    const counterStart = firstCall.data?.[0]?.called_at as string | undefined;
+    lastEidAt = withEidRows
+      .map((r) => r.fetched_at as string)
+      .filter((at) => at && (!counterStart || Date.parse(at) < Date.parse(counterStart)))
+      .sort()
+      .at(-1);
+  }
   return { stored, storedEid, lastEidOkDate: lastEidAt ? torontoDate(new Date(lastEidAt)) : null };
 }
 
@@ -190,9 +205,16 @@ export async function rangeRefresh({ db, prayerApiUrl, dry }: { db: SupabaseClie
   let dbRejected: Rejection[] = [];
   let writeError: string | null = null;
   let changes: Record<string, string> | undefined;
+  let preview: Record<string, unknown>[] | undefined;
 
   if (dry) {
     changes = Object.fromEntries(accepted.map((d) => [d.date, changeKind(stored.get(d.date), d.payload)]));
+    preview = accepted.map((d) => ({
+      date: d.date,
+      ...daySummary(d.payload),
+      change: changeKind(stored.get(d.date), d.payload),
+      diff: stored.has(d.date) ? payloadDiff(stored.get(d.date), d.payload) : undefined,
+    }));
   } else if (accepted.length > 0) {
     const { data, error } = await db.rpc("ingest_prayer_days", {
       p_days: accepted.map((d) => ({ date: d.date, source: d.payload })),
@@ -226,7 +248,7 @@ export async function rangeRefresh({ db, prayerApiUrl, dry }: { db: SupabaseClie
     runId,
     today,
     source: answer?.source ?? null,
-    eid: { due: eidDue(today, lastEidOkDate, storedEid), requested: wantEid, fetched: answer?.eid?.fetched ?? false },
+    eid: { due: eidDue(today, lastEidOkDate, storedEid), lastOkDate: lastEidOkDate, requested: wantEid, fetched: answer?.eid?.fetched ?? false },
     calls: answer?.calls ?? null,
     capsReached: counter.capsReached,
     fetchedDays: fetched.length,
@@ -235,6 +257,7 @@ export async function rangeRefresh({ db, prayerApiUrl, dry }: { db: SupabaseClie
     unchanged,
     rejected: [...upstreamRejected, ...rejected, ...dbRejected],
     changes,
+    preview,
     failure,
     writeError,
     alerts,

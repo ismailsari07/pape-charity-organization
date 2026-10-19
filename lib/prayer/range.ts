@@ -259,3 +259,47 @@ export function changeKind(stored: unknown, fetched: unknown): "new" | "same" | 
   if (stored === undefined || stored === null) return "new";
   return canonical(stored) === canonical(fetched) ? "same" : "changed";
 }
+
+/**
+ * A payload as flat "path → JSON value" lines, for dry-run reports. Prayer
+ * lists are keyed by prayer name: "dailyPrayerTimes.Isha.time" → "\"7:55\"".
+ */
+export function flatten(value: unknown, path = "", out: Record<string, string> = {}): Record<string, string> {
+  if (Array.isArray(value)) {
+    value.forEach((item, i) => {
+      const name = (item as Prayer | null)?.name;
+      const named = typeof name === "string";
+      if (named && item && typeof item === "object") {
+        for (const [k, v] of Object.entries(item)) if (k !== "name") flatten(v, `${path}${name}.${k}.`, out);
+      } else {
+        flatten(item, `${path}${i}.`, out);
+      }
+    });
+  } else if (value && typeof value === "object") {
+    for (const [k, v] of Object.entries(value)) flatten(v, `${path}${k}.`, out);
+  } else {
+    out[path.replace(/\.$/, "")] = canonical(value);
+  }
+  return out;
+}
+
+/** The fields that differ between a stored and a fetched day, for dry-run reports. */
+export function payloadDiff(stored: unknown, fetched: unknown): { field: string; from: string | null; to: string | null }[] {
+  const a = flatten(stored ?? {});
+  const b = flatten(fetched ?? {});
+  return [...new Set([...Object.keys(a), ...Object.keys(b)])]
+    .sort()
+    .filter((k) => a[k] !== b[k])
+    .map((k) => ({ field: k, from: a[k] ?? null, to: b[k] ?? null }));
+}
+
+/** Fajr / Maghrib / Isha start times and Jumu'ah of a day, for dry-run reports. */
+export function daySummary(payload: unknown) {
+  const prayers = prayersOf(payload) ?? [];
+  const time = (name: string) => {
+    const t = prayers.find((p) => p?.name === name)?.time;
+    return typeof t === "string" ? t : null;
+  };
+  const jumaa = (payload as Source | null)?.jumaaPrayerTime;
+  return { fajr: time("Fajr"), maghrib: time("Maghrib"), isha: time("Isha"), jumaa: typeof jumaa === "string" ? jumaa : null };
+}

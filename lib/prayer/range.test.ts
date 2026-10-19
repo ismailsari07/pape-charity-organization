@@ -6,7 +6,9 @@ import {
   alertReasons,
   changeKind,
   continuityProblem,
+  daySummary,
   eidDue,
+  payloadDiff,
   prayerMinutes,
   selectDays,
   sourceProblem,
@@ -156,4 +158,19 @@ test("changeKind ignores jsonb key order", () => {
   assert.equal(changeKind(undefined, {}), "new");
   assert.equal(changeKind({ a: 1, b: [1, { c: 2, d: 3 }] }, { b: [1, { d: 3, c: 2 }], a: 1 }), "same");
   assert.equal(changeKind({ a: 1 }, { a: 2 }), "changed");
+});
+
+test("dry-run report helpers: summary and field diff", () => {
+  const nov1 = dayOf("2026-11-01");
+  const { fajr, maghrib, isha, jumaa } = daySummary(nov1.payload);
+  assert.equal(jumaa, "1:00");
+  assert.ok(fajr && maghrib && isha);
+  const eid = (live["2026-10-18"] as P).eidPrayerTimes;
+  assert.deepEqual(payloadDiff(live["2026-10-18"], withEid([dayOf("2026-10-18")], eid)[0].payload), []);
+  const before = dayOf("2026-10-20");
+  const after = setTime(dayOf("2026-10-20"), "Isha", "7:59");
+  const was = daySummary(before.payload).isha;
+  assert.deepEqual(payloadDiff(before.payload, after.payload), [
+    { field: "dailyPrayerTimes.Isha.time", from: JSON.stringify(was), to: '"7:59"' },
+  ]);
 });
