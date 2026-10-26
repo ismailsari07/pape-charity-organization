@@ -1,0 +1,85 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { ArrowRightIcon, MapPinIcon, PhoneIcon } from "lucide-react";
+import { resolveI18n, t } from "@/lib/i18n";
+import { directionsUrl } from "@/lib/content/bundle";
+import { getSiteContent } from "@/lib/server/content";
+import SectionHeading from "@/components/site/SectionHeading";
+import { SERVICE_ICON } from "@/components/services/serviceIcon";
+
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: t.services.pageTitle,
+  description: t.services.intro,
+  alternates: { canonical: "/services" },
+};
+
+const tel = (phone: string) => `tel:+1${phone.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "")}`;
+
+// Only the burial service for now (marriage hidden on the website).
+export default async function ServicesPage() {
+  const content = await getSiteContent();
+  const burial = content.features.burialService ? content.services.find((s) => s.kind === "burial") : undefined;
+  if (!burial) notFound();
+
+  const Icon = SERVICE_ICON[burial.icon] ?? SERVICE_ICON.leaf;
+  const contacts = content.contacts.filter((c) => c.group === "burial");
+  const { cemetery } = content;
+  const history = resolveI18n(cemetery.history);
+  const card = "flex flex-col gap-4 rounded-[24px] border border-pm-line bg-pm-card p-6 md:p-8";
+
+  return (
+    <main className="mx-auto flex max-w-4xl flex-col gap-8 px-4 pt-8 md:px-6 md:pt-14">
+      <SectionHeading as="h1" eyebrow={t.services.eyebrow} title={t.services.title} intro={t.services.intro} />
+
+      <section className={card}>
+        <div className="flex items-center gap-4">
+          <span className="flex size-12 items-center justify-center rounded-[14px] bg-pm-tile text-pm-mint">
+            <Icon size={22} />
+          </span>
+          <div>
+            <h2 className="text-xl font-extrabold text-pm-text">{resolveI18n(burial.title)}</h2>
+            <p className="text-sm font-semibold text-pm-mint">{resolveI18n(burial.summary)}</p>
+          </div>
+        </div>
+        {resolveI18n(burial.body) && <p className="text-pm-text-2">{resolveI18n(burial.body)}</p>}
+      </section>
+
+      {contacts.length > 0 && (
+        <section className={card}>
+          <h2 className="text-lg font-extrabold text-pm-text">{t.services.contactsTitle}</h2>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {contacts.map((c) => (
+              <li key={c.id} className="flex flex-col gap-1 rounded-[18px] bg-pm-tile/60 p-4">
+                <span className="font-bold text-pm-text">{c.name}</span>
+                <span className="text-sm text-pm-text-2">{resolveI18n(c.position)}</span>
+                <a href={tel(c.phone)} className="mt-1 inline-flex items-center gap-2 font-bold text-pm-mint transition-colors hover:text-pm-text">
+                  <PhoneIcon size={14} aria-hidden /> {c.phone}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {cemetery.name && (
+        <section className={card}>
+          <h2 className="text-lg font-extrabold text-pm-text">{t.services.cemeteryTitle}</h2>
+          <p className="flex items-start gap-2 text-pm-text-3">
+            <MapPinIcon size={16} className="mt-1 shrink-0 text-pm-muted" aria-hidden />
+            <span>
+              <span className="font-bold text-pm-text">{cemetery.name}</span>
+              <br />
+              {cemetery.street}, {cemetery.city}
+            </span>
+          </p>
+          {history && <p className="text-pm-text-2">{history}</p>}
+          <a href={directionsUrl(cemetery)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 self-start text-sm font-bold text-pm-mint transition-colors hover:text-pm-text">
+            {t.services.directions} <ArrowRightIcon size={14} aria-hidden />
+          </a>
+        </section>
+      )}
+    </main>
+  );
+}

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getSiteContent } from "@/lib/server/content";
 import AnnouncementCard from "@/components/announcements/AnnouncementCard";
 import { getActiveAnnouncements } from "@/lib/server/announcements";
 
@@ -12,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AnnouncementsPage() {
+  if (!(await getSiteContent()).features.announcements) notFound();
   const announcements = await getActiveAnnouncements();
 
   return (

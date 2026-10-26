@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getSiteContent } from "@/lib/server/content";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getActiveAnnouncement } from "@/lib/server/announcements";
 import { announcementDate, announcementParagraphs } from "@/lib/announcements";
@@ -32,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AnnouncementPage({ params }: Props) {
   const { id } = await params;
+  if (!(await getSiteContent()).features.announcements) notFound();
   const announcement = await getActiveAnnouncement(id);
   if (!announcement) notFound();
 

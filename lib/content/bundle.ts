@@ -43,10 +43,13 @@ export type Service = {
   body: I18nText;
 };
 
+export type Cemetery = { name: string; street: string; city: string; lat?: number; lng?: number; history: I18nText };
+
 export type Contact = { id: string; name: string; phone: string; email?: string; group: string; position: I18nText };
 
 export type SiteContent = {
   mosque: MosqueInfo;
+  cemetery: Cemetery;
   links: Links;
   features: Features;
   services: Service[];
@@ -95,6 +98,18 @@ function parseMosque(raw: unknown, fallback: MosqueInfo): MosqueInfo {
   };
 }
 
+function parseCemetery(raw: unknown, fallback: Cemetery): Cemetery {
+  if (!isObj(raw)) return fallback;
+  return {
+    name: str(raw.name) ?? fallback.name,
+    street: str(raw.street) ?? fallback.street,
+    city: str(raw.city) ?? fallback.city,
+    lat: num(raw.lat),
+    lng: num(raw.lng),
+    history: "history" in raw ? i18n(raw.history) : fallback.history,
+  };
+}
+
 function parseLinks(raw: unknown): Links {
   if (!isObj(raw)) return {};
   const out: Links = {};
@@ -140,6 +155,7 @@ export function parseBundle(raw: unknown, fallback?: SiteContent): SiteContent {
   const content = isObj(raw.content) ? raw.content : {};
   return {
     mosque: parseMosque(content.mosque_info, base.mosque),
+    cemetery: parseCemetery(content.cemetery, base.cemetery),
     links: "links" in content ? parseLinks(content.links) : base.links,
     features: "app_config" in content ? parseFeatures(content.app_config) : base.features,
     services: Array.isArray(raw.services) ? parseServices(raw.services) : base.services,
@@ -148,12 +164,14 @@ export function parseBundle(raw: unknown, fallback?: SiteContent): SiteContent {
 }
 
 const EMPTY_MOSQUE: MosqueInfo = { name: "", street: "", city: "", postalCode: "", phone: "", email: "", hours: [] };
+const EMPTY_CEMETERY: Cemetery = { name: "", street: "", city: "", history: {} };
 
 export const DEFAULT_CONTENT: SiteContent = (() => {
   const d = defaults as Obj;
   const content = isObj(d.content) ? d.content : {};
   return {
     mosque: parseMosque(content.mosque_info, EMPTY_MOSQUE),
+    cemetery: parseCemetery(content.cemetery, EMPTY_CEMETERY),
     links: parseLinks(content.links),
     features: parseFeatures(content.app_config),
     services: parseServices(d.services),
@@ -161,8 +179,9 @@ export const DEFAULT_CONTENT: SiteContent = (() => {
   };
 })();
 
-/** Google Maps directions to the mosque: coordinates when set, else the address. */
-export function directionsUrl(m: MosqueInfo): string {
-  const destination = m.lat !== undefined && m.lng !== undefined ? `${m.lat},${m.lng}` : `${m.street}, ${m.city} ${m.postalCode}`;
+/** Google Maps directions to a place: coordinates when set, else the address. */
+export function directionsUrl(place: { street: string; city: string; postalCode?: string; lat?: number; lng?: number }): string {
+  const destination =
+    place.lat !== undefined && place.lng !== undefined ? `${place.lat},${place.lng}` : [place.street, `${place.city} ${place.postalCode ?? ""}`.trim()].join(", ");
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
 }

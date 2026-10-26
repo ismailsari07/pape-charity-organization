@@ -1,49 +1,49 @@
-import News from "@/components/News";
-import Services from "@/components/Services";
-import UpcomingEvents from "@/components/UpcomingEvents";
 import Hero from "@/components/home/Hero";
+import EventsSection from "@/components/home/EventsSection";
+import ServicesSection from "@/components/home/ServicesSection";
+import DonationBand from "@/components/home/DonationBand";
+import AppSection from "@/components/home/AppSection";
+import ContactSection from "@/components/home/ContactSection";
 import { getActiveAnnouncements } from "@/lib/server/announcements";
 import { getPrayerDays } from "@/lib/server/prayer";
-import { torontoDate } from "@/lib/prayer/range";
+import { getUpcomingEvents } from "@/lib/server/events";
+import { getDonationFunds } from "@/lib/server/funds";
 import { getSiteContent } from "@/lib/server/content";
-import type { PublicAnnouncement } from "@/lib/announcements";
+import { torontoDate } from "@/lib/prayer/range";
 
-// ISR: prayer rows, announcements and flags refresh at most once a minute.
+// ISR: prayer rows, announcements, events, funds and flags refresh at most once a minute.
 export const revalidate = 60;
+
+/** A failed read hides only its own section; the home page always renders. */
+function orEmpty<T>(label: string, fallback: T) {
+  return (error: unknown): T => {
+    console.error(`[home] ${label} fetch failed`, error);
+    return fallback;
+  };
+}
 
 export default async function Home() {
   const content = await getSiteContent();
+  const { features } = content;
 
-  // Neither problem may break the home page: without data the hero shows
-  // "not loaded yet" in the table, and no announcement card.
-  const [prayer, announcements] = await Promise.all([
-    getPrayerDays().catch((error) => {
-      console.error("[home] prayer_cache fetch failed", error);
-      return null;
-    }),
-    content.features.announcements
-      ? getActiveAnnouncements().catch((error): PublicAnnouncement[] => {
-          console.error("[home] announcements fetch failed", error);
-          return [];
-        })
-      : Promise.resolve([] as PublicAnnouncement[]),
+  const [prayer, announcements, events, funds] = await Promise.all([
+    getPrayerDays().catch(orEmpty("prayer_cache", null)),
+    features.announcements ? getActiveAnnouncements().catch(orEmpty("announcements", [])) : [],
+    features.events ? getUpcomingEvents().catch(orEmpty("youth_events", [])) : [],
+    getDonationFunds().catch(orEmpty("donation_funds", [])),
   ]);
 
+  // Only the burial service for now; marriage stays hidden on the website whatever its flag.
+  const burial = features.burialService ? content.services.find((s) => s.kind === "burial") : undefined;
+
   return (
-    <main>
-      <div className="mx-auto max-w-6xl px-4 pt-8 pb-16 md:px-6 md:pt-14">
-        <Hero
-          prayer={prayer ?? { today: torontoDate(), days: [] }}
-          announcement={announcements[0] ?? null}
-          announcementCount={announcements.length}
-        />
-      </div>
-      {/* Phase 1 of the redesign: these sections are replaced in phase 2. */}
-      <div className="container">
-        <Services />
-        <UpcomingEvents />
-        <News />
-      </div>
+    <main className="mx-auto flex max-w-6xl flex-col gap-24 px-4 pt-8 md:px-6 md:pt-14">
+      <Hero prayer={prayer ?? { today: torontoDate(), days: [] }} announcement={announcements[0] ?? null} announcementCount={announcements.length} />
+      <EventsSection events={events} />
+      {burial && <ServicesSection burial={burial} contacts={content.contacts.filter((c) => c.group === "burial")} />}
+      <DonationBand funds={funds} />
+      <AppSection appStoreUrl={content.links.app_store} />
+      <ContactSection mosque={content.mosque} />
     </main>
   );
 }
