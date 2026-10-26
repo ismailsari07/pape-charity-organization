@@ -30,6 +30,7 @@ export default function Navbar() {
       <div className="hidden md:flex items-center gap-4">
         <Link href={"/about"}>Derneğimiz</Link>
         <Link href={"/service"}>Hizmetlerimiz</Link>
+        <Link href={"/announcements"}>Duyurular</Link>
         <Link href={"/donation"}>Bağış</Link>
         <Link href={"/contact"}>İletişim</Link>
       </div>
@@ -54,6 +55,9 @@ export default function Navbar() {
               </SheetClose>
               <SheetClose asChild>
                 <Link href={"/service"}>Hizmetlerimiz</Link>
+              </SheetClose>
+              <SheetClose asChild>
+                <Link href={"/announcements"}>Duyurular</Link>
               </SheetClose>
               <SheetClose asChild>
                 <Link href={"/donation"}>Bagis</Link>

@@ -1,11 +1,20 @@
+"use client";
 import { Button } from "@/components/ui/button";
-import { DownloadIcon, GithubIcon, InstagramIcon, TwitterIcon, YoutubeIcon } from "lucide-react";
+import { ArrowRight, DownloadIcon, GithubIcon, InstagramIcon, TwitterIcon, YoutubeIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import AnnouncementCard from "@/components/announcements/AnnouncementCard";
+import type { PublicAnnouncement } from "@/lib/announcements";
 
-export default function Hero() {
+type HeroProps = {
+  /** Newest active announcement; null → the hero renders as before. */
+  announcement: PublicAnnouncement | null;
+  announcementCount: number;
+};
+
+export default function Hero({ announcement, announcementCount }: HeroProps) {
   const container = {
     hidden: { opacity: 1 },
     show: {
@@ -78,6 +87,22 @@ export default function Hero() {
             </motion.div>
           </div>
         </div>
+
+        {/* Not animated: the announcement must be visible from the first paint.
+            Mobile: above the big title; desktop: right of it. */}
+        {announcement && (
+          <div className="order-first md:order-last w-full md:max-w-md flex flex-col gap-3">
+            <AnnouncementCard announcement={announcement} priority />
+            {announcementCount > 1 && (
+              <Link
+                href="/announcements"
+                className="self-end inline-flex items-center gap-1 text-sm text-neutral-300 hover:text-[#E30A17]"
+              >
+                Tüm duyurular ({announcementCount}) <ArrowRight size={14} />
+              </Link>
+            )}
+          </div>
+        )}
 
         {/*<div className="flex flex-col items-center justify-center gap-6 md:gap-8">
           <motion.div variants={item} className="flex flex-col lg:flex-row gap-4">
