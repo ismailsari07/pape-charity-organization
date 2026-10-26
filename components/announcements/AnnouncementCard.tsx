@@ -25,14 +25,26 @@ export default function AnnouncementCard({ announcement, priority = false, class
       )}
     >
       {image_url && (
-        <div className="relative aspect-video w-full bg-neutral-900">
+        // Whole photo inside the 16:9 frame (posters are often square); the
+        // sides are filled by a blurred, darkened copy of the same image.
+        // Same src and sizes → the browser downloads it only once.
+        <div className="relative aspect-video w-full overflow-hidden bg-neutral-900">
+          <Image
+            src={image_url}
+            alt=""
+            aria-hidden
+            fill
+            priority={priority}
+            sizes="(min-width: 768px) 28rem, 100vw"
+            className="scale-110 object-cover blur-2xl brightness-[0.6]"
+          />
           <Image
             src={image_url}
             alt={image_alt_text ?? title}
             fill
             priority={priority}
             sizes="(min-width: 768px) 28rem, 100vw"
-            className="object-cover"
+            className="object-contain"
           />
         </div>
       )}
