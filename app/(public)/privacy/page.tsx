@@ -15,33 +15,33 @@ export const metadata: Metadata = {
  */
 
 function H2({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-2xl lg:text-3xl font-bold mt-12">{children}</h2>;
+  return <h2 className="mt-12 text-2xl font-extrabold tracking-[-0.5px] text-pm-text md:text-[28px]">{children}</h2>;
 }
 
 function P({ children }: { children: React.ReactNode }) {
-  return <p className="text-lg max-w-3xl">{children}</p>;
+  return <p className="max-w-3xl text-[17px] leading-[1.7] text-pm-text-2">{children}</p>;
 }
 
 function List({ children }: { children: React.ReactNode }) {
-  return <ul className="list-disc pl-6 text-lg max-w-3xl space-y-1">{children}</ul>;
+  return <ul className="max-w-3xl list-disc space-y-1.5 pl-6 text-[17px] leading-[1.7] text-pm-text-2 marker:text-pm-mint">{children}</ul>;
 }
 
 export default function Privacy() {
   return (
-    <section className="container flex flex-col gap-3 py-8 lg:py-24">
-      <nav className="flex gap-4 text-lg mb-4">
-        <a href="#english" className="underline hover:text-green-500 transition-colors">
+    <section className="mx-auto flex max-w-[1248px] flex-col gap-3 px-6 pt-14">
+      <nav className="mb-6 flex gap-2">
+        <a href="#english" className="rounded-full border border-pm-line bg-pm-card px-4 py-2 text-[15px] font-semibold text-pm-mint transition-colors hover:text-pm-mint-hover">
           English
         </a>
-        <a href="#turkce" className="underline hover:text-green-500 transition-colors">
+        <a href="#turkce" className="rounded-full border border-pm-line bg-pm-card px-4 py-2 text-[15px] font-semibold text-pm-mint transition-colors hover:text-pm-mint-hover">
           Türkçe
         </a>
       </nav>
 
       {/* ---------- English ---------- */}
       <div id="english" className="flex flex-col gap-3 scroll-mt-24">
-        <h1 className="text-4xl lg:text-6xl font-bold">Privacy Policy — Pape Mosque App</h1>
-        <p className="text-lg font-bold">Last updated: 19 October 2026</p>
+        <h1 className="text-[40px] leading-tight font-extrabold tracking-[-1px] text-pm-text md:text-[48px]">Privacy Policy — Pape Mosque App</h1>
+        <p className="text-[15px] font-bold text-pm-mint">Last updated: 19 October 2026</p>
 
         <P>
           This Privacy Policy explains how the Pape Mosque mobile application (&quot;the app&quot;), provided by the
@@ -49,7 +49,7 @@ export default function Privacy() {
           your information.
         </P>
         <P>
-          It describes the <span className="font-bold">mobile application</span>. If you have a question about the
+          It describes the <span className="font-bold text-pm-text">mobile application</span>. If you have a question about the
           papemosque.ca website, please contact us using the details at the bottom of this page.
         </P>
         <P>
@@ -59,7 +59,7 @@ export default function Privacy() {
 
         <H2>Information we collect</H2>
         <P>
-          <span className="font-bold">Only if you choose to create an account</span>, we collect and store your
+          <span className="font-bold text-pm-text">Only if you choose to create an account</span>, we collect and store your
           profile information:
         </P>
         <List>
@@ -78,7 +78,7 @@ export default function Privacy() {
           account and to provide the features described below.
         </P>
         <P>
-          <span className="font-bold">You can use the app without an account.</span> Prayer times, prayer reminders,
+          <span className="font-bold text-pm-text">You can use the app without an account.</span> Prayer times, prayer reminders,
           events, and announcements are all available without signing in. An account is only needed for features tied
           to your profile.
         </P>
@@ -162,7 +162,7 @@ export default function Privacy() {
         <H2>Deleting your account</H2>
         <P>
           You can delete your account at any time directly within the app, from{" "}
-          <span className="font-bold">Profile → Delete account</span>. This permanently deletes your account and its
+          <span className="font-bold text-pm-text">Profile → Delete account</span>. This permanently deletes your account and its
           personal data. If you signed in with Apple, we also revoke the Apple sign-in token for the app. Deletion
           cannot be undone.
         </P>
@@ -191,27 +191,27 @@ export default function Privacy() {
           <li>Turkish Islamic Center Canada (Pape Camii)</li>
           <li>336 Pape Avenue, Toronto, ON M4M 2W7</li>
           <li>
-            Phone: <a href="tel:6478342000">647 834 2000</a>
+            Phone: <a href="tel:6478342000" className="text-pm-mint transition-colors hover:text-pm-mint-hover">647 834 2000</a>
           </li>
           <li>
-            Email: <a href="mailto:info@papecami.com">info@papecami.com</a>
+            Email: <a href="mailto:info@papecami.com" className="text-pm-mint transition-colors hover:text-pm-mint-hover">info@papecami.com</a>
           </li>
         </List>
       </div>
 
-      <hr className="my-16 border-foreground/20" />
+      <hr className="my-16 border-pm-line" />
 
       {/* ---------- Türkçe ---------- */}
       <div id="turkce" className="flex flex-col gap-3 scroll-mt-24">
-        <h1 className="text-4xl lg:text-6xl font-bold">Gizlilik Politikası — Pape Camii Uygulaması</h1>
-        <p className="text-lg font-bold">Son güncelleme: 19 Ekim 2026</p>
+        <h1 className="text-[40px] leading-tight font-extrabold tracking-[-1px] text-pm-text md:text-[48px]">Gizlilik Politikası — Pape Camii Uygulaması</h1>
+        <p className="text-[15px] font-bold text-pm-mint">Son güncelleme: 19 Ekim 2026</p>
 
         <P>
           Bu Gizlilik Politikası, Kanada Türk İslam Vakfı (Pape Camii) (&quot;biz&quot;) tarafından sağlanan Pape Camii
           mobil uygulamasının (&quot;uygulama&quot;) bilgilerinizi nasıl işlediğini açıklar.
         </P>
         <P>
-          Politika <span className="font-bold">mobil uygulamayı</span> anlatır. papemosque.ca web sitesiyle ilgili bir
+          Politika <span className="font-bold text-pm-text">mobil uygulamayı</span> anlatır. papemosque.ca web sitesiyle ilgili bir
           sorunuz varsa, sayfanın altındaki iletişim bilgilerinden bize ulaşabilirsiniz.
         </P>
         <P>
@@ -221,7 +221,7 @@ export default function Privacy() {
 
         <H2>Topladığımız bilgiler</H2>
         <P>
-          <span className="font-bold">Yalnızca bir hesap oluşturmayı seçerseniz</span>, şu profil bilgilerinizi toplar
+          <span className="font-bold text-pm-text">Yalnızca bir hesap oluşturmayı seçerseniz</span>, şu profil bilgilerinizi toplar
           ve saklarız:
         </P>
         <List>
@@ -240,7 +240,7 @@ export default function Privacy() {
           yönetmek ve aşağıda anlatılan özellikleri sunmak için kullanılır.
         </P>
         <P>
-          <span className="font-bold">Uygulamayı hesap olmadan kullanabilirsiniz.</span> Namaz vakitleri, namaz
+          <span className="font-bold text-pm-text">Uygulamayı hesap olmadan kullanabilirsiniz.</span> Namaz vakitleri, namaz
           hatırlatmaları, etkinlikler ve duyurular giriş yapmadan da kullanılabilir. Hesap yalnızca profilinize bağlı
           özellikler için gereklidir.
         </P>
@@ -325,7 +325,7 @@ export default function Privacy() {
         <H2>Hesabınızı silme</H2>
         <P>
           Hesabınızı istediğiniz zaman doğrudan uygulama içinden{" "}
-          <span className="font-bold">Profil → Hesabı sil</span> yolundan silebilirsiniz. Bu işlem hesabınızı ve
+          <span className="font-bold text-pm-text">Profil → Hesabı sil</span> yolundan silebilirsiniz. Bu işlem hesabınızı ve
           hesabınıza ait kişisel verileri kalıcı olarak siler. Apple ile giriş yaptıysanız, uygulamaya ait Apple giriş
           token&apos;ını da iptal ederiz. Silme işlemi geri alınamaz.
         </P>
@@ -354,10 +354,10 @@ export default function Privacy() {
           <li>Kanada Türk İslam Vakfı (Pape Camii)</li>
           <li>336 Pape Avenue, Toronto, ON M4M 2W7</li>
           <li>
-            Telefon: <a href="tel:6478342000">647 834 2000</a>
+            Telefon: <a href="tel:6478342000" className="text-pm-mint transition-colors hover:text-pm-mint-hover">647 834 2000</a>
           </li>
           <li>
-            E-posta: <a href="mailto:info@papecami.com">info@papecami.com</a>
+            E-posta: <a href="mailto:info@papecami.com" className="text-pm-mint transition-colors hover:text-pm-mint-hover">info@papecami.com</a>
           </li>
         </List>
       </div>

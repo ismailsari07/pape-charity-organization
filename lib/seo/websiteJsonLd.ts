@@ -10,7 +10,7 @@ export const websiteJsonLd = {
     name: "Turkish Islamic Center Canada",
     logo: {
       "@type": "ImageObject",
-      url: "https://papemosque.ca/logo.jpeg",
+      url: "https://papemosque.ca/brand/logo-green-1024.png",
     },
   },
 };

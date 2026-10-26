@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase/client";
+import { publicClient } from "@/lib/server/public-client";
 
 const TZ = "America/Toronto";
 
@@ -21,7 +21,9 @@ export const runtime = "nodejs";
 export async function GET() {
   const date = todayInToronto();
 
-  const { data, error } = await supabase
+  // Same query as before; only the client changed (server-side anon client
+  // instead of the old browser client module).
+  const { data, error } = await publicClient()
     .from("prayer_cache")
     .select("payload, fetched_at, status")
     .eq("date", date)

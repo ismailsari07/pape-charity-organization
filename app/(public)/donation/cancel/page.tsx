@@ -1,19 +1,22 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import type { Metadata } from "next";
+import { XIcon } from "lucide-react";
+import { t } from "@/lib/i18n";
+import StatusCard from "@/components/site/StatusCard";
 
+export const metadata: Metadata = { title: t.donation.cancelTitle, robots: { index: false } };
+
+// Stripe's cancel_url (unchanged: /donation/cancel).
 export default function CancelPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8">
-      <h1 className="text-2xl font-bold mb-4">İşlem iptal edildi</h1>
-      <p>
-        Bağış işlemi iptal edildi. Tekrar denemek isterseniz bağış sayfasına
-        dönebilirsiniz.
-      </p>
-      <Button className="mt-6">
-        <Link href={"/"}>
-        Ana sayfaya dön
-        </Link>
-      </Button>
-    </div>
+    <StatusCard
+      icon={<XIcon size={26} />}
+      title={t.donation.cancelTitle}
+      actions={[
+        { href: "/donation", label: t.donation.backToDonation, primary: true },
+        { href: "/", label: t.common.home },
+      ]}
+    >
+      <p>{t.donation.cancelText}</p>
+    </StatusCard>
   );
 }

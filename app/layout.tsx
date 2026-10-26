@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Manrope } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
 import { websiteJsonLd } from "@/lib/seo/websiteJsonLd";
 import { mosqueJsonLd } from "@/lib/seo/mosqueJsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo/breadcrumbJsonLd";
@@ -57,9 +56,7 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={`${manrope.variable} antialiased font-sans`}>
-        <Providers>
-          {children}
-        </Providers>
+        {children}
 
         <Script
           id="ld-website"

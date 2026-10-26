@@ -24,3 +24,27 @@ export async function getPrayerDays(): Promise<{ today: string; days: PrayerDay[
   });
   return { today, days };
 }
+
+/**
+ * Every stored day from today to today + [days] on the Toronto calendar, in
+ * date order — only rows that are really there (a missing day stays missing).
+ * The browser drops days that are already past when a cached page is shown
+ * after midnight. Throws when the query itself fails.
+ */
+export async function getPrayerRange(days = 31): Promise<{ today: string; days: PrayerDay[] }> {
+  const today = torontoDate();
+  const { data, error } = await publicClient()
+    .from("prayer_cache")
+    .select("date, payload")
+    .gte("date", today)
+    .lte("date", addDays(today, days))
+    .order("date");
+  if (error) throw error;
+  return {
+    today,
+    days: (data ?? []).flatMap((row) => {
+      const day = parsePrayerDay(row.date as string, row.payload);
+      return day ? [day] : [];
+    }),
+  };
+}

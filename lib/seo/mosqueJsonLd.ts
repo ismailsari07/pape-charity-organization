@@ -14,7 +14,7 @@ export const mosqueJsonLd = {
     addressCountry: "CA",
   },
   image: "https://papemosque.ca/opengraph-image",
-  logo: "https://papemosque.ca/logo.jpeg",
+  logo: "https://papemosque.ca/brand/logo-green-1024.png",
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",

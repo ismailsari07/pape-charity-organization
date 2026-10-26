@@ -1,16 +1,15 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import type { Metadata } from "next";
+import { HeartIcon } from "lucide-react";
+import { t } from "@/lib/i18n";
+import StatusCard from "@/components/site/StatusCard";
 
+export const metadata: Metadata = { title: t.donation.successTitle, robots: { index: false } };
+
+// Stripe's success_url (unchanged: /donation/success).
 export default function SuccessPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8">
-      <h1 className="text-2xl font-bold mb-4">Teşekkürler 🙏</h1>
-      <p>Bağışınız başarıyla alındı. Allah kabul etsin.</p>
-      <Button className="mt-6">
-        <Link href={"/"}>
-        Ana sayfaya dön
-        </Link>
-      </Button>
-    </div>
+    <StatusCard icon={<HeartIcon size={26} />} title={t.donation.successTitle} actions={[{ href: "/", label: t.common.home, primary: true }]}>
+      <p>{t.donation.successText}</p>
+    </StatusCard>
   );
 }
