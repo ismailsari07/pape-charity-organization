@@ -21,7 +21,7 @@ export default async function AnnouncementsPage() {
       {announcements.length === 0 ? (
         <p className="text-center text-neutral-400">Şu anda aktif duyuru yok.</p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {announcements.map((a, i) => (
             <AnnouncementCard key={a.id} announcement={a} priority={i < 3} />
           ))}

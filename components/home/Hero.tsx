@@ -13,20 +13,19 @@ type Props = {
   announcementCount: number;
 };
 
+// Mobile: heading → announcement → table. Desktop: heading and table on the
+// left, the announcement on the right, aligned to the top (never stretched).
 export default function Hero({ prayer, announcement, announcementCount }: Props) {
   return (
-    <section className={announcement ? "grid items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-10" : "grid gap-8"}>
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-4">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-pm-mint">{t.hero.eyebrow}</p>
-          <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-pm-text md:text-6xl">{t.hero.title}</h1>
-          <p className="max-w-xl text-base text-pm-text-2 md:text-lg">{t.hero.intro}</p>
-        </div>
-        <TodayTable serverToday={prayer.today} days={prayer.days} />
+    <section className={announcement ? "grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-x-10" : "grid gap-8"}>
+      <div className="flex flex-col gap-4">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-pm-mint">{t.hero.eyebrow}</p>
+        <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-pm-text md:text-6xl">{t.hero.title}</h1>
+        <p className="max-w-xl text-base text-pm-text-2 md:text-lg">{t.hero.intro}</p>
       </div>
 
       {announcement && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 self-start lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <AnnouncementCard announcement={announcement} variant="tall" priority />
           {announcementCount > 1 && (
             <Link href="/announcements" className="inline-flex items-center gap-1 self-end text-sm font-bold text-pm-mint transition-colors hover:text-pm-text">
@@ -35,6 +34,10 @@ export default function Hero({ prayer, announcement, announcementCount }: Props)
           )}
         </div>
       )}
+
+      <div className="self-start lg:col-start-1 lg:row-start-2">
+        <TodayTable serverToday={prayer.today} days={prayer.days} />
+      </div>
     </section>
   );
 }

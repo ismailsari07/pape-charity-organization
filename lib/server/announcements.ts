@@ -1,6 +1,7 @@
 import "server-only";
 import { PUBLIC_ANNOUNCEMENT_COLUMNS, type PublicAnnouncement } from "@/lib/announcements";
 import { publicClient } from "@/lib/server/public-client";
+import { imageSize } from "@/lib/server/image-size";
 
 // Public announcement reads for the website's server-rendered pages.
 //
@@ -11,7 +12,10 @@ import { publicClient } from "@/lib/server/public-client";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** Published, unexpired announcements, newest published_at first. Throws on errors. */
+/**
+ * Published, unexpired announcements, newest published_at first, each with
+ * its photo's natural size (cached per URL) for the cards. Throws on errors.
+ */
 export async function getActiveAnnouncements(): Promise<PublicAnnouncement[]> {
   const { data, error } = await publicClient()
     .from("announcements")
@@ -21,7 +25,8 @@ export async function getActiveAnnouncements(): Promise<PublicAnnouncement[]> {
     .order("published_at", { ascending: false, nullsFirst: false });
 
   if (error) throw error;
-  return (data ?? []) as PublicAnnouncement[];
+  const rows = (data ?? []) as PublicAnnouncement[];
+  return Promise.all(rows.map(async (a) => ({ ...a, image_size: a.image_url ? await imageSize(a.image_url) : null })));
 }
 
 /** One published, unexpired announcement; null when missing, archived, a draft, expired or a bad id. */

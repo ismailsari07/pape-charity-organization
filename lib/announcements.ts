@@ -1,6 +1,8 @@
 // Public announcements, as the mobile app (youth-toronto) shows them.
 // Shared by server pages and client components — no data access here.
 
+import type { ImageSize } from "@/lib/images/jpeg-size";
+
 export type PublicAnnouncement = {
   id: string;
   title: string;
@@ -9,6 +11,8 @@ export type PublicAnnouncement = {
   image_alt_text: string | null;
   published_at: string | null;
   created_at: string;
+  /** The photo's natural size (read on the server), for layout without a shift; null = unknown. */
+  image_size?: ImageSize | null;
 };
 
 // Same columns the app selects (lib/core/events_news_service.dart).

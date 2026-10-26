@@ -15,12 +15,17 @@ type Props = {
 };
 
 // Two variants, like the app's card: with a photo → the photo on top; without
-// → text-first with an icon, no image box at all. The whole photo is always
-// visible (posters are often square or portrait): object-contain inside the
-// frame, the empty sides filled by a blurred, darkened copy of the same image.
+// → text-first with an icon, no image box at all. The photo box takes the
+// photo's own aspect ratio (natural size read on the server, so no layout
+// shift), capped at 680 px high: only a very tall photo is then shown whole
+// (object-contain) with a blurred, darkened copy of itself filling the sides.
+// Unknown size → a fixed frame with the same blurred fill.
+const MAX_PHOTO_HEIGHT = "max-h-[680px]";
 export default function AnnouncementCard({ announcement, variant = "default", priority = false, className }: Props) {
   const { id, title, description, image_url, image_alt_text } = announcement;
   const tall = variant === "tall";
+  const size = announcement.image_size;
+  const ratio = size ? `${size.width} / ${size.height}` : tall ? "4 / 5" : "16 / 9";
   const sizes = tall ? "(min-width: 1024px) 30rem, 100vw" : "(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 100vw";
 
   return (
@@ -33,7 +38,7 @@ export default function AnnouncementCard({ announcement, variant = "default", pr
     >
       {image_url && (
         // Same src and sizes on both layers → the browser downloads it once.
-        <div className={cn("relative w-full overflow-hidden bg-pm-tile", tall ? "aspect-[4/5]" : "aspect-video")}>
+        <div className={cn("relative w-full overflow-hidden bg-pm-tile", MAX_PHOTO_HEIGHT)} style={{ aspectRatio: ratio }}>
           <Image
             src={image_url}
             alt=""
