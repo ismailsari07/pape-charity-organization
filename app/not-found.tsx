@@ -5,6 +5,7 @@ import Footer from "@/components/site/Footer";
 import { navItems } from "@/components/site/nav";
 import StatusCard from "@/components/site/StatusCard";
 import { getSiteContent } from "@/lib/server/content";
+import RevealScript from "@/components/motion/RevealScript";
 
 // Root 404: unknown URLs and every notFound() (unpublished/expired
 // announcements, switched-off sections). Renders outside the (public)
@@ -18,6 +19,7 @@ export default async function NotFound() {
         <p>{t.notFound.text}</p>
       </StatusCard>
       <Footer features={content.features} links={content.links} />
+      <RevealScript />
     </>
   );
 }

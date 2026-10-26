@@ -7,6 +7,7 @@ import { getActiveAnnouncement } from "@/lib/server/announcements";
 import { announcementDate, announcementParagraphs } from "@/lib/announcements";
 import { imageSize } from "@/lib/server/image-size";
 import { t } from "@/lib/i18n";
+import { reveal } from "@/lib/reveal";
 
 // ISR: rendered on first visit, then refreshed at most once a minute, so an
 // archived or expired announcement turns into a 404 within about a minute.
@@ -44,11 +45,13 @@ export default async function AnnouncementPage({ params }: Props) {
 
   const text = (
     <article className="flex min-w-0 flex-col gap-5">
-      <span className="text-sm font-bold tracking-[1.5px] text-pm-mint uppercase">
+      <span className="text-sm font-bold tracking-[1.5px] text-pm-mint uppercase" {...reveal("right")}>
         {t.announcement.eyebrow} · {announcementDate(announcement)}
       </span>
-      <h1 className="text-[36px] leading-[1.1] font-extrabold tracking-[-1px] text-pm-text md:text-[44px]">{title}</h1>
-      <div className="flex flex-col gap-4 text-[17px] leading-[1.7] text-pm-text-2">
+      <h1 className="text-[36px] leading-[1.1] font-extrabold tracking-[-1px] text-pm-text md:text-[44px]" {...reveal("right", 60)}>
+        {title}
+      </h1>
+      <div className="flex flex-col gap-4 text-[17px] leading-[1.7] text-pm-text-2" {...reveal("up", 120)}>
         {announcementParagraphs(description).map((p, i) => (
           <p key={i} className="whitespace-pre-line">
             {p}
@@ -67,6 +70,7 @@ export default async function AnnouncementPage({ params }: Props) {
     <main className="mx-auto max-w-[1248px] px-6 pt-14">
       {image_url ? (
         <div className="grid items-start gap-8 lg:grid-cols-[480px_minmax(0,1fr)] lg:gap-14">
+          <div {...reveal("up", 80)}>
           <PhotoFrame
             src={image_url}
             alt={image_alt_text ?? title}
@@ -76,6 +80,7 @@ export default async function AnnouncementPage({ params }: Props) {
             priority
             className="rounded-[24px] border border-pm-line"
           />
+          </div>
           {text}
         </div>
       ) : (

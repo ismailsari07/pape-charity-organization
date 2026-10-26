@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { reveal } from "@/lib/reveal";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Gizlilik Politikası",
@@ -15,15 +16,27 @@ export const metadata: Metadata = {
  */
 
 function H2({ children }: { children: React.ReactNode }) {
-  return <h2 className="mt-12 text-2xl font-extrabold tracking-[-0.5px] text-pm-text md:text-[28px]">{children}</h2>;
+  return (
+    <h2 className="mt-12 text-2xl font-extrabold tracking-[-0.5px] text-pm-text md:text-[28px]" {...reveal("right")}>
+      {children}
+    </h2>
+  );
 }
 
 function P({ children }: { children: React.ReactNode }) {
-  return <p className="max-w-3xl text-[17px] leading-[1.7] text-pm-text-2">{children}</p>;
+  return (
+    <p className="max-w-3xl text-[17px] leading-[1.7] text-pm-text-2" {...reveal("up")}>
+      {children}
+    </p>
+  );
 }
 
 function List({ children }: { children: React.ReactNode }) {
-  return <ul className="max-w-3xl list-disc space-y-1.5 pl-6 text-[17px] leading-[1.7] text-pm-text-2 marker:text-pm-mint">{children}</ul>;
+  return (
+    <ul className="max-w-3xl list-disc space-y-1.5 pl-6 text-[17px] leading-[1.7] text-pm-text-2 marker:text-pm-mint" {...reveal("up")}>
+      {children}
+    </ul>
+  );
 }
 
 export default function Privacy() {
@@ -40,7 +53,7 @@ export default function Privacy() {
 
       {/* ---------- English ---------- */}
       <div id="english" className="flex flex-col gap-3 scroll-mt-24">
-        <h1 className="text-[40px] leading-tight font-extrabold tracking-[-1px] text-pm-text md:text-[48px]">Privacy Policy — Pape Mosque App</h1>
+        <h1 className="text-[40px] leading-tight font-extrabold tracking-[-1px] text-pm-text md:text-[48px]" {...reveal("right")}>Privacy Policy — Pape Mosque App</h1>
         <p className="text-[15px] font-bold text-pm-mint">Last updated: 19 October 2026</p>
 
         <P>
@@ -203,7 +216,7 @@ export default function Privacy() {
 
       {/* ---------- Türkçe ---------- */}
       <div id="turkce" className="flex flex-col gap-3 scroll-mt-24">
-        <h1 className="text-[40px] leading-tight font-extrabold tracking-[-1px] text-pm-text md:text-[48px]">Gizlilik Politikası — Pape Camii Uygulaması</h1>
+        <h1 className="text-[40px] leading-tight font-extrabold tracking-[-1px] text-pm-text md:text-[48px]" {...reveal("right")}>Gizlilik Politikası — Pape Camii Uygulaması</h1>
         <p className="text-[15px] font-bold text-pm-mint">Son güncelleme: 19 Ekim 2026</p>
 
         <P>

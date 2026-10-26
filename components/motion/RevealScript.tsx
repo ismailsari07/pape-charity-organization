@@ -2,9 +2,10 @@ import { initReveal } from "@/lib/reveal";
 import RevealOnNavigate from "./RevealOnNavigate";
 
 /**
- * Put once at the end of a page that uses data-reveal. The inline script runs
- * while the HTML is parsed (first load); RevealOnNavigate covers client-side
- * navigations, where React does not run inline scripts.
+ * Once per layout, after the content. The inline script runs while the HTML is
+ * parsed (first load) and then watches the DOM for content rendered later;
+ * RevealOnNavigate starts it when the layout itself arrived by client-side
+ * navigation (React does not run inline scripts then).
  */
 export default function RevealScript() {
   return (

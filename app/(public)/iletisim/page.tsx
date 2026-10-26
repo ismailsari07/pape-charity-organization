@@ -5,6 +5,7 @@ import type { Contact } from "@/lib/content/bundle";
 import ContactSection from "@/components/home/ContactSection";
 import ContactCard from "@/components/contacts/ContactCard";
 import { Eyebrow } from "@/components/site/SectionHeading";
+import { reveal } from "@/lib/reveal";
 
 export const revalidate = 60;
 
@@ -36,16 +37,20 @@ export default async function ContactPage() {
 
       <section className="flex flex-col gap-7">
         <div className="flex flex-col gap-2">
-          <Eyebrow>{t.contact.peopleEyebrow}</Eyebrow>
-          <h2 className="text-[38px] leading-tight font-extrabold tracking-[-0.8px] text-pm-text">{t.contact.peopleTitle}</h2>
+          <Eyebrow {...reveal("right")}>{t.contact.peopleEyebrow}</Eyebrow>
+          <h2 className="text-[38px] leading-tight font-extrabold tracking-[-0.8px] text-pm-text" {...reveal("right", 60)}>
+            {t.contact.peopleTitle}
+          </h2>
         </div>
         {groups.length === 0 && <p className="text-pm-text-2">{t.contact.noPeople}</p>}
         {groups.map(([group, people]) => (
           <div key={group} className="flex flex-col gap-4">
-            <h3 className="text-xl font-extrabold text-pm-text">{t.contact.groups[group] ?? group}</h3>
+            <h3 className="text-xl font-extrabold text-pm-text" {...reveal("right")}>
+              {t.contact.groups[group] ?? group}
+            </h3>
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {people.map((c) => (
-                <ContactCard key={c.id} contact={c} />
+              {people.map((c, i) => (
+                <ContactCard key={c.id} contact={c} revealDelay={(i % 3) * 70} />
               ))}
             </ul>
           </div>

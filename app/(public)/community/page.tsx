@@ -9,6 +9,7 @@ import { getActiveAnnouncements } from "@/lib/server/announcements";
 import SectionHeading from "@/components/site/SectionHeading";
 import EventCard from "@/components/events/EventCard";
 import AnnouncementCard from "@/components/announcements/AnnouncementCard";
+import { reveal } from "@/lib/reveal";
 
 export const metadata: Metadata = {
   title: t.community.eyebrow,
@@ -39,7 +40,7 @@ export default async function CommunityPage({ searchParams }: Props) {
       <SectionHeading as="h1" eyebrow={t.community.eyebrow} title={t.community.title} intro={t.community.intro} />
 
       {tabs.length > 1 && (
-        <nav aria-label={t.community.tabsLabel} className="flex w-full gap-1 self-start rounded-full border border-pm-line bg-pm-card p-1 sm:w-auto">
+        <nav aria-label={t.community.tabsLabel} className="flex w-full gap-1 self-start rounded-full border border-pm-line bg-pm-card p-1 sm:w-auto" {...reveal("up", 160)}>
           {tabs.map((key) => (
             <Link
               key={key}
@@ -68,8 +69,8 @@ async function EventsPanel() {
   if (events.length === 0) return <p className="text-pm-text-2">{t.events.empty}</p>;
   return (
     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {events.map((u) => (
-        <EventCard key={u.event.id} upcoming={u} showDescription />
+      {events.map((u, i) => (
+        <EventCard key={u.event.id} upcoming={u} showDescription revealDelay={(i % 3) * 70} />
       ))}
     </div>
   );
@@ -81,7 +82,7 @@ async function AnnouncementsPanel() {
   return (
     <div className="grid items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {announcements.map((a, i) => (
-        <AnnouncementCard key={a.id} announcement={a} priority={i < 3} />
+        <AnnouncementCard key={a.id} announcement={a} priority={i < 3} revealDelay={(i % 3) * 70} />
       ))}
     </div>
   );

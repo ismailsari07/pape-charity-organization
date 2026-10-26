@@ -238,6 +238,9 @@ body {
 /* ── Entrance animations (lib/reveal.ts) ─────────────────────────────────
    Only active once the script added .reveal-on to <html>: no JS → visible.
    Transform/opacity only, so layout never moves. */
+html.reveal-on body {
+  overflow-x: clip; /* the 20 px slide-in never causes sideways scrolling (clip keeps sticky working) */
+}
 html.reveal-on [data-reveal]:not([data-revealed]) {
   opacity: 0;
 }

@@ -7,12 +7,12 @@ type Props = {
   intro?: string;
   link?: { href: string; label: string };
   as?: "h1" | "h2";
-  /** Entrance animation (lib/reveal.ts): eyebrow + title slide in from the right, intro rises. */
+  /** Entrance animation (lib/reveal.ts): eyebrow + title slide in from the right, intro rises. On by default. */
   reveal?: boolean;
 };
 
 /** Eyebrow + title (+ intro) with an optional "see all" link on the right. */
-export default function SectionHeading({ eyebrow, title, intro, link, as: Tag = "h2", reveal: animate = false }: Props) {
+export default function SectionHeading({ eyebrow, title, intro, link, as: Tag = "h2", reveal: animate = true }: Props) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div className="flex max-w-2xl flex-col gap-2">
@@ -29,7 +29,7 @@ export default function SectionHeading({ eyebrow, title, intro, link, as: Tag = 
         )}
       </div>
       {link && (
-        <Link href={link.href} className="text-base font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
+        <Link href={link.href} className="text-base font-bold text-pm-mint transition-colors hover:text-pm-mint-hover" {...(animate ? reveal("up", 120) : {})}>
           {link.label} →
         </Link>
       )}
@@ -38,6 +38,10 @@ export default function SectionHeading({ eyebrow, title, intro, link, as: Tag = 
 }
 
 /** The mint uppercase label above titles. */
-export function Eyebrow({ children, className = "text-pm-mint" }: { children: React.ReactNode; className?: string }) {
-  return <span className={`text-sm font-bold tracking-[1.5px] uppercase ${className}`}>{children}</span>;
+export function Eyebrow({ children, className = "text-pm-mint", ...rest }: { children: React.ReactNode; className?: string } & React.HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span className={`text-sm font-bold tracking-[1.5px] uppercase ${className}`} {...rest}>
+      {children}
+    </span>
+  );
 }

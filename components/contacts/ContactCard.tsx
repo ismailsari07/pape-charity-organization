@@ -2,12 +2,13 @@ import { MailIcon, PhoneIcon } from "lucide-react";
 import { resolveI18n } from "@/lib/i18n";
 import { telHref } from "@/lib/contact-links";
 import type { Contact } from "@/lib/content/bundle";
+import { reveal } from "@/lib/reveal";
 
 /** One person from the panel's contacts: name, role, tap-to-call and mailto (each only when set). */
-export default function ContactCard({ contact }: { contact: Contact }) {
+export default function ContactCard({ contact, revealDelay }: { contact: Contact; revealDelay?: number }) {
   const link = "inline-flex items-center gap-2 font-bold text-pm-mint transition-colors hover:text-pm-mint-hover";
   return (
-    <li className="flex flex-col gap-1 rounded-[18px] border border-pm-line bg-pm-card p-5">
+    <li className="flex flex-col gap-1 rounded-[18px] border border-pm-line bg-pm-card p-5" {...(revealDelay !== undefined ? reveal("up", revealDelay) : {})}>
       <span className="text-[17px] font-extrabold text-pm-text">{contact.name}</span>
       {resolveI18n(contact.position) && <span className="text-sm text-pm-text-2">{resolveI18n(contact.position)}</span>}
       <span className="mt-2 flex flex-col gap-1.5 text-[15px]">

@@ -5,6 +5,7 @@ import { DATE_LOCALE, t } from "@/lib/i18n";
 import { dayTitle } from "@/lib/prayer/display";
 import { recurrenceOf, sessionLine, type UpcomingEvent } from "@/lib/events/schedule";
 import MosqueIcon from "@/components/icons/MosqueIcon";
+import { reveal } from "@/lib/reveal";
 
 // The app's category → icon mapping (AppIcons.forEventCategory).
 const CATEGORY_ICON: Record<string, ComponentType<{ size?: number; strokeWidth?: number }>> = {
@@ -21,7 +22,16 @@ const words = { everyWeekday: t.events.everyWeekday, everyTwoWeeks: t.events.eve
  * icon on a tile colour when there's no photo. Eyebrow: the programme kind
  * for recurring events (as in the app), the category for one-off events.
  */
-export default function EventCard({ upcoming, showDescription = false }: { upcoming: UpcomingEvent; showDescription?: boolean }) {
+export default function EventCard({
+  upcoming,
+  showDescription = false,
+  revealDelay,
+}: {
+  upcoming: UpcomingEvent;
+  showDescription?: boolean;
+  /** Entrance animation delay in ms (lib/reveal.ts); omitted = no animation. */
+  revealDelay?: number;
+}) {
   const e = upcoming.event;
   const category = e.category?.trim().toLowerCase() ?? "";
   const Icon = CATEGORY_ICON[category] ?? CalendarDaysIcon;
@@ -31,7 +41,7 @@ export default function EventCard({ upcoming, showDescription = false }: { upcom
   const hasForm = e.registration_form !== null && e.registration_form !== undefined;
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-[22px] border border-pm-line bg-pm-card">
+    <article className="flex flex-col overflow-hidden rounded-[22px] border border-pm-line bg-pm-card" {...(revealDelay !== undefined ? reveal("up", revealDelay) : {})}>
       {e.image_url ? (
         <div className="relative h-[170px] w-full bg-pm-tile">
           <Image src={e.image_url} alt={e.title} fill sizes="(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 100vw" className="object-cover" />

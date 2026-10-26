@@ -7,6 +7,7 @@ import { getSiteContent } from "@/lib/server/content";
 import SectionHeading from "@/components/site/SectionHeading";
 import { SERVICE_ICON } from "@/components/services/serviceIcon";
 import ContactCard from "@/components/contacts/ContactCard";
+import { reveal } from "@/lib/reveal";
 
 export const revalidate = 60;
 
@@ -32,7 +33,7 @@ export default async function ServicesPage() {
     <main className="mx-auto flex max-w-4xl flex-col gap-7 px-6 pt-14">
       <SectionHeading as="h1" eyebrow={t.services.eyebrow} title={t.services.title} intro={t.services.intro} />
 
-      <section className={card}>
+      <section className={card} {...reveal("up", 150)}>
         <div className="flex items-center gap-4">
           <span className="flex size-12 items-center justify-center rounded-[14px] bg-pm-tile text-pm-mint">
             <Icon size={22} />
@@ -46,7 +47,7 @@ export default async function ServicesPage() {
       </section>
 
       {contacts.length > 0 && (
-        <section className={card}>
+        <section className={card} {...reveal("up")}>
           <h2 className="text-lg font-extrabold text-pm-text">{t.services.contactsTitle}</h2>
           <ul className="grid gap-3 sm:grid-cols-2">
             {contacts.map((c) => (
@@ -57,7 +58,7 @@ export default async function ServicesPage() {
       )}
 
       {cemetery.name && (
-        <section className={card}>
+        <section className={card} {...reveal("up")}>
           <h2 className="text-lg font-extrabold text-pm-text">{t.services.cemeteryTitle}</h2>
           <p className="flex items-start gap-2 text-pm-text-3">
             <MapPinIcon size={16} className="mt-1 shrink-0 text-pm-muted" aria-hidden />

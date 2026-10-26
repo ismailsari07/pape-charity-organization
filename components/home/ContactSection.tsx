@@ -3,6 +3,7 @@ import Link from "next/link";
 import { resolveI18n, t } from "@/lib/i18n";
 import { directionsUrl, type MosqueInfo } from "@/lib/content/bundle";
 import { Eyebrow } from "@/components/site/SectionHeading";
+import { reveal } from "@/lib/reveal";
 
 import { telHref } from "@/lib/contact-links";
 
@@ -19,7 +20,7 @@ export default function ContactSection({ mosque, allLink = false, as: Title = "h
 
   return (
     <section id="iletisim" className="flex scroll-mt-6 flex-col gap-5 md:flex-row">
-      <div className="flex min-w-0 flex-col gap-[18px] rounded-[22px] border border-pm-line bg-pm-card p-7 md:flex-[1_1_380px]">
+      <div className="flex min-w-0 flex-col gap-[18px] rounded-[22px] border border-pm-line bg-pm-card p-7 md:flex-[1_1_380px]" {...reveal("up")}>
         <Eyebrow>{t.contact.eyebrow}</Eyebrow>
         <Title className="text-[32px] leading-tight font-extrabold tracking-[-0.6px] text-pm-text">{t.contact.title}</Title>
         <dl className="flex flex-col gap-3.5 text-base text-pm-text">
@@ -64,7 +65,7 @@ export default function ContactSection({ mosque, allLink = false, as: Title = "h
         )}
       </div>
 
-      <div className="relative flex min-h-[320px] min-w-0 items-end overflow-hidden rounded-[22px] border border-pm-line bg-pm-map p-[22px] md:flex-[1.4_1_420px]">
+      <div className="relative flex min-h-[320px] min-w-0 items-end overflow-hidden rounded-[22px] border border-pm-line bg-pm-map p-[22px] md:flex-[1.4_1_420px]" {...reveal("up", 100)}>
         <div className="absolute inset-0 grid grid-cols-6 gap-2.5 p-5 opacity-35" aria-hidden>
           {TILES.map((tone, i) => (
             <span key={i} className={`rounded-[6px] ${tone === "a" ? "bg-[#233a32]" : "bg-[#1d312a]"}`} />

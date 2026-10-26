@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { reveal } from "@/lib/reveal";
 
 type Action = { href: string; label: string; primary?: boolean } | { onClick: () => void; label: string; primary?: boolean };
 
@@ -11,7 +12,7 @@ export default function StatusCard({ icon, eyebrow, title, children, actions }: 
       : "inline-flex items-center justify-center rounded-full border border-pm-line px-5 py-3 text-[15px] font-semibold text-pm-text-3 transition-colors hover:text-pm-mint-hover";
   return (
     <main className="mx-auto flex max-w-[1248px] justify-center px-6 pt-20">
-      <div className="flex w-full max-w-lg flex-col items-center gap-4 rounded-[24px] border border-pm-line bg-pm-card p-8 text-center md:p-10">
+      <div className="flex w-full max-w-lg flex-col items-center gap-4 rounded-[24px] border border-pm-line bg-pm-card p-8 text-center md:p-10" {...reveal("up")}>
         <span className="flex size-14 items-center justify-center rounded-[16px] bg-pm-tile text-pm-mint">{icon}</span>
         {eyebrow && <span className="text-sm font-bold tracking-[1.5px] text-pm-mint uppercase">{eyebrow}</span>}
         <h1 className="text-[32px] leading-tight font-extrabold tracking-[-0.6px] text-pm-text">{title}</h1>
