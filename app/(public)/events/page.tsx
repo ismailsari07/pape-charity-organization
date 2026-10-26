@@ -20,12 +20,12 @@ export default async function EventsPage() {
   const events = await getUpcomingEvents();
 
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-8 px-4 pt-8 md:px-6 md:pt-14">
+    <main className="mx-auto flex max-w-[1248px] flex-col gap-7 px-6 pt-14">
       <SectionHeading as="h1" eyebrow={t.events.eyebrow} title={t.events.title} intro={t.events.pageIntro} />
       {events.length === 0 ? (
         <p className="text-pm-text-2">{t.events.empty}</p>
       ) : (
-        <div className="grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {events.map((u) => (
             <EventCard key={u.event.id} upcoming={u} showDescription />
           ))}

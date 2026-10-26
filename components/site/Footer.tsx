@@ -1,18 +1,18 @@
+import Image from "next/image";
 import Link from "next/link";
 import { t } from "@/lib/i18n";
 import type { Features, Links } from "@/lib/content/bundle";
-import Logo from "./Logo";
 
 export default function Footer({ features, links }: { features: Features; links: Links }) {
-  const linkClass = "text-sm font-semibold text-pm-text-3 transition-colors hover:text-pm-mint";
+  const linkClass = "text-pm-text-2 transition-colors hover:text-pm-mint-hover";
   return (
-    <footer className="mt-24 border-t border-pm-line">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 md:flex-row md:items-center md:justify-between md:px-6">
-        <div className="flex flex-col gap-3">
-          <Logo />
-          <p className="text-sm text-pm-muted">{t.footer.copyright}</p>
-        </div>
-        <nav className="flex flex-wrap gap-x-6 gap-y-3">
+    <footer className="mt-20 border-t border-pm-line">
+      <div className="mx-auto flex max-w-[1248px] flex-wrap items-center justify-between gap-4 px-6 py-7 text-sm text-pm-muted">
+        <span className="flex items-center gap-2.5">
+          <Image src="/brand/logo-green.png" alt="" width={28} height={28} className="size-7 rounded-[8px]" />
+          {t.footer.copyright}
+        </span>
+        <nav className="flex flex-wrap gap-[18px]">
           {features.announcements && (
             <Link href="/announcements" className={linkClass}>
               {t.footer.announcements}

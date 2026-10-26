@@ -23,7 +23,7 @@ export const tr = {
     eyebrow: "336 Pape Avenue · Toronto",
     title: "Pape Camii'ne hoş geldiniz",
     intro:
-      "Namaz vakitleri Türkiye Diyanet İşleri Başkanlığı'ndan, cemaat vakitleri camimizden; her gün güncel.",
+      "Toronto'da namaz, sohbet ve kardeşlik. Namaz vakitleri Türkiye Diyanet İşleri Başkanlığı'ndan, cemaat vakitleri camimizden.",
   },
   prayer: {
     todayTitle: "Bugünün vakitleri",
@@ -74,7 +74,9 @@ export const tr = {
     registerFree: "Kayıt ol · ücretsiz",
     registerInApp: "Kayıt uygulamadan yapılır",
     free: "Ücretsiz",
-    // Category labels (youth_events.category; anything else → community).
+    // Card eyebrow for recurring events (the app's *ProgrammeEyebrow).
+    programme: { weekly: "Haftalık program", biweekly: "İki haftalık program", monthly: "Aylık program" } as Record<string, string>,
+    // Category labels (youth_events.category; anything else → community), the eyebrow of one-off events.
     categories: {
       education: "Eğitim",
       youth: "Gençlik",
@@ -98,8 +100,8 @@ export const tr = {
   services: {
     eyebrow: "Hizmetler",
     title: "Zor günlerinizde yanınızdayız",
-    intro: "Cenaze ve defin işlemlerinde ailelere her adımda destek oluyoruz.",
-    details: "Ayrıntılar",
+    intro: "Cenaze ve defin işlemlerinde görevlilerimiz her adımda size yardımcı olur.",
+    details: "Detaylar",
     contactsTitle: "İrtibat",
     cemeteryTitle: "Mezarlığımız",
     directions: "Yol tarifi al",
@@ -108,28 +110,28 @@ export const tr = {
   donation: {
     eyebrow: "Bağış",
     title: "Caminize destek olun",
-    intro: "Bağışlarınız camimizin hizmetlerini ve cemaatimizin faaliyetlerini ayakta tutar.",
+    intro: "Bağışlarınız camimizin hizmetlerini ayakta tutar. Ödeme Stripe ile güvenle alınır.",
     allFunds: "Bağış sayfasına git",
   },
   app: {
     eyebrow: "Mobil uygulama",
     title: "Pape Camii cebinizde",
-    intro: "Namaz vakitleri, duyurular ve etkinlikler her an yanınızda.",
+    intro: "Her cemaatten önce hatırlatma, ana ekran widget'ları, etkinlik kaydı ve duyurular. Ücretsiz, reklamsız.",
     appStore: "App Store'dan indirin",
     features: [
-      { title: "Vakitler ve hatırlatmalar", text: "Ezan ve cemaat vakitleri, istediğiniz vakit için bildirim." },
-      { title: "Duyuru ve etkinlik bildirimleri", text: "Camiden haberler ve etkinlikler anında telefonunuzda." },
-      { title: "Ana ekran widget'ı", text: "Sıradaki vakit, uygulamayı açmadan ana ekranınızda." },
-      { title: "Kolay bağış", text: "Fonu seçin, bağışınızı birkaç dokunuşla yapın." },
+      { title: "Hatırlatmalar", text: "Cemaatten 5 dk önce" },
+      { title: "Widget'lar", text: "Ana ve kilit ekranı" },
+      { title: "Etkinlik kaydı", text: "Uygulamadan kolayca" },
+      { title: "3 dil", text: "Türkçe, English, Français" },
     ],
   },
   contact: {
     eyebrow: "İletişim",
-    title: "Bize ulaşın",
+    title: "Camimize bekleriz",
     address: "Adres",
     phone: "Telefon",
     email: "E-posta",
-    hours: "Açık olduğumuz saatler",
+    hours: "Açık olduğu saatler",
     directions: "Yol tarifi al",
   },
   footer: {

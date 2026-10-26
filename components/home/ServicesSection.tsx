@@ -1,41 +1,30 @@
 import Link from "next/link";
-import { ArrowRightIcon, PhoneIcon } from "lucide-react";
 import { resolveI18n, t } from "@/lib/i18n";
-import type { Contact, Service } from "@/lib/content/bundle";
-import SectionHeading from "@/components/site/SectionHeading";
+import type { Service } from "@/lib/content/bundle";
+import { Eyebrow } from "@/components/site/SectionHeading";
 import { SERVICE_ICON } from "@/components/services/serviceIcon";
 
 /** Burial service card only (marriage is hidden on the website for now). */
-export default function ServicesSection({ burial, contacts }: { burial: Service; contacts: Contact[] }) {
+export default function ServicesSection({ burial, cemeteryName }: { burial: Service; cemeteryName: string }) {
   const Icon = SERVICE_ICON[burial.icon] ?? SERVICE_ICON.leaf;
+  const summary = [resolveI18n(burial.summary), cemeteryName].filter(Boolean).join(" · ");
   return (
-    <section id="hizmetler" className="flex scroll-mt-6 flex-col gap-8">
-      <SectionHeading eyebrow={t.services.eyebrow} title={t.services.title} intro={t.services.intro} />
+    <section id="hizmetler" className="flex scroll-mt-6 flex-col gap-5 md:flex-row">
+      <div className="flex min-w-0 flex-1 flex-col gap-3 py-2 md:basis-[340px]">
+        <Eyebrow>{t.services.eyebrow}</Eyebrow>
+        <h2 className="text-[38px] leading-tight font-extrabold tracking-[-0.8px] text-pm-text">{t.services.title}</h2>
+        <p className="text-[17px] leading-[1.6] text-pm-text-2">{t.services.intro}</p>
+      </div>
       <Link
         href="/services"
-        className="group flex flex-col gap-5 rounded-[24px] border border-pm-line bg-pm-card p-6 transition-colors hover:border-pm-mint/40 md:flex-row md:items-start md:gap-8 md:p-8"
+        className="group flex min-w-0 flex-1 flex-col gap-3 rounded-[22px] border border-pm-line bg-pm-card p-[26px] transition-colors hover:border-pm-mint/40 md:basis-[300px]"
       >
-        <span className="flex size-12 shrink-0 items-center justify-center rounded-[14px] bg-pm-tile text-pm-mint">
-          <Icon size={22} />
+        <span className="flex size-12 items-center justify-center rounded-[14px] bg-pm-tile text-pm-mint">
+          <Icon size={24} />
         </span>
-        <div className="flex flex-1 flex-col gap-3">
-          <h3 className="text-xl font-extrabold text-pm-text">{resolveI18n(burial.title)}</h3>
-          <p className="text-sm font-semibold text-pm-mint">{resolveI18n(burial.summary)}</p>
-          {resolveI18n(burial.body) && <p className="max-w-3xl text-pm-text-2">{resolveI18n(burial.body)}</p>}
-          {contacts.length > 0 && (
-            <ul className="mt-1 flex flex-wrap gap-x-8 gap-y-2 text-sm text-pm-text-3">
-              {contacts.map((c) => (
-                <li key={c.id} className="flex items-center gap-2">
-                  <PhoneIcon size={14} className="text-pm-muted" aria-hidden />
-                  <span className="font-bold text-pm-text">{c.name}</span> {c.phone}
-                </li>
-              ))}
-            </ul>
-          )}
-          <span className="mt-1 inline-flex items-center gap-1 text-sm font-bold text-pm-mint transition-colors group-hover:text-pm-text">
-            {t.services.details} <ArrowRightIcon size={14} aria-hidden />
-          </span>
-        </div>
+        <h3 className="text-xl font-extrabold text-pm-text">{resolveI18n(burial.title)}</h3>
+        {summary && <p className="text-[15px] leading-[1.55] text-pm-text-2">{summary}</p>}
+        <span className="mt-auto text-[15px] font-bold text-pm-mint transition-colors group-hover:text-pm-mint-hover">{t.services.details} →</span>
       </Link>
     </section>
   );

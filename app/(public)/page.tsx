@@ -37,10 +37,10 @@ export default async function Home() {
   const burial = features.burialService ? content.services.find((s) => s.kind === "burial") : undefined;
 
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-24 px-4 pt-8 md:px-6 md:pt-14">
+    <main className="mx-auto flex max-w-[1248px] flex-col gap-24 px-6 pt-14">
       <Hero prayer={prayer ?? { today: torontoDate(), days: [] }} announcement={announcements[0] ?? null} announcementCount={announcements.length} />
       <EventsSection events={events} />
-      {burial && <ServicesSection burial={burial} contacts={content.contacts.filter((c) => c.group === "burial")} />}
+      {burial && <ServicesSection burial={burial} cemeteryName={content.cemetery.name} />}
       <DonationBand funds={funds} />
       <AppSection appStoreUrl={content.links.app_store} />
       <ContactSection mosque={content.mosque} />

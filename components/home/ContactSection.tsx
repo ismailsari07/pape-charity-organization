@@ -1,66 +1,76 @@
-import { ArrowRightIcon, ClockIcon, MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
+import Image from "next/image";
 import { resolveI18n, t } from "@/lib/i18n";
 import { directionsUrl, type MosqueInfo } from "@/lib/content/bundle";
-import SectionHeading from "@/components/site/SectionHeading";
+import { Eyebrow } from "@/components/site/SectionHeading";
 
 const tel = (phone: string) => `tel:+1${phone.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "")}`;
 
+// Decorative "map" tiles (two rows of six); no embedded map for now.
+const TILES = ["a", "a", "b", "a", "b", "a", "b", "a", "a", "b", "a", "b"];
+
 export default function ContactSection({ mosque }: { mosque: MosqueInfo }) {
-  const card = "flex flex-col gap-3 rounded-[22px] border border-pm-line bg-pm-card p-5";
-  const tile = "flex size-10 items-center justify-center rounded-[12px] bg-pm-tile text-pm-mint";
-  const label = "text-xs font-bold uppercase tracking-[0.12em] text-pm-muted";
-  const link = "font-bold text-pm-text transition-colors hover:text-pm-mint";
+  const label = "text-[13px] font-bold text-pm-muted uppercase";
+  const link = "text-pm-mint transition-colors hover:text-pm-mint-hover";
 
   return (
-    <section id="iletisim" className="flex scroll-mt-6 flex-col gap-8">
-      <SectionHeading eyebrow={t.contact.eyebrow} title={t.contact.title} />
-      <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className={card}>
-          <span className={tile}>
-            <MapPinIcon size={18} />
-          </span>
-          <p className={label}>{t.contact.address}</p>
-          <p className="font-bold text-pm-text">
-            {mosque.street}
-            <br />
-            {mosque.city} {mosque.postalCode}
-          </p>
-          <a href={directionsUrl(mosque)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-bold text-pm-mint transition-colors hover:text-pm-text">
-            {t.contact.directions} <ArrowRightIcon size={14} aria-hidden />
-          </a>
+    <section id="iletisim" className="flex scroll-mt-6 flex-col gap-5 md:flex-row">
+      <div className="flex min-w-0 flex-col gap-[18px] rounded-[22px] border border-pm-line bg-pm-card p-7 md:flex-[1_1_380px]">
+        <Eyebrow>{t.contact.eyebrow}</Eyebrow>
+        <h2 className="text-[32px] leading-tight font-extrabold tracking-[-0.6px] text-pm-text">{t.contact.title}</h2>
+        <dl className="flex flex-col gap-3.5 text-base text-pm-text">
+          <div className="flex flex-col gap-0.5">
+            <dt className={label}>{t.contact.address}</dt>
+            <dd>
+              {mosque.street}, {mosque.city} {mosque.postalCode}
+            </dd>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <dt className={label}>{t.contact.phone}</dt>
+            <dd>
+              <a href={tel(mosque.phone)} className={link}>
+                {mosque.phone}
+              </a>
+            </dd>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <dt className={label}>{t.contact.email}</dt>
+            <dd>
+              <a href={`mailto:${mosque.email}`} className={`${link} break-all`}>
+                {mosque.email}
+              </a>
+            </dd>
+          </div>
+          {mosque.hours.length > 0 && (
+            <div className="flex flex-col gap-0.5">
+              <dt className={label}>{t.contact.hours}</dt>
+              {mosque.hours.map((h, i) => (
+                <dd key={i}>
+                  {/* The first row is the general opening; further rows name what they are about. */}
+                  {i === 0 ? resolveI18n(h.value) : `${resolveI18n(h.label)}: ${resolveI18n(h.value)}`}
+                </dd>
+              ))}
+            </div>
+          )}
+        </dl>
+      </div>
+
+      <div className="relative flex min-h-[320px] min-w-0 items-end overflow-hidden rounded-[22px] border border-pm-line bg-pm-map p-[22px] md:flex-[1.4_1_420px]">
+        <div className="absolute inset-0 grid grid-cols-6 gap-2.5 p-5 opacity-35" aria-hidden>
+          {TILES.map((tone, i) => (
+            <span key={i} className={`rounded-[6px] ${tone === "a" ? "bg-[#233a32]" : "bg-[#1d312a]"}`} />
+          ))}
         </div>
-        <div className={card}>
-          <span className={tile}>
-            <PhoneIcon size={18} />
-          </span>
-          <p className={label}>{t.contact.phone}</p>
-          <a href={tel(mosque.phone)} className={link}>
-            {mosque.phone}
-          </a>
-        </div>
-        <div className={card}>
-          <span className={tile}>
-            <MailIcon size={18} />
-          </span>
-          <p className={label}>{t.contact.email}</p>
-          <a href={`mailto:${mosque.email}`} className={`${link} break-all`}>
-            {mosque.email}
-          </a>
-        </div>
-        <div className={card}>
-          <span className={tile}>
-            <ClockIcon size={18} />
-          </span>
-          <p className={label}>{t.contact.hours}</p>
-          <dl className="flex flex-col gap-2 text-sm">
-            {mosque.hours.map((h, i) => (
-              <div key={i}>
-                <dt className="font-bold text-pm-text">{resolveI18n(h.label)}</dt>
-                <dd className="text-pm-text-2">{resolveI18n(h.value)}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+        <span className="absolute top-[42%] left-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-pm-green shadow-[0_10px_30px_rgba(0,0,0,0.4)]" aria-hidden>
+          <Image src="/brand/logo-green.png" alt="" width={36} height={36} className="size-9 rounded-[10px]" />
+        </span>
+        <a
+          href={directionsUrl(mosque)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative inline-flex items-center gap-2 rounded-full bg-pm-green px-5 py-[13px] text-[15px] font-bold text-white transition-colors hover:bg-pm-green-hover"
+        >
+          {t.contact.directions}
+        </a>
       </div>
     </section>
   );

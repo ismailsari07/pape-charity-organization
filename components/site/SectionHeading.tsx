@@ -1,22 +1,26 @@
 import Link from "next/link";
-import { ArrowRightIcon } from "lucide-react";
 
 type Props = { eyebrow: string; title: string; intro?: string; link?: { href: string; label: string }; as?: "h1" | "h2" };
 
 /** Eyebrow + title (+ intro) with an optional "see all" link on the right. */
 export default function SectionHeading({ eyebrow, title, intro, link, as: Tag = "h2" }: Props) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="flex max-w-2xl flex-col gap-3">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-pm-mint">{eyebrow}</p>
-        <Tag className="text-3xl font-extrabold tracking-tight text-pm-text md:text-4xl">{title}</Tag>
-        {intro && <p className="text-base text-pm-text-2">{intro}</p>}
+    <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="flex max-w-2xl flex-col gap-2">
+        <Eyebrow>{eyebrow}</Eyebrow>
+        <Tag className="text-[38px] leading-tight font-extrabold tracking-[-0.8px] text-pm-text">{title}</Tag>
+        {intro && <p className="mt-1 text-[17px] leading-[1.6] text-pm-text-2">{intro}</p>}
       </div>
       {link && (
-        <Link href={link.href} className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-pm-mint transition-colors hover:text-pm-text">
-          {link.label} <ArrowRightIcon size={14} aria-hidden />
+        <Link href={link.href} className="text-base font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
+          {link.label} →
         </Link>
       )}
     </div>
   );
+}
+
+/** The mint uppercase label above titles. */
+export function Eyebrow({ children, className = "text-pm-mint" }: { children: React.ReactNode; className?: string }) {
+  return <span className={`text-sm font-bold tracking-[1.5px] uppercase ${className}`}>{children}</span>;
 }

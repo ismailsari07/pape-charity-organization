@@ -30,7 +30,7 @@ export default async function ServicesPage() {
   const card = "flex flex-col gap-4 rounded-[24px] border border-pm-line bg-pm-card p-6 md:p-8";
 
   return (
-    <main className="mx-auto flex max-w-4xl flex-col gap-8 px-4 pt-8 md:px-6 md:pt-14">
+    <main className="mx-auto flex max-w-4xl flex-col gap-7 px-6 pt-14">
       <SectionHeading as="h1" eyebrow={t.services.eyebrow} title={t.services.title} intro={t.services.intro} />
 
       <section className={card}>
@@ -54,7 +54,7 @@ export default async function ServicesPage() {
               <li key={c.id} className="flex flex-col gap-1 rounded-[18px] bg-pm-tile/60 p-4">
                 <span className="font-bold text-pm-text">{c.name}</span>
                 <span className="text-sm text-pm-text-2">{resolveI18n(c.position)}</span>
-                <a href={tel(c.phone)} className="mt-1 inline-flex items-center gap-2 font-bold text-pm-mint transition-colors hover:text-pm-text">
+                <a href={tel(c.phone)} className="mt-1 inline-flex items-center gap-2 font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
                   <PhoneIcon size={14} aria-hidden /> {c.phone}
                 </a>
               </li>
@@ -75,7 +75,7 @@ export default async function ServicesPage() {
             </span>
           </p>
           {history && <p className="text-pm-text-2">{history}</p>}
-          <a href={directionsUrl(cemetery)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 self-start text-sm font-bold text-pm-mint transition-colors hover:text-pm-text">
+          <a href={directionsUrl(cemetery)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 self-start text-sm font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
             {t.services.directions} <ArrowRightIcon size={14} aria-hidden />
           </a>
         </section>
