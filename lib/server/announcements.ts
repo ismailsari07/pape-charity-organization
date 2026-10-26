@@ -7,8 +7,6 @@ import { imageSize } from "@/lib/server/image-size";
 //
 // RLS already limits anon to published, unexpired rows; the filters below
 // repeat that so the result never depends on who is asking.
-//
-// The old lib/api/announcements.ts belongs to the old /admin and stays as is.
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

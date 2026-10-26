@@ -3,11 +3,9 @@ import Script from "next/script";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { AuthProvider } from "@/components/AuthProvider";
 import { websiteJsonLd } from "@/lib/seo/websiteJsonLd";
 import { mosqueJsonLd } from "@/lib/seo/mosqueJsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo/breadcrumbJsonLd";
-import { Toaster } from "@/components/ui/sonner";
 
 // Variable font: every weight from 400 to 800 in one file.
 const manrope = Manrope({
@@ -60,9 +58,8 @@ export default function RootLayout({
     <html lang="tr">
       <body className={`${manrope.variable} antialiased font-sans`}>
         <Providers>
-          <AuthProvider>{children}</AuthProvider>
+          {children}
         </Providers>
-        <Toaster position="top-center" richColors />
 
         <Script
           id="ld-website"

@@ -1,16 +1,5 @@
-export type PrayerItem = {
-  name: "Fajr" | "Sunrise" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
-  time: string;
-  iqamah?: string;
-  ampm: "a.m" | "p.m";
-};
-
-export interface CreateSubscriberInput {
-  name: string;
-  email: string;
-  phone?: string;
-}
-
+// The donation page's fund row (read in the browser by lib/api/funds.ts until
+// the page moves to the server-side read in lib/server/funds.ts).
 export type DonationFund = {
   id: string;
   slug: "zekat" | "sadaka" | "general" | "cenaze" | "fitre";
