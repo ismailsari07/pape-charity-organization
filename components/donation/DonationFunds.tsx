@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useVisualViewportInset } from "@/hooks/use-visual-viewport-inset";
 import { t } from "@/lib/i18n";
 import type { DonationFund } from "@/lib/server/funds";
+import { reveal } from "@/lib/reveal";
 
 type Values = {
   email: string;
@@ -115,8 +116,8 @@ export default function DonationFunds({ funds }: { funds: DonationFund[] }) {
   return (
     <>
       <div className="grid gap-5 sm:grid-cols-2">
-        {funds.map((fund) => (
-          <div key={fund.slug} className="flex flex-col gap-3 rounded-[22px] border border-pm-line bg-pm-card p-[26px]">
+        {funds.map((fund, i) => (
+          <div key={fund.slug} className="flex flex-col gap-3 rounded-[22px] border border-pm-line bg-pm-card p-[26px]" {...reveal("up", 150 + i * 70)}>
             <span className="flex size-12 items-center justify-center rounded-[14px] bg-pm-tile text-pm-mint">
               <HeartIcon size={22} aria-hidden />
             </span>
@@ -132,7 +133,7 @@ export default function DonationFunds({ funds }: { funds: DonationFund[] }) {
           </div>
         ))}
       </div>
-      <p className="flex items-center gap-2 text-sm text-pm-muted">
+      <p className="flex items-center gap-2 text-sm text-pm-muted" {...reveal("up", 150 + funds.length * 70)}>
         <LockIcon size={14} aria-hidden /> {t.donation.secure}
       </p>
 
