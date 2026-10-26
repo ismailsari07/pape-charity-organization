@@ -43,7 +43,7 @@ export default async function Home() {
       {burial && <ServicesSection burial={burial} cemeteryName={content.cemetery.name} />}
       <DonationBand funds={funds} />
       <AppSection appStoreUrl={content.links.app_store} />
-      <ContactSection mosque={content.mosque} />
+      <ContactSection mosque={content.mosque} allLink />
     </main>
   );
 }

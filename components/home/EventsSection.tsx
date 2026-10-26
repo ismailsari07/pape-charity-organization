@@ -8,7 +8,7 @@ export default function EventsSection({ events }: { events: UpcomingEvent[] }) {
   if (events.length === 0) return null;
   return (
     <section id="etkinlikler" className="flex scroll-mt-6 flex-col gap-7">
-      <SectionHeading eyebrow={t.events.eyebrow} title={t.events.title} link={{ href: "/events", label: t.events.all }} />
+      <SectionHeading eyebrow={t.events.eyebrow} title={t.events.title} link={{ href: "/community", label: t.events.all }} />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {events.slice(0, 3).map((u) => (
           <EventCard key={u.event.id} upcoming={u} />

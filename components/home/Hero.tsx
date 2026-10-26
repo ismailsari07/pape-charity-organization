@@ -29,7 +29,7 @@ export default function Hero({ prayer, announcement, announcementCount }: Props)
         <div className="flex flex-col gap-3 self-start lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <AnnouncementCard announcement={announcement} variant="tall" priority />
           {announcementCount > 1 && (
-            <Link href="/announcements" className="inline-flex items-center gap-1 self-end text-[15px] font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
+            <Link href="/community?tab=duyurular" className="inline-flex items-center gap-1 self-end text-[15px] font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
               {t.announcement.all(announcementCount)} <ArrowRightIcon size={14} aria-hidden />
             </Link>
           )}

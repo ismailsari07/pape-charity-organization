@@ -7,9 +7,8 @@ export type NavItem = { href: string; label: string };
 export function navItems(features: Features): NavItem[] {
   return [
     { href: "/prayer-times", label: t.nav.prayerTimes },
-    ...(features.announcements ? [{ href: "/announcements", label: t.nav.announcements }] : []),
-    ...(features.events ? [{ href: "/events", label: t.nav.events }] : []),
+    ...(features.events || features.announcements ? [{ href: "/community", label: t.nav.community }] : []),
     ...(features.burialService ? [{ href: "/services", label: t.nav.services }] : []),
-    { href: "/#iletisim", label: t.nav.contact },
+    { href: "/iletisim", label: t.nav.contact },
   ];
 }

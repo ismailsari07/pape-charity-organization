@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowRightIcon, MapPinIcon, PhoneIcon } from "lucide-react";
+import { ArrowRightIcon, MapPinIcon } from "lucide-react";
 import { resolveI18n, t } from "@/lib/i18n";
 import { directionsUrl } from "@/lib/content/bundle";
 import { getSiteContent } from "@/lib/server/content";
 import SectionHeading from "@/components/site/SectionHeading";
 import { SERVICE_ICON } from "@/components/services/serviceIcon";
+import ContactCard from "@/components/contacts/ContactCard";
 
 export const revalidate = 60;
 
@@ -14,8 +15,6 @@ export const metadata: Metadata = {
   description: t.services.intro,
   alternates: { canonical: "/services" },
 };
-
-const tel = (phone: string) => `tel:+1${phone.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "")}`;
 
 // Only the burial service for now (marriage hidden on the website).
 export default async function ServicesPage() {
@@ -51,13 +50,7 @@ export default async function ServicesPage() {
           <h2 className="text-lg font-extrabold text-pm-text">{t.services.contactsTitle}</h2>
           <ul className="grid gap-3 sm:grid-cols-2">
             {contacts.map((c) => (
-              <li key={c.id} className="flex flex-col gap-1 rounded-[18px] bg-pm-tile/60 p-4">
-                <span className="font-bold text-pm-text">{c.name}</span>
-                <span className="text-sm text-pm-text-2">{resolveI18n(c.position)}</span>
-                <a href={tel(c.phone)} className="mt-1 inline-flex items-center gap-2 font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
-                  <PhoneIcon size={14} aria-hidden /> {c.phone}
-                </a>
-              </li>
+              <ContactCard key={c.id} contact={c} />
             ))}
           </ul>
         </section>

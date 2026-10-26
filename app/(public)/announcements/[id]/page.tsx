@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getSiteContent } from "@/lib/server/content";
-import Image from "next/image";
+import PhotoFrame from "@/components/media/PhotoFrame";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { getActiveAnnouncement } from "@/lib/server/announcements";
 import { announcementDate, announcementParagraphs } from "@/lib/announcements";
 import { imageSize } from "@/lib/server/image-size";
@@ -40,35 +39,15 @@ export default async function AnnouncementPage({ params }: Props) {
   if (!announcement) notFound();
 
   const { title, description, image_url, image_alt_text } = announcement;
-  // Natural size (cached per URL) so the full photo takes its own height without a layout shift.
+  // Natural size (cached per URL): the photo takes its own height without a layout shift.
   const size = image_url ? await imageSize(image_url) : null;
 
-  return (
-    <main className="mx-auto flex max-w-[860px] flex-col gap-6 px-6 pt-14">
-      <Link href="/announcements" className="inline-flex items-center gap-1 self-start text-[15px] font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
-        <ArrowLeft size={16} aria-hidden /> {t.announcementsPage.back}
-      </Link>
-
-      <header className="flex flex-col gap-3">
-        <span className="text-sm font-bold tracking-[1.5px] text-pm-mint uppercase">
-          {t.announcement.eyebrow} · {announcementDate(announcement)}
-        </span>
-        <h1 className="text-[36px] leading-[1.1] font-extrabold tracking-[-1px] text-pm-text md:text-[48px]">{title}</h1>
-      </header>
-
-      {/* Full photo in its original aspect ratio (the panel never crops it). */}
-      {image_url && (
-        <Image
-          src={image_url}
-          alt={image_alt_text ?? title}
-          width={size?.width ?? 1600}
-          height={size?.height ?? 1600}
-          priority
-          sizes="(min-width: 860px) 812px, 100vw"
-          className="h-auto w-full rounded-[22px] border border-pm-line"
-        />
-      )}
-
+  const text = (
+    <article className="flex min-w-0 flex-col gap-5">
+      <span className="text-sm font-bold tracking-[1.5px] text-pm-mint uppercase">
+        {t.announcement.eyebrow} · {announcementDate(announcement)}
+      </span>
+      <h1 className="text-[36px] leading-[1.1] font-extrabold tracking-[-1px] text-pm-text md:text-[44px]">{title}</h1>
       <div className="flex flex-col gap-4 text-[17px] leading-[1.7] text-pm-text-2">
         {announcementParagraphs(description).map((p, i) => (
           <p key={i} className="whitespace-pre-line">
@@ -76,6 +55,32 @@ export default async function AnnouncementPage({ params }: Props) {
           </p>
         ))}
       </div>
+      <Link href="/community?tab=duyurular" className="mt-2 self-start text-[15px] font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
+        {t.announcementsPage.back} →
+      </Link>
+    </article>
+  );
+
+  // Desktop: photo (about the hero card's size, PhotoFrame rules) beside the
+  // text; mobile: stacked, photo first. Without a photo: text only, full width.
+  return (
+    <main className="mx-auto max-w-[1248px] px-6 pt-14">
+      {image_url ? (
+        <div className="grid items-start gap-8 lg:grid-cols-[480px_minmax(0,1fr)] lg:gap-14">
+          <PhotoFrame
+            src={image_url}
+            alt={image_alt_text ?? title}
+            size={size}
+            fallbackRatio="4 / 5"
+            sizes="(min-width: 1024px) 480px, 100vw"
+            priority
+            className="rounded-[24px] border border-pm-line"
+          />
+          {text}
+        </div>
+      ) : (
+        <div className="max-w-[860px]">{text}</div>
+      )}
     </main>
   );
 }

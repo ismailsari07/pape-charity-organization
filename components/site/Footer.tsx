@@ -14,7 +14,7 @@ export default function Footer({ features, links }: { features: Features; links:
         </span>
         <nav className="flex flex-wrap gap-[18px]">
           {features.announcements && (
-            <Link href="/announcements" className={linkClass}>
+            <Link href="/community?tab=duyurular" className={linkClass}>
               {t.footer.announcements}
             </Link>
           )}

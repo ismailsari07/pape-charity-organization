@@ -22,8 +22,12 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/service", destination: "/services", permanent: true },
-      { source: "/about", destination: "/#iletisim", permanent: true },
-      { source: "/contact", destination: "/#iletisim", permanent: true },
+      { source: "/about", destination: "/iletisim", permanent: true },
+      { source: "/contact", destination: "/iletisim", permanent: true },
+      // Events and announcements live under one page with tabs (like the app);
+      // announcement detail pages keep their /announcements/[id] URLs.
+      { source: "/events", destination: "/community", permanent: true },
+      { source: "/announcements", destination: "/community?tab=duyurular", permanent: true },
     ];
   },
 };

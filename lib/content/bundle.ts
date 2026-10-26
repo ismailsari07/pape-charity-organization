@@ -45,7 +45,7 @@ export type Service = {
 
 export type Cemetery = { name: string; street: string; city: string; lat?: number; lng?: number; history: I18nText };
 
-export type Contact = { id: string; name: string; phone: string; email?: string; group: string; position: I18nText };
+export type Contact = { id: string; name: string; phone?: string; email?: string; group: string; position: I18nText };
 
 export type SiteContent = {
   mosque: MosqueInfo;
@@ -143,8 +143,11 @@ function parseContacts(raw: unknown): Contact[] {
     const id = str(c.id);
     const name = str(c.name);
     const phone = str(c.phone);
-    if (!id || !name || !phone) return [];
-    return [{ id, name, phone, email: str(c.email), group: str(c.group) ?? "", position: i18n(c.position) }];
+    const email = str(c.email);
+    // The panel makes the phone optional (board members often have only an
+    // email): show a contact that can be reached by phone or by email.
+    if (!id || !name || (!phone && !email)) return [];
+    return [{ id, name, phone, email, group: str(c.group) ?? "", position: i18n(c.position) }];
   });
 }
 

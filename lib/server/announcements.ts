@@ -1,4 +1,5 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import { PUBLIC_ANNOUNCEMENT_COLUMNS, type PublicAnnouncement } from "@/lib/announcements";
 import { publicClient } from "@/lib/server/public-client";
 import { imageSize } from "@/lib/server/image-size";
@@ -12,9 +13,12 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 /**
  * Published, unexpired announcements, newest published_at first, each with
- * its photo's natural size (cached per URL) for the cards. Throws on errors.
+ * its photo's natural size (cached per URL) for the cards. Kept 60 s in Next's
+ * data cache (also for /community, which renders per request). Throws on errors.
  */
-export async function getActiveAnnouncements(): Promise<PublicAnnouncement[]> {
+export const getActiveAnnouncements = unstable_cache(fetchActiveAnnouncements, ["active_announcements"], { revalidate: 60 });
+
+async function fetchActiveAnnouncements(): Promise<PublicAnnouncement[]> {
   const { data, error } = await publicClient()
     .from("announcements")
     .select(PUBLIC_ANNOUNCEMENT_COLUMNS)
