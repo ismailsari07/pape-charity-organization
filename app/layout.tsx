@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Lato, Bricolage_Grotesque } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { AuthProvider } from "@/components/AuthProvider";
@@ -9,15 +9,10 @@ import { mosqueJsonLd } from "@/lib/seo/mosqueJsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo/breadcrumbJsonLd";
 import { Toaster } from "@/components/ui/sonner";
 
-const bricolageGrotesque = Bricolage_Grotesque({
-  variable: "--font-bricolage-sans",
-  subsets: ["latin"],
-});
-
-const lato = Lato({
-  weight: "400",
-  variable: "--font-lato-sans",
-  subsets: ["latin"],
+// Variable font: every weight from 400 to 800 in one file.
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin", "latin-ext"],
 });
 
 export const metadata: Metadata = {
@@ -62,10 +57,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${lato.variable} ${bricolageGrotesque.variable} antialiased font-sans`}
-      >
+    <html lang="tr">
+      <body className={`${manrope.variable} antialiased font-sans`}>
         <Providers>
           <AuthProvider>{children}</AuthProvider>
         </Providers>

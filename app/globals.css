@@ -7,8 +7,24 @@ html {
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --dark: #0e140c;
-  --paper: #d1cfc0;
+  /* Site palette (dark only for now; matches the approved redesign mockup) */
+  --dark: #0a1310; /* page background */
+  --paper: #eef3f0; /* primary text */
+  --pm-card: #121c18;
+  --pm-line: rgba(255, 255, 255, 0.07);
+  --pm-tile: #16302a;
+  --pm-green: #1b7a5a;
+  --pm-green-hover: #218a66;
+  --pm-mint: #7fd1ae;
+  --pm-text-2: #a9bab3;
+  --pm-text-3: #b3c6bd;
+  --pm-muted: #8a9c95;
+  --pm-band: #12392d;
+  --pm-band-line: rgba(127, 209, 174, 0.18);
+  --pm-gold: #ecd28f;
+  --pm-gold-soft: #f6e3b0;
+  --pm-gold-bg: rgba(217, 180, 90, 0.13);
+  --pm-gold-line: rgba(217, 180, 90, 0.3);
   --radius: 0.625rem;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -44,16 +60,26 @@ html {
   --foreground: oklch(0.145 0 0);
 }
 
-[theme="dark"] {
-  --dark: #d1cfc0;
-  --paper: #0e140c;
-}
-
 @theme inline {
   --color-background: var(--dark);
   --color-foreground: var(--paper);
-  --font-sans: var(--font-bricolage-sans);
-  --font-header: var(--font-lato-sans);
+  --font-sans: var(--font-manrope);
+  --color-pm-card: var(--pm-card);
+  --color-pm-line: var(--pm-line);
+  --color-pm-tile: var(--pm-tile);
+  --color-pm-green: var(--pm-green);
+  --color-pm-green-hover: var(--pm-green-hover);
+  --color-pm-mint: var(--pm-mint);
+  --color-pm-text: var(--paper);
+  --color-pm-text-2: var(--pm-text-2);
+  --color-pm-text-3: var(--pm-text-3);
+  --color-pm-muted: var(--pm-muted);
+  --color-pm-band: var(--pm-band);
+  --color-pm-band-line: var(--pm-band-line);
+  --color-pm-gold: var(--pm-gold);
+  --color-pm-gold-soft: var(--pm-gold-soft);
+  --color-pm-gold-bg: var(--pm-gold-bg);
+  --color-pm-gold-line: var(--pm-gold-line);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -95,11 +121,6 @@ html {
 body {
   background: var(--dark);
   color: var(--paper);
-}
-
-footer {
-  background: var(--paper);
-  color: var(--dark);
 }
 
 .dark {

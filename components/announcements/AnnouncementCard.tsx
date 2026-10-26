@@ -1,66 +1,69 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MegaphoneIcon } from "lucide-react";
+import { ArrowRightIcon, MegaphoneIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 import { announcementDate, type PublicAnnouncement } from "@/lib/announcements";
 
 type Props = {
   announcement: PublicAnnouncement;
-  /** Load the photo eagerly (the hero card is above the fold). */
+  /** "tall": the home hero's portrait card; "default": 16:9 list card. */
+  variant?: "default" | "tall";
+  /** Load the photo eagerly (above the fold). */
   priority?: boolean;
   className?: string;
 };
 
-// Two variants, like the app's card: with a photo → 16:9 crop on top;
-// without → text-first with an icon, no image box at all.
-export default function AnnouncementCard({ announcement, priority = false, className }: Props) {
+// Two variants, like the app's card: with a photo → the photo on top; without
+// → text-first with an icon, no image box at all. The whole photo is always
+// visible (posters are often square or portrait): object-contain inside the
+// frame, the empty sides filled by a blurred, darkened copy of the same image.
+export default function AnnouncementCard({ announcement, variant = "default", priority = false, className }: Props) {
   const { id, title, description, image_url, image_alt_text } = announcement;
+  const tall = variant === "tall";
+  const sizes = tall ? "(min-width: 1024px) 30rem, 100vw" : "(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 100vw";
 
   return (
     <Link
       href={`/announcements/${id}`}
       className={cn(
-        "group flex flex-col overflow-hidden rounded-xl border border-neutral-800 bg-neutral-800/50 text-left shadow-sm transition-colors hover:border-[#E30A17]/60",
+        "group flex flex-col overflow-hidden rounded-[24px] border border-pm-line bg-pm-card text-left transition-colors hover:border-pm-mint/40",
         className,
       )}
     >
       {image_url && (
-        // Whole photo inside the 16:9 frame (posters are often square); the
-        // sides are filled by a blurred, darkened copy of the same image.
-        // Same src and sizes → the browser downloads it only once.
-        <div className="relative aspect-video w-full overflow-hidden bg-neutral-900">
+        // Same src and sizes on both layers → the browser downloads it once.
+        <div className={cn("relative w-full overflow-hidden bg-pm-tile", tall ? "aspect-[4/5]" : "aspect-video")}>
           <Image
             src={image_url}
             alt=""
             aria-hidden
             fill
             priority={priority}
-            sizes="(min-width: 768px) 28rem, 100vw"
+            sizes={sizes}
             className="scale-110 object-cover blur-2xl brightness-[0.6]"
           />
-          <Image
-            src={image_url}
-            alt={image_alt_text ?? title}
-            fill
-            priority={priority}
-            sizes="(min-width: 768px) 28rem, 100vw"
-            className="object-contain"
-          />
+          <Image src={image_url} alt={image_alt_text ?? title} fill priority={priority} sizes={sizes} className="object-contain" />
         </div>
       )}
 
-      <div className="flex gap-4 p-5">
+      <div className={cn("flex gap-4", tall ? "p-6" : "p-5")}>
         {!image_url && (
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#E30A17]/15 text-[#E30A17]">
-            <MegaphoneIcon size={20} />
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-[14px] bg-pm-tile text-pm-mint">
+            <MegaphoneIcon size={20} aria-hidden />
           </div>
         )}
-        <div className="flex min-w-0 flex-col gap-1.5">
-          <span className="text-xs uppercase tracking-wide text-neutral-400">
-            Duyuru · {announcementDate(announcement)}
+        <div className="flex min-w-0 flex-col gap-2">
+          <span className="text-xs font-bold uppercase tracking-[0.12em] text-pm-mint">
+            {t.announcement.eyebrow} · {announcementDate(announcement)}
           </span>
-          <h3 className="text-lg font-semibold leading-snug group-hover:text-[#E30A17]">{title}</h3>
-          <p className="line-clamp-3 text-sm text-neutral-300">{description}</p>
+          <h3 className={cn("font-extrabold leading-snug text-pm-text", tall ? "text-xl" : "text-lg")}>{title}</h3>
+          <p className={cn("text-sm text-pm-text-2", tall ? "line-clamp-4" : "line-clamp-3")}>{description}</p>
+          {tall && (
+            <span className="mt-1 inline-flex items-center gap-1 text-sm font-bold text-pm-mint transition-colors group-hover:text-pm-text">
+              {t.announcement.readMore} <ArrowRightIcon size={14} aria-hidden />
+            </span>
+          )}
         </div>
       </div>
     </Link>
