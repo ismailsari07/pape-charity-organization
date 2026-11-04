@@ -70,7 +70,7 @@ async function EventsPanel() {
   return (
     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {events.map((u, i) => (
-        <EventCard key={u.event.id} upcoming={u} showDescription revealDelay={(i % 3) * 70} />
+        <EventCard key={u.event.id} upcoming={u} showDescription showContribution revealDelay={(i % 3) * 70} />
       ))}
     </div>
   );

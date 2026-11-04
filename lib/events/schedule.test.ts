@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { nextOccurrence, sessionLine, toMosqueTime, upcomingEvents, type ScheduleWords, type YouthEvent } from "./schedule.ts";
+import { contributionOf, nextOccurrence, sessionLine, toMosqueTime, upcomingEvents, type ScheduleWords, type YouthEvent } from "./schedule.ts";
 
 const base: YouthEvent = {
   id: "x",
@@ -16,8 +16,28 @@ const base: YouthEvent = {
   registration_form: null,
   recurrence: "weekly",
   starts_after_prayer: null,
+  contribution_phone: null,
+  contribution_heading: null,
+  contribution_text: null,
+  contribution_name: null,
 };
 const ev = (over: Partial<YouthEvent>): YouthEvent => ({ ...base, ...over });
+
+test("contributionOf: no phone means no box", () => {
+  assert.equal(contributionOf(base), null);
+  assert.equal(contributionOf(ev({ contribution_heading: "Katkı?" })), null);
+  assert.equal(contributionOf(ev({ contribution_phone: "416 555 0142" })), null);
+  assert.deepEqual(contributionOf(ev({ contribution_phone: "416 555 0142", contribution_heading: "Katkı?" })), {
+    heading: "Katkı?",
+    phone: "416 555 0142",
+    text: null,
+    name: null,
+  });
+  assert.deepEqual(
+    contributionOf(ev({ contribution_phone: "416 555 0142", contribution_heading: "Katkı?", contribution_text: "Metin", contribution_name: "Ali" })),
+    { heading: "Katkı?", phone: "416 555 0142", text: "Metin", name: "Ali" },
+  );
+});
 
 test("toMosqueTime converts to Toronto wall time", () => {
   assert.deepEqual(toMosqueTime(new Date("2026-09-30T23:00:00Z")), { date: "2026-09-30", hour: 19, minute: 0 });

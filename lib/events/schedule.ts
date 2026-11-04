@@ -21,10 +21,25 @@ export type YouthEvent = {
   registration_form: unknown; // in-app form, or null
   recurrence: string;
   starts_after_prayer: string | null; // fajr | dhuhr | asr | maghrib | isha
+  // Contribution box: no phone means no box (pape-admin migration 20261027120000).
+  contribution_phone: string | null; // always "416 555 0142"
+  contribution_heading: string | null;
+  contribution_text: string | null;
+  contribution_name: string | null;
 };
 
 export const EVENT_COLUMNS =
-  "id, title, description, location, date_time, is_free, price, category, image_url, registration_link, registration_form, recurrence, starts_after_prayer";
+  "id, title, description, location, date_time, is_free, price, category, image_url, registration_link, registration_form, recurrence, starts_after_prayer, contribution_phone, contribution_heading, contribution_text, contribution_name";
+
+export type EventContribution = { heading: string; text: string | null; name: string | null; phone: string };
+
+/** The event's contribution box, or null when it has none. */
+export function contributionOf(e: YouthEvent): EventContribution | null {
+  const phone = e.contribution_phone?.trim();
+  const heading = e.contribution_heading?.trim();
+  if (!phone || !heading) return null;
+  return { heading, phone, text: e.contribution_text?.trim() || null, name: e.contribution_name?.trim() || null };
+}
 
 /** A wall-clock moment at the mosque. */
 export type MosqueTime = { date: string; hour: number; minute: number }; // date = yyyy-MM-dd

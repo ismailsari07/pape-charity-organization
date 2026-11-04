@@ -1,9 +1,10 @@
 import Image from "next/image";
 import type { ComponentType } from "react";
-import { BookOpenIcon, CalendarDaysIcon, SmartphoneIcon, UserIcon, UsersIcon } from "lucide-react";
+import { BookOpenIcon, CalendarDaysIcon, PhoneIcon, SmartphoneIcon, UserIcon, UsersIcon } from "lucide-react";
+import { telHref } from "@/lib/contact-links";
 import { DATE_LOCALE, t } from "@/lib/i18n";
 import { dayTitle } from "@/lib/prayer/display";
-import { recurrenceOf, sessionLine, type UpcomingEvent } from "@/lib/events/schedule";
+import { contributionOf, recurrenceOf, sessionLine, type UpcomingEvent } from "@/lib/events/schedule";
 import MosqueIcon from "@/components/icons/MosqueIcon";
 import { reveal } from "@/lib/reveal";
 
@@ -21,14 +22,17 @@ const words = { everyWeekday: t.events.everyWeekday, everyTwoWeeks: t.events.eve
  * Like the app's event card: a 170 px band with the photo, or the category
  * icon on a tile colour when there's no photo. Eyebrow: the programme kind
  * for recurring events (as in the app), the category for one-off events.
+ * The contribution box is for /community; the home page's cards stay short.
  */
 export default function EventCard({
   upcoming,
   showDescription = false,
+  showContribution = false,
   revealDelay,
 }: {
   upcoming: UpcomingEvent;
   showDescription?: boolean;
+  showContribution?: boolean;
   /** Entrance animation delay in ms (lib/reveal.ts); omitted = no animation. */
   revealDelay?: number;
 }) {
@@ -38,6 +42,7 @@ export default function EventCard({
   const rec = recurrenceOf(e);
   const eyebrow = rec === "none" ? (t.events.categories[category] ?? t.events.categories.community) : t.events.programme[rec];
   const when = sessionLine(upcoming, words, (iso) => dayTitle(iso, DATE_LOCALE));
+  const contribution = showContribution ? contributionOf(e) : null;
   const hasForm = e.registration_form !== null && e.registration_form !== undefined;
 
   return (
@@ -57,23 +62,36 @@ export default function EventCard({
         {showDescription && e.description && <p className="line-clamp-3 text-[15px] text-pm-text-2">{e.description}</p>}
         <p className="text-[15px] text-pm-text-2">{when}</p>
         {e.location && <p className="text-sm text-pm-muted">{e.location}</p>}
-        {(hasForm || e.registration_link) && (
-          <div className="mt-auto pt-3">
+        {(contribution || hasForm || e.registration_link) && (
+          <div className="mt-auto flex flex-col gap-3 pt-3">
+            {contribution && (
+              <div className="flex flex-col gap-1 rounded-[14px] bg-pm-tile px-4 pt-3.5 pb-2.5">
+                <p className="text-[15px] font-bold text-pm-text">{contribution.heading}</p>
+                {contribution.text && <p className="text-sm text-pm-text-2">{contribution.text}</p>}
+                <a
+                  href={telHref(contribution.phone)}
+                  className="inline-flex min-h-[44px] flex-wrap items-center gap-x-2 text-[15px] font-bold text-pm-mint transition-colors hover:text-pm-mint-hover"
+                >
+                  <PhoneIcon size={14} aria-hidden /> {contribution.phone}
+                  {contribution.name && <span className="font-medium text-pm-text-2">· {contribution.name}</span>}
+                </a>
+              </div>
+            )}
             {hasForm ? (
               // The in-app form wins over any link (the panel allows one or the other).
               <p className="flex items-center gap-2 text-sm font-semibold text-pm-text-2">
                 <SmartphoneIcon size={16} className="text-pm-mint" aria-hidden /> {t.events.registerInApp}
               </p>
-            ) : (
+            ) : e.registration_link ? (
               <a
-                href={e.registration_link!}
+                href={e.registration_link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center rounded-[14px] bg-pm-green px-4 py-2.5 text-[15px] font-bold text-white transition-colors hover:bg-pm-green-hover"
               >
                 {e.is_free ? t.events.registerFree : t.events.register}
               </a>
-            )}
+            ) : null}
           </div>
         )}
       </div>
