@@ -11,8 +11,8 @@ export const WINDOW_DAYS = 40;
 export const MAX_DAILY_DRIFT_MIN = 5;
 /** Eid has a yearly quota: call it again only after this many days. */
 export const EID_REFRESH_DAYS = 7;
-/** Alert when fewer stored days than this lie ahead of today. */
-export const MIN_HORIZON_DAYS = 7;
+/** Alert when fewer stored days than this lie ahead of today, or any of the next this many is missing. */
+export const MIN_FUTURE_DAYS = 14;
 
 export const PRAYER_NAMES = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;
 
@@ -216,31 +216,88 @@ export function withEid(days: Day[], storedEid: unknown): Day[] {
 
 // ── Alerts ──────────────────────────────────────────────────────────────
 
-export type AlertInput = {
-  today: string;
-  /** Every stored date from today on, after this run's writes. */
-  datesFromToday: string[];
+/** `type` is the unit of the once-a-day limit (alerts.ts). */
+export type Problem = { type: string; message: string };
+
+/** What is stored from today on: real dates are counted, not the last date. */
+export function dataProblems(today: string, datesFromToday: string[]): Problem[] {
+  const dates = new Set(datesFromToday);
+  const problems: Problem[] = [];
+  if (!dates.has(today)) problems.push({ type: "today_missing", message: `Today's prayer_cache row (${today}) is missing.` });
+  const future = [...dates].filter((d) => d > today).length;
+  if (future < MIN_FUTURE_DAYS) {
+    problems.push({ type: "future_days_low", message: `Only ${future} future day(s) are stored (minimum ${MIN_FUTURE_DAYS}).` });
+  }
+  const missing = Array.from({ length: MIN_FUTURE_DAYS }, (_, i) => addDays(today, i + 1)).filter((d) => !dates.has(d));
+  if (missing.length > 0) {
+    problems.push({ type: "dates_missing", message: `Missing date(s) in the next ${MIN_FUTURE_DAYS} days: ${missing.join(", ")}.` });
+  }
+  return problems;
+}
+
+export type RunFacts = {
+  /** Why pape-api gave no usable answer, or null. */
+  failure: string | null;
   /** Monthly didn't succeed: Daily fallback used, or no usable answer at all. */
   monthlyFailed: boolean;
-  /** Endpoints whose cap stopped a wanted call. */
+  source: string | null;
+  /** pape-api's failure body: Diyanet's status, and what it failed on. */
+  upstream: { status?: number | null; label?: string | null; bodySnippet?: string | null } | null;
+  calls: { endpoint: string; outcome: string; status: number | null }[] | null;
+  eidRequested: boolean;
+  eidFetched: boolean;
+  /** Endpoints whose cap in prayer_api_calls stopped a wanted call. */
   capsReached: string[];
+  /** The newest Eid call that counts toward the cap, before this run. */
+  lastEidAttempt: { outcome: string; http_status: number | null; called_at: string } | null;
+  writeError: string | null;
+  finishErrors: string[];
+  rejected: Rejection[];
 };
 
-/** The owner's alert list (2026-10-18); nothing else sends mail. */
-export function alertReasons({ today, datesFromToday, monthlyFailed, capsReached }: AlertInput): string[] {
-  const reasons: string[] = [];
-  const dates = new Set(datesFromToday);
-  if (!dates.has(today)) reasons.push(`Today's prayer_cache row (${today}) is missing.`);
-  const horizon = [...dates].filter((d) => d >= today).sort().at(-1);
-  const ahead = horizon ? daysBetween(today, horizon) : -1;
-  if (ahead < MIN_HORIZON_DAYS) {
-    reasons.push(horizon
-      ? `Stored prayer times end on ${horizon}, ${ahead} day(s) ahead (alert below ${MIN_HORIZON_DAYS}).`
-      : "No prayer times are stored from today on.");
+const isQuotaRefusal = (status: unknown, body?: string | null) => status === 406 || /kota/i.test(body ?? "");
+
+/** One run's failures. Diyanet's own quota (406) and our cap are separate types with separate messages. */
+export function runProblems(run: RunFacts): Problem[] {
+  const problems: Problem[] = [];
+
+  const refused = (run.calls ?? []).filter((c) => isQuotaRefusal(c.status)).map((c) => c.endpoint);
+  if (run.upstream && isQuotaRefusal(run.upstream.status, run.upstream.bodySnippet)) refused.push(run.upstream.label ?? "pape-api");
+  const names = [...new Set(refused)];
+  if (names.length > 0) {
+    problems.push({
+      type: "diyanet_quota",
+      message: `Diyanet refused ${names.join(", ")} with its own quota (HTTP 406). This is Diyanet's limit, not our call cap. Its listed yearly quotas reset on 1 January; check /api/Quota/My.`,
+    });
   }
-  if (monthlyFailed) reasons.push("Diyanet Monthly did not succeed this run (Daily fallback or no answer).");
-  for (const endpoint of capsReached) reasons.push(`Call cap reached for ${endpoint}: the call was not made.`);
-  return reasons;
+  const monthlyRefused = names.some((n) => n !== "eid" && n !== "PrayerTime/Eid");
+  if (run.monthlyFailed && !monthlyRefused) {
+    const how = run.source === "daily" ? "The Daily fallback stored today only." : "Nothing new was stored.";
+    problems.push({ type: "monthly_failed", message: `Diyanet Monthly did not succeed this run. ${how}${run.failure ? ` (${run.failure})` : ""}` });
+  }
+
+  const eidCall = run.calls?.find((c) => c.endpoint === "eid");
+  const eidBroke = eidCall?.outcome === "failed" || (eidCall && run.source && !run.eidFetched);
+  if (run.eidRequested && eidCall && eidBroke && !names.includes("eid")) {
+    problems.push({ type: "eid_failed", message: `Diyanet Eid failed this run (status ${eidCall.status ?? "none"}). The stored Eid times stay in use.` });
+  }
+
+  for (const endpoint of run.capsReached) {
+    // A failed Eid call holds its retry for 7 days. That failure was already reported, so the wait isn't news.
+    if (endpoint === "eid" && run.lastEidAttempt && run.lastEidAttempt.outcome !== "ok") continue;
+    problems.push({ type: `call_cap_${endpoint}`, message: `Our own call cap (prayer_api_calls) stopped a ${endpoint} call: it was not made. Diyanet did not refuse it.` });
+  }
+
+  if (run.writeError) problems.push({ type: "write_failed", message: `Writing prayer_cache failed: ${run.writeError}` });
+  if (run.finishErrors.length > 0) {
+    problems.push({ type: "counter_failed", message: `Closing Diyanet call records failed: ${run.finishErrors.join("; ")}` });
+  }
+  // Monthly always starts a little before today, so out_of_window is routine.
+  const bad = run.rejected.filter((r) => r.reason !== "out_of_window");
+  if (bad.length > 0) {
+    problems.push({ type: "days_rejected", message: `${bad.length} day(s) were rejected and not stored: ${bad.map((r) => `${r.date} (${r.reason})`).join(", ")}.` });
+  }
+  return problems;
 }
 
 // ── Comparing with what is stored ───────────────────────────────────────

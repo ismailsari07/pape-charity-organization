@@ -1,18 +1,19 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { Resend } from "resend";
+import { sendAlerts, StepError, type AlertResult } from "./alerts.ts";
 import {
   addDays,
-  alertReasons,
   changeKind,
+  dataProblems,
   daySummary,
   eidDue,
   payloadDiff,
+  runProblems,
   selectDays,
   torontoDate,
   withEid,
   type Day,
   type Rejection,
-} from "./range";
+} from "./range.ts";
 
 // The 30-day refresh (PRAYER_RANGE_ENABLED, or ?dry=1): one pape-api
 // /prayer-times/range call per run, Diyanet calls counted and capped in
@@ -32,11 +33,13 @@ type RangeAnswer = {
   eid?: { requested: boolean; fetched: boolean };
   code?: string;
   message?: string;
+  status?: number | null;
+  upstreamLabel?: string | null;
+  bodySnippet?: string | null;
 };
 
 const WARMUP_TIMEOUT_MS = 90_000; // Render free tier cold start
 const RANGE_TIMEOUT_MS = 60_000; // pape-api's own deadline is 25 s
-const ALERT_FROM = "Pape Mosque prayer times <duyuru@papemosque.ca>";
 
 export function rangeUrl(prayerApiUrl: string): string {
   return `${prayerApiUrl.replace(/\/+$/, "")}/range`;
@@ -60,8 +63,16 @@ async function fetchJson(url: string, timeoutMs: number): Promise<{ status: numb
 class Counter {
   private ids = new Map<Endpoint, number>();
   readonly capsReached: Endpoint[] = [];
+  readonly finishErrors: string[] = [];
+  private db: SupabaseClient;
+  private runId: string;
+  private dry: boolean;
 
-  constructor(private db: SupabaseClient, private runId: string, private dry: boolean) {}
+  constructor(db: SupabaseClient, runId: string, dry: boolean) {
+    this.db = db;
+    this.runId = runId;
+    this.dry = dry;
+  }
 
   /** true = the call may be made; false = cap reached (recorded for the alert). */
   async reserve(endpoint: Endpoint): Promise<boolean> {
@@ -71,7 +82,7 @@ class Counter {
       p_dry_run: this.dry,
     });
     // No counter, no Diyanet call.
-    if (error) throw new Error(`prayer_api_reserve failed: ${error.message}`);
+    if (error) throw new StepError("counter_failed", `prayer_api_reserve failed: ${error.message}`);
     if (data === null) {
       this.capsReached.push(endpoint);
       return false;
@@ -93,13 +104,16 @@ class Counter {
         p_outcome: outcome,
         p_http_status: call?.status ?? null,
       });
-      if (error) console.error("[prayer/refresh] prayer_api_finish failed", { endpoint, message: error.message });
+      if (error) {
+        console.error("[prayer/refresh] prayer_api_finish failed", { endpoint, message: error.message });
+        this.finishErrors.push(`${endpoint}: ${error.message}`);
+      }
     }
   }
 }
 
 async function storedContext(db: SupabaseClient, today: string) {
-  const [rows, eidRows, lastEid, firstCall] = await Promise.all([
+  const [rows, eidRows, lastEid, firstCall, lastEidCall] = await Promise.all([
     db.from("prayer_cache").select("date, source_payload").gte("date", addDays(today, -1)).order("date"),
     db
       .from("prayer_cache")
@@ -114,9 +128,16 @@ async function storedContext(db: SupabaseClient, today: string) {
       .order("called_at", { ascending: false })
       .limit(1),
     db.from("prayer_api_calls").select("called_at").order("called_at").limit(1),
+    db
+      .from("prayer_api_calls")
+      .select("called_at, outcome, http_status")
+      .eq("endpoint", "eid")
+      .neq("outcome", "not_called")
+      .order("called_at", { ascending: false })
+      .limit(1),
   ]);
-  for (const r of [rows, eidRows, lastEid, firstCall]) {
-    if (r.error) throw new Error(`reading stored state failed: ${r.error.message}`);
+  for (const r of [rows, eidRows, lastEid, firstCall, lastEidCall]) {
+    if (r.error) throw new StepError("read_failed", `reading stored state failed: ${r.error.message}`);
   }
   const stored = new Map<string, unknown>((rows.data ?? []).map((r) => [r.date as string, r.source_payload]));
   const withEidRows = (eidRows.data ?? []).filter((r) => r.eid && typeof r.eid === "object");
@@ -133,41 +154,19 @@ async function storedContext(db: SupabaseClient, today: string) {
       .sort()
       .at(-1);
   }
-  return { stored, storedEid, lastEidOkDate: lastEidAt ? torontoDate(new Date(lastEidAt)) : null };
+  return {
+    stored,
+    storedEid,
+    lastEidOkDate: lastEidAt ? torontoDate(new Date(lastEidAt)) : null,
+    lastEidAttempt: (lastEidCall.data?.[0] ?? null) as { called_at: string; outcome: string; http_status: number | null } | null,
+  };
 }
 
-async function sendAlert(reasons: string[], detail: Record<string, unknown>) {
-  const to = process.env.ALERT_EMAIL;
-  const key = process.env.RESEND_API_KEY;
-  if (!to || !key) {
-    console.error("[prayer/refresh] alert not sent: ALERT_EMAIL or RESEND_API_KEY missing", { reasons });
-    return false;
-  }
-  const text = [
-    "The prayer-time refresh needs attention:",
-    "",
-    ...reasons.map((r) => `- ${r}`),
-    "",
-    `Run: ${JSON.stringify(detail, null, 2)}`,
-  ].join("\n");
-  const { error } = await new Resend(key).emails.send({
-    from: ALERT_FROM,
-    to,
-    subject: `Prayer times: ${reasons.length} problem(s) — ${detail.today}`,
-    text,
-  });
-  if (error) {
-    console.error("[prayer/refresh] alert email failed", { message: error.message });
-    return false;
-  }
-  return true;
-}
-
-export async function rangeRefresh({ db, prayerApiUrl, dry }: { db: SupabaseClient; prayerApiUrl: string; dry: boolean }) {
+export async function rangeRefresh({ db, prayerApiUrl, dry, now = new Date() }: { db: SupabaseClient; prayerApiUrl: string; dry: boolean; now?: Date }) {
   const startedAt = Date.now();
   const runId = crypto.randomUUID();
-  const today = torontoDate();
-  const { stored, storedEid, lastEidOkDate } = await storedContext(db, today);
+  const today = torontoDate(now);
+  const { stored, storedEid, lastEidOkDate, lastEidAttempt } = await storedContext(db, today);
   const counter = new Counter(db, runId, dry);
 
   const wantEid = eidDue(today, lastEidOkDate, storedEid) && (await counter.reserve("eid"));
@@ -177,6 +176,7 @@ export async function rangeRefresh({ db, prayerApiUrl, dry }: { db: SupabaseClie
   let answer: RangeAnswer | null = null;
   let httpStatus: number | null = null;
   let failure: string | null = null;
+  let upstream: { status?: number | null; label?: string | null; bodySnippet?: string | null } | null = null;
 
   if (monthlyAllowed) {
     const url = rangeUrl(prayerApiUrl);
@@ -187,7 +187,10 @@ export async function rangeRefresh({ db, prayerApiUrl, dry }: { db: SupabaseClie
       httpStatus = res.status;
       const body = res.body as RangeAnswer | null;
       if (body && Array.isArray(body.calls)) answer = body;
-      if (!body?.success) failure = `pape-api ${res.status}: ${body?.code ?? "no body"} ${body?.message ?? ""}`.trim();
+      if (!body?.success) {
+        failure = `pape-api ${res.status}: ${body?.code ?? "no body"} ${body?.message ?? ""}`.trim();
+        upstream = { status: body?.status, label: body?.upstreamLabel, bodySnippet: body?.bodySnippet };
+      }
     } catch (err) {
       failure = `pape-api unreachable: ${String((err as Error)?.message ?? err)}`;
     }
@@ -235,11 +238,28 @@ export async function rangeRefresh({ db, prayerApiUrl, dry }: { db: SupabaseClie
     datesFromToday = [...new Set([...[...stored.keys()], ...accepted.map((d) => d.date)])].filter((d) => d >= today);
   } else {
     const { data, error } = await db.from("prayer_cache").select("date").gte("date", today);
-    if (error) throw new Error(`reading prayer_cache after the write failed: ${error.message}`);
+    if (error) throw new StepError("read_failed", `reading prayer_cache after the write failed: ${error.message}`);
     datesFromToday = (data ?? []).map((r) => r.date as string);
   }
   const monthlyFailed = monthlyAllowed && answer?.source !== "monthly";
-  const alerts = alertReasons({ today, datesFromToday, monthlyFailed, capsReached: counter.capsReached });
+  const allRejected = [...upstreamRejected, ...rejected, ...dbRejected];
+  const problems = [
+    ...dataProblems(today, datesFromToday),
+    ...runProblems({
+      failure,
+      monthlyFailed,
+      source: answer?.source ?? null,
+      upstream,
+      calls: answer?.calls ?? null,
+      eidRequested: wantEid,
+      eidFetched: answer?.eid?.fetched ?? false,
+      capsReached: counter.capsReached,
+      lastEidAttempt,
+      writeError,
+      finishErrors: counter.finishErrors,
+      rejected: allRejected,
+    }),
+  ];
 
   const report = {
     ok: !failure && !writeError,
@@ -255,27 +275,26 @@ export async function rangeRefresh({ db, prayerApiUrl, dry }: { db: SupabaseClie
     accepted: accepted.length,
     written,
     unchanged,
-    rejected: [...upstreamRejected, ...rejected, ...dbRejected],
+    rejected: allRejected,
     changes,
     preview,
     failure,
     writeError,
-    alerts,
+    alerts: problems,
     alertSent: false,
+    alertResult: null as AlertResult | null,
     tookMs: Date.now() - startedAt,
   };
 
-  if (alerts.length > 0 && !dry) {
-    report.alertSent = await sendAlert(alerts, {
-      today,
-      runId,
-      failure,
-      writeError,
-      httpStatus,
-      source: report.source,
-      written: written.length,
-      rejected: report.rejected,
+  if (problems.length > 0 && !dry) {
+    report.alertResult = await sendAlerts({
+      db,
+      day: today,
+      source: "Prayer refresh",
+      problems,
+      detail: { today, runId, failure, writeError, httpStatus, source: report.source, written: written.length, rejected: report.rejected },
     });
+    report.alertSent = report.alertResult.sent.length > 0;
   }
   if (report.rejected.length > 0) console.warn("[prayer/refresh] rejected days", report.rejected);
   if (failure) console.error("[prayer/refresh] range fetch failed", { failure, httpStatus });

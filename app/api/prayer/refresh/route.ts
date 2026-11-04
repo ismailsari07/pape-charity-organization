@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { alertException, sendAlerts } from "@/lib/prayer/alerts";
 import { rangeRefresh } from "@/lib/prayer/range-refresh";
 
 export const runtime = "nodejs";
@@ -113,7 +114,24 @@ function extractCronSecret(req: Request): string | null {
   return null;
 }
 
+const supabaseClient = () => createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+// One-day path (flag off). Goes through the same once-a-day limit as the range path.
+async function alertOneDay(type: string, message: string) {
+  await sendAlerts({
+    db: supabaseClient(),
+    day: todayInToronto(),
+    source: "Prayer refresh (one-day path)",
+    problems: [{ type, message }],
+    detail: { today: todayInToronto() },
+  });
+}
+
 export async function POST(req: Request) {
+  // Only requests past the secret check can send mail, so an anonymous caller
+  // can't trigger any. A cron that can't authenticate shows up in the watchdog.
+  let authenticated = false;
+  let dry = false;
   try {
     // 1) Güvenlik: secret header kontrolü
     const provided = extractCronSecret(req);
@@ -128,10 +146,11 @@ export async function POST(req: Request) {
     // 30 günlük pencere (lib/prayer/range-refresh.ts): PRAYER_RANGE_ENABLED=true
     // iken her çalıştırmada; ?dry=1 ile bayraktan bağımsız, prayer_cache'e
     // yazmadan ve e-posta göndermeden. Kapalıyken aşağıdaki tek günlük yol aynen çalışır.
-    const dry = new URL(req.url).searchParams.get("dry") === "1";
+    authenticated = true;
+    dry = new URL(req.url).searchParams.get("dry") === "1";
     if (dry || process.env.PRAYER_RANGE_ENABLED === "true") {
       const report = await rangeRefresh({
-        db: createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY),
+        db: supabaseClient(),
         prayerApiUrl: PRAYER_API_URL,
         dry,
       });
@@ -155,6 +174,7 @@ export async function POST(req: Request) {
         detail,
         message: String(err?.message ?? err),
       });
+      await alertOneDay("monthly_failed", `pape-api failed, nothing was stored: ${String(err?.message ?? err)}`);
       return NextResponse.json({ error: "upstream_failed", status, detail }, { status: 502 });
     }
 
@@ -163,10 +183,11 @@ export async function POST(req: Request) {
     // 4) Minimal doğrulama — geçersizse yazma
     if (!minimalValidatePayload(payload)) {
       console.error("[prayer/refresh] invalid payload from pape-api — skipping prayer_cache write");
+      await alertOneDay("monthly_failed", "pape-api returned an invalid payload, nothing was stored.");
       return NextResponse.json({ error: "invalid_payload" }, { status: 422 });
     }
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const supabase = supabaseClient();
 
     // 5) Kaydet: veritabanı pape-api verisini source_payload olarak saklar ve
     // yönetim panelinin override'larını uygular (prayer_payload_merge). Birleştirme
@@ -201,12 +222,14 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error("DB insert failed:", error);
+      await alertOneDay("write_failed", `Writing prayer_cache failed: ${error.message}`);
       return NextResponse.json({ error: "db_upsert_failed", detail: error.message }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true, date, tookMs: tookMs(), fallback: true });
   } catch (err: any) {
     // AbortError vs diğer hatalar aynı yerden döner
+    if (authenticated && !dry) await alertException(err, supabaseClient, todayInToronto(), "Prayer refresh");
     return NextResponse.json({ error: "internal_error", detail: String(err?.message ?? err) }, { status: 500 });
   }
 }

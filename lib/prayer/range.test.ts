@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   addDays,
-  alertReasons,
   changeKind,
   continuityProblem,
+  dataProblems,
   daySummary,
   eidDue,
   payloadDiff,
@@ -136,22 +136,18 @@ test("Eid: called when missing or a week old, otherwise copied in", () => {
   assert.equal(changeKind(live["2026-10-18"], withEid([dayOf("2026-10-18")], eid)[0].payload), "same");
 });
 
-test("alerts: only the owner's four operational reasons", () => {
-  const month = Array.from({ length: 31 }, (_, i) => addDays(TODAY, i));
-  assert.deepEqual(alertReasons({ today: TODAY, datesFromToday: month, monthlyFailed: false, capsReached: [] }), []);
+test("dataProblems counts real dates: exactly 14 future days pass, 13 don't, and a gap is named", () => {
+  const days = (n: number) => Array.from({ length: n }, (_, i) => addDays(TODAY, i));
+  assert.deepEqual(dataProblems(TODAY, days(15)), []); // today + 14
+  assert.deepEqual(dataProblems(TODAY, days(14)).map((p) => p.type), ["future_days_low", "dates_missing"]);
+  assert.deepEqual(dataProblems(TODAY, days(31).slice(1)).map((p) => p.type), ["today_missing"]);
 
-  const short = month.slice(0, 7); // horizon 6 days ahead
-  const reasons = alertReasons({ today: TODAY, datesFromToday: short.slice(1), monthlyFailed: true, capsReached: ["eid"] });
-  assert.equal(reasons.length, 4);
-  assert.match(reasons[0], /Today's prayer_cache row \(2026-10-18\) is missing/);
-  assert.match(reasons[1], /end on 2026-10-24, 6 day\(s\) ahead/);
-  assert.match(reasons[2], /Monthly did not succeed/);
-  assert.match(reasons[3], /Call cap reached for eid/);
-
-  assert.deepEqual(
-    alertReasons({ today: TODAY, datesFromToday: month.slice(0, 8), monthlyFailed: false, capsReached: [] }),
-    [],
-  ); // 7 days ahead: fine
+  // 30 days ahead by the last date, with a hole 5 days out: the old check saw nothing wrong.
+  const hole = dataProblems(TODAY, days(31).filter((d) => d !== addDays(TODAY, 5)));
+  assert.deepEqual(hole.map((p) => p.type), ["dates_missing"]);
+  assert.match(hole[0].message, /2026-10-23/);
+  // Only every other day stored: last date far ahead, too few real days.
+  assert.ok(dataProblems(TODAY, days(31).filter((_, i) => i % 3 === 0)).some((p) => p.type === "future_days_low"));
 });
 
 test("changeKind ignores jsonb key order", () => {
