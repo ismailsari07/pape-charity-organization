@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
-import { t } from "@/lib/i18n";
+import { getDict } from "@/lib/i18n";
+import { localePath, type Lang } from "@/lib/i18n/config";
 import AnnouncementCard from "@/components/announcements/AnnouncementCard";
 import TodayTable from "@/components/prayer/TodayTable";
 import { Eyebrow } from "@/components/site/SectionHeading";
@@ -12,6 +13,7 @@ import type { PublicNews } from "@/lib/news";
 import type { PrayerDay } from "@/lib/prayer/display";
 
 type Props = {
+  lang: Lang;
   prayer: { today: string; days: PrayerDay[] };
   /** Newest active announcement; null → the left column takes the full width. */
   announcement: PublicAnnouncement | null;
@@ -27,7 +29,8 @@ export default function Hero({ news, ...props }: Props) {
 // Phone: heading → news card → announcement strip → table → intro, so the card
 // shows without scrolling. Desktop: heading, intro and table on the left, the
 // card and the strip on the right.
-function NewsHero({ prayer, announcement, news }: Props & { news: PublicNews }) {
+function NewsHero({ lang, prayer, announcement, news }: Props & { news: PublicNews }) {
+  const t = getDict(lang);
   return (
     <section className="grid gap-x-10 gap-y-3.5 lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-y-7">
       <div className="flex flex-col gap-2 lg:gap-4">
@@ -41,8 +44,8 @@ function NewsHero({ prayer, announcement, news }: Props & { news: PublicNews }) 
       </div>
 
       <div className="flex flex-col gap-3 self-start lg:col-start-2 lg:row-span-2 lg:row-start-1" {...reveal("up", 160)}>
-        <NewsCard news={news} variant="hero" priority />
-        {announcement && <AnnouncementStrip announcement={announcement} />}
+        <NewsCard lang={lang} news={news} variant="hero" priority />
+        {announcement && <AnnouncementStrip lang={lang} announcement={announcement} />}
       </div>
 
       <div className="mt-3.5 flex flex-col gap-5 self-start lg:col-start-1 lg:row-start-2 lg:mt-0" {...reveal("up", 200)}>
@@ -55,7 +58,8 @@ function NewsHero({ prayer, announcement, news }: Props & { news: PublicNews }) 
 
 // Mobile: heading → announcement → table. Desktop: heading and table on the
 // left, the announcement on the right, aligned to the top (never stretched).
-function AnnouncementHero({ prayer, announcement, announcementCount }: Props) {
+function AnnouncementHero({ lang, prayer, announcement, announcementCount }: Props) {
+  const t = getDict(lang);
   return (
     <section className={announcement ? "grid gap-x-10 gap-y-7 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]" : "grid gap-y-7"}>
       <div className="flex flex-col gap-4">
@@ -70,9 +74,9 @@ function AnnouncementHero({ prayer, announcement, announcementCount }: Props) {
 
       {announcement && (
         <div className="flex flex-col gap-3 self-start lg:col-start-2 lg:row-span-2 lg:row-start-1" {...reveal("up", 160)}>
-          <AnnouncementCard announcement={announcement} variant="tall" priority />
+          <AnnouncementCard lang={lang} announcement={announcement} variant="tall" priority />
           {announcementCount > 1 && (
-            <Link href="/community?tab=duyurular" className="inline-flex items-center gap-1 self-end text-[15px] font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
+            <Link href={localePath(lang, "/community?tab=duyurular")} className="inline-flex items-center gap-1 self-end text-[15px] font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
               {t.announcement.all(announcementCount)} <ArrowRightIcon size={14} aria-hidden />
             </Link>
           )}

@@ -74,11 +74,12 @@ export function hijriTitle(raw: string | null, months: string[]): string | null 
   return `${Number(m[1])} ${months[month - 1]} ${m[3]}`;
 }
 
-/** A yyyy-MM-dd key as "26 Ekim Pazartesi" (the app's title pattern d MMMM EEEE). */
+/** A yyyy-MM-dd key: "26 Ekim Pazartesi" (the app's Turkish pattern), "Monday, October 26", "lundi 26 octobre". */
 export function dayTitle(isoDate: string, locale: string): string {
   const [y, mo, d] = isoDate.split("-").map(Number);
   // Noon UTC: the same calendar date in every time zone.
   const at = new Date(Date.UTC(y, mo - 1, d, 12));
   const fmt = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, { timeZone: "UTC", ...o }).format(at);
+  if (!locale.startsWith("tr")) return fmt({ weekday: "long", day: "numeric", month: "long" });
   return `${fmt({ day: "numeric", month: "long" })} ${fmt({ weekday: "long" })}`;
 }

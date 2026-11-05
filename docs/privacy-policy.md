@@ -1,4 +1,4 @@
-<!-- Web surumu: app/(public)/privacy/page.tsx -> papemosque.ca/privacy
+<!-- Web surumu: app/[lang]/(public)/privacy/page.tsx -> papemosque.ca/privacy
      Birini guncellerken digerini de guncelle. -->
 
 # Privacy Policy — Pape Mosque App
@@ -211,3 +211,110 @@ Bu Gizlilik Politikası hakkında sorularınız varsa bize ulaşın:
 - 336 Pape Avenue, Toronto, ON M4M 2W7
 - Telefon: 647 834 2000
 - E-posta: info@papecami.com
+
+---
+---
+
+# Politique de confidentialité — Application de la mosquée Pape
+
+**Dernière mise à jour : 19 octobre 2026**
+
+La présente politique de confidentialité explique comment l'application mobile de la mosquée Pape (« l'application »), offerte par le Centre islamique turc du Canada (Pape Camii) / Kanada Türk İslam Vakfı (« nous »), traite vos renseignements.
+
+Elle porte sur l'**application mobile**. Si vous avez une question au sujet du site Web papemosque.ca, veuillez communiquer avec nous à l'aide des coordonnées au bas de cette page.
+
+Nous restons simples : l'application recueille uniquement ce dont ses fonctions ont besoin, ne vous suit pas, n'affiche pas de publicité et ne vend pas vos renseignements.
+
+## Renseignements que nous recueillons
+
+**Seulement si vous choisissez de créer un compte**, nous recueillons et conservons les renseignements de votre profil :
+
+- Votre nom
+- Votre adresse courriel
+- Votre numéro de téléphone (facultatif)
+- Votre date de naissance (facultatif)
+
+Vous pouvez vous inscrire avec une adresse courriel et un mot de passe, ou avec « Se connecter avec Apple » (Sign in with Apple). Si vous utilisez cette option, nous recevons le nom et l'adresse courriel qu'Apple nous transmet. Si vous choisissez de masquer votre courriel, il s'agit d'une adresse de relais privée créée par Apple.
+
+Ces renseignements sont conservés de façon sécurisée par notre fournisseur de services, Supabase. Ils servent à créer et à gérer votre compte ainsi qu'à offrir les fonctions décrites ci-dessous.
+
+**Vous pouvez utiliser l'application sans compte.** Les heures de prière, les rappels de prière, les événements et les annonces sont tous accessibles sans connexion. Un compte n'est nécessaire que pour les fonctions liées à votre profil.
+
+## Inscription aux événements
+
+Lorsque vous vous inscrivez à un événement, nous conservons vos réponses au formulaire d'inscription de cet événement, avec votre nom, votre adresse courriel et votre numéro de téléphone. Seuls les administrateurs autorisés de la mosquée peuvent voir les inscriptions, et ils peuvent les exporter pour organiser et tenir l'événement.
+
+Les inscriptions ne peuvent pas être annulées dans l'application. Pour modifier ou annuler une inscription, veuillez communiquer avec nous à l'aide des coordonnées au bas de cette page.
+
+## Service de mariage
+
+Si vous utilisez le service de mariage, vous pouvez téléverser un CV ou un autre document. Il est conservé de façon privée et seuls vous et les administrateurs autorisés de la mosquée pouvez le voir.
+
+## Consultations des événements
+
+Lorsque vous ouvrez un événement, nous enregistrons qu'il a été consulté (une fois par utilisateur ou par appareil) afin de pouvoir afficher un nombre approximatif de consultations pour cet événement.
+
+## Renseignements conservés sur votre appareil
+
+Les éléments suivants sont conservés uniquement sur votre appareil et ne nous sont jamais envoyés :
+
+- Votre préférence pour les rappels de prière (activés ou désactivés)
+- Le moment où vous avez consulté les annonces pour la dernière fois (pour indiquer quelles annonces sont nouvelles)
+
+## Notifications push
+
+Si vous autorisez les notifications, nous conservons un jeton push pour votre appareil (de Firebase Cloud Messaging) et vos paramètres de notification. Nous les utilisons pour vous envoyer des notifications au sujet des événements, des annonces et des données sur les heures de prière. Vous pouvez désactiver les notifications à tout moment dans l'application ou dans les réglages iOS de votre appareil.
+
+## Rappels de prière
+
+Si vous activez les rappels de prière, l'application planifie des notifications locales sur votre appareil. Ces rappels sont générés sur votre appareil, et nous ne vérifions pas s'ils s'affichent ni à quel moment.
+
+## Dons
+
+Les dons se font sur notre site Web, papemosque.ca, et sont traités par Stripe. L'application ne fait qu'ouvrir le site Web; elle ne recueille ni ne traite elle-même aucun renseignement de paiement.
+
+## Renseignements que nous ne recueillons PAS
+
+- Nous ne recueillons pas votre position.
+- Nous ne vous suivons pas dans les applications ou les sites Web d'autres entreprises.
+- Nous n'affichons pas de publicité.
+- Nous ne vendons pas vos renseignements personnels.
+- Nous n'utilisons pas vos données à des fins de publicité ou de profilage marketing.
+
+## Fournisseurs de services
+
+Nous communiquons des renseignements uniquement aux fournisseurs de services que nous utilisons pour faire fonctionner l'application, et seulement dans la mesure nécessaire pour qu'ils nous fournissent leur service :
+
+- Supabase : base de données, connexion et stockage de fichiers
+- Firebase Cloud Messaging (Google) : notifications push
+- Apple : Se connecter avec Apple
+- Stripe : dons faits sur notre site Web
+
+## Données sur les heures de prière
+
+Les heures de prière proviennent du calendrier de la Présidence des affaires religieuses de Turquie (Diyanet) et sont transmises à l'application par notre propre serveur. La récupération des heures de prière n'envoie aucun renseignement personnel à votre sujet.
+
+## Suppression de votre compte
+
+Vous pouvez supprimer votre compte à tout moment directement dans l'application, à partir de **Profil → Supprimer le compte**. Cette action supprime définitivement votre compte et ses données personnelles. Si vous vous êtes connecté avec Apple, nous révoquons aussi le jeton de connexion Apple de l'application. La suppression est irréversible.
+
+## Conservation des données
+
+Nous conservons les renseignements de votre compte tant que vous avez un compte. Lorsque vous supprimez votre compte, celui-ci et ses données personnelles sont définitivement retirés de nos systèmes.
+
+## Protection de la vie privée des enfants
+
+L'application s'adresse au grand public et ne vise pas les enfants de moins de 13 ans. Nous ne recueillons pas sciemment de renseignements personnels auprès d'enfants de moins de 13 ans.
+
+## Modifications de la présente politique
+
+Nous pouvons mettre à jour la présente politique de confidentialité à l'occasion. La date de « Dernière mise à jour » ci-dessus indique quand elle a été modifiée pour la dernière fois.
+
+## Nous joindre
+
+Si vous avez des questions au sujet de la présente politique de confidentialité, communiquez avec nous :
+
+- Centre islamique turc du Canada (Pape Camii)
+- 336, avenue Pape, Toronto (Ontario) M4M 2W7
+- Téléphone : 647 834 2000
+- Courriel : info@papecami.com

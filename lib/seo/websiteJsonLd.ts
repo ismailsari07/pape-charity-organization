@@ -1,10 +1,10 @@
 // -------- JSON-LD (Schema.org) --------
-export const websiteJsonLd = {
+export const websiteJsonLd = (lang: "tr" | "en" | "fr") => ({
   "@context": "https://schema.org",
   "@type": "WebSite",
-  url: "https://papemosque.ca/",
+  url: lang === "tr" ? "https://papemosque.ca/" : `https://papemosque.ca/${lang}`,
   name: "Turkish Islamic Center Canada",
-  inLanguage: "tr",
+  inLanguage: lang,
   publisher: {
     "@type": "Organization",
     name: "Turkish Islamic Center Canada",
@@ -13,4 +13,4 @@ export const websiteJsonLd = {
       url: "https://papemosque.ca/brand/logo-green-1024.png",
     },
   },
-};
+});

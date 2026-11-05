@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { t } from "@/lib/i18n";
+import { useI18n } from "@/components/i18n/LangProvider";
 import type { NewsPhoto } from "@/lib/news";
 import NewsPhotoFrame from "./NewsPhotoFrame";
 
@@ -29,6 +29,7 @@ const arrow = "absolute top-1/2 hidden size-11 -translate-y-1/2 items-center jus
 // CSS scroll-snap, no library. A tap opens the photo fullscreen, whole and
 // without the fill; the browser's own pinch-to-zoom works there.
 export default function NewsGallery({ slides, title }: { slides: NewsPhoto[]; title: string }) {
+  const { t } = useI18n();
   const { ref, index, onScroll, go } = useSlides(slides.length);
   const [viewer, setViewer] = useState<number | null>(null);
   const many = slides.length > 1;
@@ -38,7 +39,7 @@ export default function NewsGallery({ slides, title }: { slides: NewsPhoto[]; ti
       <div className="relative overflow-hidden lg:rounded-3xl">
         <div ref={ref} onScroll={onScroll} tabIndex={many ? 0 : undefined} className="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {slides.map((p, i) => (
-            <button key={p.url} type="button" onClick={() => setViewer(i)} aria-label={t.news.openFullscreen(i + 1, slides.length)} className="w-full shrink-0 cursor-zoom-in snap-center snap-always">
+            <button key={p.url} type="button" onClick={() => setViewer(i)} aria-label={t.news.openFullscreen.replace("{i}", String(i + 1)).replace("{n}", String(slides.length))} className="w-full shrink-0 cursor-zoom-in snap-center snap-always">
               <NewsPhotoFrame photo={p} alt={p.alt ?? title} sizes="(min-width: 1024px) 600px, 100vw" priority={i === 0} />
             </button>
           ))}
@@ -60,7 +61,7 @@ export default function NewsGallery({ slides, title }: { slides: NewsPhoto[]; ti
       {many && (
         <div className="flex justify-center py-1">
           {slides.map((p, i) => (
-            <button key={p.url} type="button" aria-label={t.news.goTo(i + 1)} aria-current={i === index ? "true" : undefined} onClick={() => go(i)} className="p-1.5">
+            <button key={p.url} type="button" aria-label={t.news.goTo.replace("{i}", String(i + 1))} aria-current={i === index ? "true" : undefined} onClick={() => go(i)} className="p-1.5">
               <span className={`block size-2 rounded-full ${i === index ? "bg-pm-mint" : "bg-[#3b4a44]"}`} />
             </button>
           ))}
@@ -72,6 +73,7 @@ export default function NewsGallery({ slides, title }: { slides: NewsPhoto[]; ti
 }
 
 function Viewer({ slides, title, start, onClose }: { slides: NewsPhoto[]; title: string; start: number; onClose: (index: number) => void }) {
+  const { t } = useI18n();
   const dialog = useRef<HTMLDialogElement>(null);
   const { ref, index, onScroll, go, setIndex } = useSlides(slides.length);
   const many = slides.length > 1;

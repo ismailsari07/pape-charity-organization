@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import { stripe } from "@/lib/stripe/server";
 import { UNASSIGNED_FUND } from "@/lib/stripe/donations";
+import { DEFAULT_LANG, isLang, localePath, type Lang } from "@/lib/i18n/config";
 
 // Anon client: RLS on donation_funds returns only active funds, the same list
 // the public donation page shows.
@@ -16,6 +17,8 @@ const MIN_AMOUNT_CENTS = 100;
 const MAX_AMOUNT_CENTS = 99_999_999; // Stripe's per-payment limit for CAD (999,999.99)
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const STRIPE_LOCALES: Record<Lang, Stripe.Checkout.SessionCreateParams.Locale> = { tr: "tr", en: "en", fr: "fr-CA" };
+
 const badRequest = (error: string) => NextResponse.json({ error }, { status: 400 });
 
 export async function POST(req: Request) {
@@ -25,7 +28,9 @@ export async function POST(req: Request) {
   } catch {
     return badRequest("Invalid request");
   }
-  const { amount, fund, email, mode } = body;
+  const { amount, fund, email, mode, locale } = body;
+  // Never fails a donation: anything unexpected is treated as Turkish, the site's default.
+  const lang = isLang(locale) ? locale : DEFAULT_LANG;
 
   if (typeof email !== "string" || email.length > 254 || !EMAIL_RE.test(email))
     return badRequest("Valid email required");
@@ -72,8 +77,9 @@ export async function POST(req: Request) {
       mode,
       line_items: [lineItem],
       customer_email: email,
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/donation/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/donation/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}${localePath(lang, "/donation/success")}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}${localePath(lang, "/donation/cancel")}`,
+      locale: STRIPE_LOCALES[lang],
       metadata,
       ...(mode === "subscription"
         ? { subscription_data: { metadata } }

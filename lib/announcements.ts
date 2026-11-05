@@ -20,8 +20,8 @@ export const PUBLIC_ANNOUNCEMENT_COLUMNS =
   "id, title, description, image_url, image_alt_text, published_at, created_at";
 
 /** Date shown to users: when it was published, else when it was created (as in the app). */
-export function announcementDate(a: PublicAnnouncement): string {
-  return new Date(a.published_at ?? a.created_at).toLocaleDateString("tr-TR", {
+export function announcementDate(a: PublicAnnouncement, locale: string): string {
+  return new Date(a.published_at ?? a.created_at).toLocaleDateString(locale, {
     timeZone: "America/Toronto",
     day: "numeric",
     month: "long",

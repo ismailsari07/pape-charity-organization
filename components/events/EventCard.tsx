@@ -2,7 +2,8 @@ import Image from "next/image";
 import type { ComponentType } from "react";
 import { BookOpenIcon, CalendarDaysIcon, PhoneIcon, SmartphoneIcon, UserIcon, UsersIcon } from "lucide-react";
 import { telHref } from "@/lib/contact-links";
-import { DATE_LOCALE, t } from "@/lib/i18n";
+import { getDict } from "@/lib/i18n";
+import { DATE_LOCALES, type Lang } from "@/lib/i18n/config";
 import { dayTitle } from "@/lib/prayer/display";
 import { contributionOf, recurrenceOf, sessionLine, type UpcomingEvent } from "@/lib/events/schedule";
 import MosqueIcon from "@/components/icons/MosqueIcon";
@@ -16,8 +17,6 @@ const CATEGORY_ICON: Record<string, ComponentType<{ size?: number; strokeWidth?:
   worship: MosqueIcon,
 };
 
-const words = { everyWeekday: t.events.everyWeekday, everyTwoWeeks: t.events.everyTwoWeeks, monthly: t.events.monthly, afterPrayer: t.events.afterPrayer };
-
 /**
  * Like the app's event card: a 170 px band with the photo, or the category
  * icon on a tile colour when there's no photo. Eyebrow: the programme kind
@@ -26,22 +25,25 @@ const words = { everyWeekday: t.events.everyWeekday, everyTwoWeeks: t.events.eve
  */
 export default function EventCard({
   upcoming,
+  lang,
   showDescription = false,
   showContribution = false,
   revealDelay,
 }: {
   upcoming: UpcomingEvent;
+  lang: Lang;
   showDescription?: boolean;
   showContribution?: boolean;
   /** Entrance animation delay in ms (lib/reveal.ts); omitted = no animation. */
   revealDelay?: number;
 }) {
+  const t = getDict(lang);
   const e = upcoming.event;
   const category = e.category?.trim().toLowerCase() ?? "";
   const Icon = CATEGORY_ICON[category] ?? CalendarDaysIcon;
   const rec = recurrenceOf(e);
   const eyebrow = rec === "none" ? (t.events.categories[category] ?? t.events.categories.community) : t.events.programme[rec];
-  const when = sessionLine(upcoming, words, (iso) => dayTitle(iso, DATE_LOCALE));
+  const when = sessionLine(upcoming, t.events, (iso) => dayTitle(iso, DATE_LOCALES[lang]));
   const contribution = showContribution ? contributionOf(e) : null;
   const hasForm = e.registration_form !== null && e.registration_form !== undefined;
 

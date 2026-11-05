@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { useVisualViewportInset } from "@/hooks/use-visual-viewport-inset";
-import { t } from "@/lib/i18n";
+import { useI18n } from "@/components/i18n/LangProvider";
 import type { DonationFund } from "@/lib/server/funds";
 import { reveal } from "@/lib/reveal";
 
@@ -24,9 +24,10 @@ const inputClass =
 /**
  * Fund cards and the donation drawer. Only the look changed in the redesign:
  * the drawer, the ?fund= deep link, the iOS keyboard handling and the
- * /api/checkout request (body, headers) are exactly as before.
+ * /api/checkout request are as before, plus the page's language in the body.
  */
 export default function DonationFunds({ funds }: { funds: DonationFund[] }) {
+  const { lang, t } = useI18n();
   const [selectedFund, setSelectedFund] = useState<string>(funds[0]?.slug ?? "");
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -97,7 +98,7 @@ export default function DonationFunds({ funds }: { funds: DonationFund[] }) {
           "Content-Type": "application/json",
           "Idempotency-Key": crypto.randomUUID(),
         },
-        body: JSON.stringify({ amount: Math.round(Number(amount) * 100), fund: selectedFund, email, mode }),
+        body: JSON.stringify({ amount: Math.round(Number(amount) * 100), fund: selectedFund, email, mode, locale: lang }),
       });
 
       const data = await res.json();
@@ -162,7 +163,7 @@ export default function DonationFunds({ funds }: { funds: DonationFund[] }) {
                     <FormItem className="flex flex-col gap-2">
                       <FormLabel className="text-sm font-semibold text-pm-text-3">{t.donation.email} *</FormLabel>
                       <FormControl>
-                        <Input className={inputClass} type="email" placeholder="ornek@eposta.com" required {...field} />
+                        <Input className={inputClass} type="email" placeholder={t.donation.emailPlaceholder} required {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

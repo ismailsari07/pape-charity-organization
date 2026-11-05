@@ -2,12 +2,14 @@ import Link from "next/link";
 import PhotoFrame from "@/components/media/PhotoFrame";
 import { ArrowRightIcon, MegaphoneIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { t } from "@/lib/i18n";
+import { getDict } from "@/lib/i18n";
+import { DATE_LOCALES, localePath, type Lang } from "@/lib/i18n/config";
 import { announcementDate, type PublicAnnouncement } from "@/lib/announcements";
 import { reveal } from "@/lib/reveal";
 
 type Props = {
   announcement: PublicAnnouncement;
+  lang: Lang;
   /** "tall": the home hero's portrait card; "default": 16:9 list card. */
   variant?: "default" | "tall";
   /** Load the photo eagerly (above the fold). */
@@ -20,14 +22,15 @@ type Props = {
 // Two variants, like the app's card: with a photo → the photo on top (PhotoFrame:
 // its own aspect ratio, capped at 680 px with a blurred fill); without →
 // text-first with an icon, no image box at all.
-export default function AnnouncementCard({ announcement, variant = "default", priority = false, className, revealDelay }: Props) {
+export default function AnnouncementCard({ announcement, lang, variant = "default", priority = false, className, revealDelay }: Props) {
+  const t = getDict(lang);
   const { id, title, description, image_url, image_alt_text } = announcement;
   const tall = variant === "tall";
   const sizes = tall ? "(min-width: 1024px) 30rem, 100vw" : "(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 100vw";
 
   return (
     <Link
-      href={`/announcements/${id}`}
+      href={localePath(lang, `/announcements/${id}`)}
       className={cn(
         "group flex flex-col overflow-hidden rounded-[24px] border border-pm-line bg-pm-card text-left transition-colors hover:border-pm-mint/40",
         className,
@@ -46,7 +49,7 @@ export default function AnnouncementCard({ announcement, variant = "default", pr
         )}
         <div className="flex min-w-0 flex-col gap-2">
           <span className="text-xs font-bold uppercase tracking-[0.12em] text-pm-mint">
-            {t.announcement.eyebrow} · {announcementDate(announcement)}
+            {t.announcement.eyebrow} · {announcementDate(announcement, DATE_LOCALES[lang])}
           </span>
           <h3 className={cn("font-extrabold leading-snug text-pm-text", tall ? "text-xl" : "text-lg")}>{title}</h3>
           <p className={cn("text-sm text-pm-text-2", tall ? "line-clamp-4" : "line-clamp-3")}>{description}</p>
