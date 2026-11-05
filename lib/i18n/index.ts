@@ -1,4 +1,4 @@
-import { tr, type Dictionary } from "./tr";
+import { tr, type Dictionary } from "./tr.ts";
 
 // The site is Turkish only for now. Adding English/French = a new dictionary
 // file plus picking the locale here (and in the routes); components only ever
