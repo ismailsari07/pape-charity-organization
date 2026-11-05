@@ -34,15 +34,15 @@ export type RouteDecision =
 
 /**
  * What the middleware does with a page request. Only "/" follows the language
- * cookie, and only when it is a real page load: the logo on a Turkish page is a
- * client-side navigation to "/" and stays Turkish. Every other URL opens in the
- * language it says, so shared links open as sent.
+ * cookie, and only when a visitor arrives from outside the site: the logo on a
+ * Turkish page stays Turkish. Every other URL opens in the language it says, so
+ * shared links open as sent.
  */
-export function routeRequest(pathname: string, cookie: string | undefined, isPageLoad: boolean): RouteDecision {
+export function routeRequest(pathname: string, cookie: string | undefined, arriving: boolean): RouteDecision {
   const first = pathname.split("/")[1];
   if (first === DEFAULT_LANG) return { kind: "redirect", to: stripLang(pathname), status: 308 };
   if (isLang(first)) return { kind: "next" };
-  if (pathname === "/" && isPageLoad && isLang(cookie) && cookie !== DEFAULT_LANG) {
+  if (pathname === "/" && arriving && isLang(cookie) && cookie !== DEFAULT_LANG) {
     return { kind: "redirect", to: `/${cookie}`, status: 307 };
   }
   return { kind: "rewrite", to: pathname === "/" ? `/${DEFAULT_LANG}` : `/${DEFAULT_LANG}${pathname}` };

@@ -1,11 +1,23 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { LANG_COOKIE, routeRequest } from "@/lib/i18n/config";
 
+function fromOwnSite(req: NextRequest): boolean {
+  const referer = req.headers.get("referer");
+  if (!referer) return false;
+  try {
+    return new URL(referer).host === req.headers.get("host");
+  } catch {
+    return false;
+  }
+}
+
 // Pages stay cacheable: only this middleware reads the cookie, never a page.
 export function middleware(req: NextRequest) {
-  // Client-side navigations are fetches; a page load is "navigate" (or has no such header).
+  // A link on our own site (the logo on a Turkish page) means what it says. Client-side
+  // navigations are fetches; a click before hydration or in a new tab is a page load from our own URL.
   const mode = req.headers.get("sec-fetch-mode");
-  const decision = routeRequest(req.nextUrl.pathname, req.cookies.get(LANG_COOKIE)?.value, mode === null || mode === "navigate");
+  const isPageLoad = mode === null || mode === "navigate";
+  const decision = routeRequest(req.nextUrl.pathname, req.cookies.get(LANG_COOKIE)?.value, isPageLoad && !fromOwnSite(req));
   if (decision.kind === "next") return NextResponse.next();
 
   const url = req.nextUrl.clone();

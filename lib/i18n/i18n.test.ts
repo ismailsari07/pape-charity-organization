@@ -26,7 +26,7 @@ test("routeRequest: Turkish URLs keep working without a prefix, whatever the coo
   }
 });
 
-test("routeRequest: only / follows the cookie, and only on a page load", () => {
+test("routeRequest: only / follows the cookie, and only when arriving from outside", () => {
   assert.deepEqual(routeRequest("/", "en", true), { kind: "redirect", to: "/en", status: 307 });
   assert.deepEqual(routeRequest("/", "fr", true), { kind: "redirect", to: "/fr", status: 307 });
   assert.deepEqual(routeRequest("/", "en", false), { kind: "rewrite", to: "/tr" });
