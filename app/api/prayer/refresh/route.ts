@@ -70,7 +70,7 @@ function isRetryable(err: unknown): boolean {
 }
 
 async function fetchWithRetry(url: string, timeoutsMs = [45000, 60000, 90000]) {
-  let lastErr: any = null;
+  let lastErr: unknown = null;
   for (let i = 0; i < timeoutsMs.length; i++) {
     try {
       const res = await fetchWithTimeout(url, timeoutsMs[i]);
@@ -166,15 +166,15 @@ export async function POST(req: Request) {
     let res: Response;
     try {
       res = await fetchWithRetry(PRAYER_API_URL);
-    } catch (err: any) {
+    } catch (err) {
       const status = err instanceof UpstreamError ? err.status : null;
       const detail = err instanceof UpstreamError ? err.detail : null;
       console.error("[prayer/refresh] pape-api failed — skipping prayer_cache write", {
         status,
         detail,
-        message: String(err?.message ?? err),
+        message: String((err as Error)?.message ?? err),
       });
-      await alertOneDay("monthly_failed", `pape-api failed, nothing was stored: ${String(err?.message ?? err)}`);
+      await alertOneDay("monthly_failed", `pape-api failed, nothing was stored: ${String((err as Error)?.message ?? err)}`);
       return NextResponse.json({ error: "upstream_failed", status, detail }, { status: 502 });
     }
 
@@ -227,10 +227,10 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true, date, tookMs: tookMs(), fallback: true });
-  } catch (err: any) {
+  } catch (err) {
     // AbortError vs diğer hatalar aynı yerden döner
     if (authenticated && !dry) await alertException(err, supabaseClient, todayInToronto(), "Prayer refresh");
-    return NextResponse.json({ error: "internal_error", detail: String(err?.message ?? err) }, { status: 500 });
+    return NextResponse.json({ error: "internal_error", detail: String((err as Error)?.message ?? err) }, { status: 500 });
   }
 }
 

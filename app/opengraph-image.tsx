@@ -21,7 +21,6 @@ export default async function OpengraphImage() {
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", gap: 72, padding: 90, background: BG, color: TEXT }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logoSrc} width={400} height={400} alt="" style={{ borderRadius: 88 }} />
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
           <div style={{ fontSize: 26, letterSpacing: 4, color: MINT }}>336 PAPE AVENUE · TORONTO</div>

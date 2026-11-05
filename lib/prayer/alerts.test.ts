@@ -26,7 +26,7 @@ type Mail = { from: string; to: string[]; subject: string; text: string };
 let mails: Mail[] = [];
 let resendStatus = 200;
 let papeApi: () => { status: number; body: unknown } = () => okAnswer();
-let servers: Server[] = [];
+const servers: Server[] = [];
 let papeUrl = "";
 
 const listen = (handler: Parameters<typeof createServer>[1]) =>

@@ -106,9 +106,9 @@ export default function DonationFunds({ funds }: { funds: DonationFund[] }) {
       // The API returns { url: session.url } → go to Stripe Checkout
       if (data?.url) window.location.assign(data.url);
       else throw new Error("redirect URL missing");
-    } catch (e: any) {
+    } catch (e) {
       // Shown in the drawer instead of a browser alert.
-      setError(e?.message ?? "Unknown error");
+      setError((e as Error)?.message ?? "Unknown error");
       setPending(false);
     }
   }

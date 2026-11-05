@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
+  // `pnpm lint` is the lint check; a lint error should not be able to stop a production deploy.
+  eslint: { ignoreDuringBuilds: true },
   images: {
     // Announcement, event and news photos (public buckets); nothing else is allowed through next/image.
     remotePatterns: [

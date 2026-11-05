@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(rawBody, sig!, webhookSecret);
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json(
-      { error: `Signature verification failed: ${e.message}` },
+      { error: `Signature verification failed: ${(e as Error).message}` },
       { status: 400 },
     );
   }
@@ -64,8 +64,8 @@ export async function POST(req: NextRequest) {
         break;
       }
     }
-  } catch (e: any) {
-    console.error(`[stripe-webhook] ${event.type} ${event.id} failed: ${e?.message ?? "unknown error"}`);
+  } catch (e) {
+    console.error(`[stripe-webhook] ${event.type} ${event.id} failed: ${(e as Error)?.message ?? "unknown error"}`);
     return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
 

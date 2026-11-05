@@ -81,9 +81,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ url: session.url }, { status: 200 });
-  } catch (e: any) {
+  } catch (e) {
     // Stripe messages can echo the email; log only the error's type and code.
-    console.error(`[checkout] Stripe error (type=${e?.type}, code=${e?.code})`);
+    const err = e as { type?: string; code?: string } | null | undefined;
+    console.error(`[checkout] Stripe error (type=${err?.type}, code=${err?.code})`);
     return NextResponse.json({ error: "Checkout error" }, { status: 500 });
   }
 }
