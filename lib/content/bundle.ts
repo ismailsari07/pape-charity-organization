@@ -27,6 +27,7 @@ export type MosqueInfo = {
 export type Features = {
   events: boolean;
   announcements: boolean;
+  news: boolean;
   burialService: boolean;
   marriageService: boolean;
 };
@@ -124,7 +125,7 @@ function parseLinks(raw: unknown): Links {
 function parseFeatures(raw: unknown): Features {
   const f = isObj(raw) && isObj(raw.features) ? raw.features : {};
   const on = (k: string) => f[k] !== false;
-  return { events: on("events"), announcements: on("announcements"), burialService: on("burial_service"), marriageService: on("marriage_service") };
+  return { events: on("events"), announcements: on("announcements"), news: on("news"), burialService: on("burial_service"), marriageService: on("marriage_service") };
 }
 
 function parseServices(raw: unknown): Service[] {

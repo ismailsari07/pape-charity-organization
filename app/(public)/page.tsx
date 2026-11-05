@@ -5,6 +5,8 @@ import DonationBand from "@/components/home/DonationBand";
 import AppSection from "@/components/home/AppSection";
 import ContactSection from "@/components/home/ContactSection";
 import { getActiveAnnouncements } from "@/lib/server/announcements";
+import { featuredNews } from "@/lib/news";
+import { getPublishedNews } from "@/lib/server/news";
 import { getPrayerDays } from "@/lib/server/prayer";
 import { getUpcomingEvents } from "@/lib/server/events";
 import { getDonationFunds } from "@/lib/server/funds";
@@ -26,11 +28,12 @@ export default async function Home() {
   const content = await getSiteContent();
   const { features } = content;
 
-  const [prayer, announcements, events, funds] = await Promise.all([
+  const [prayer, announcements, events, funds, news] = await Promise.all([
     getPrayerDays().catch(orEmpty("prayer_cache", null)),
     features.announcements ? getActiveAnnouncements().catch(orEmpty("announcements", [])) : [],
     features.events ? getUpcomingEvents().catch(orEmpty("youth_events", [])) : [],
     getDonationFunds().catch(orEmpty("donation_funds", [])),
+    features.news ? getPublishedNews().catch(orEmpty("mosque_news", [])) : [],
   ]);
 
   // Only the burial service for now; marriage stays hidden on the website whatever its flag.
@@ -38,7 +41,7 @@ export default async function Home() {
 
   return (
     <main className="mx-auto flex max-w-[1248px] flex-col gap-24 px-6 pt-14">
-      <Hero prayer={prayer ?? { today: torontoDate(), days: [] }} announcement={announcements[0] ?? null} announcementCount={announcements.length} />
+      <Hero prayer={prayer ?? { today: torontoDate(), days: [] }} announcement={announcements[0] ?? null} announcementCount={announcements.length} news={featuredNews(news)} />
       <EventsSection events={events} />
       {burial && <ServicesSection burial={burial} cemeteryName={content.cemetery.name} />}
       <DonationBand funds={funds} />

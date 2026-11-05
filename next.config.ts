@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   images: {
-    // Announcement and event photos (public buckets); nothing else is allowed through next/image.
+    // Announcement, event and news photos (public buckets); nothing else is allowed through next/image.
     remotePatterns: [
       {
         protocol: "https",
@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "onczqxxdvmmmdcuhmyio.supabase.co",
         pathname: "/storage/v1/object/public/event-images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "onczqxxdvmmmdcuhmyio.supabase.co",
+        pathname: "/storage/v1/object/public/news-images/**",
       },
     ],
   },
