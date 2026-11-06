@@ -11,7 +11,7 @@ export default function Footer({ features, links, lang }: { features: Features; 
     <footer className="mt-20 border-t border-pm-line">
       <div className="mx-auto flex max-w-[1248px] flex-wrap items-center justify-between gap-4 px-6 py-7 text-sm text-pm-muted">
         <span className="flex items-center gap-2.5">
-          <Image src="/brand/logo-green.png" alt="" width={28} height={28} className="size-7 rounded-[8px]" />
+          <Image src="/brand/pape-emblem-256.png" alt="" width={28} height={28} className="size-7 rounded-[8px] border border-white/15" />
           {t.footer.copyright}
         </span>
         <nav className="flex flex-wrap gap-[18px]">

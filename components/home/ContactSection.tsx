@@ -74,7 +74,7 @@ export default function ContactSection({ mosque, lang, allLink = false, as: Titl
           ))}
         </div>
         <span className="absolute top-[42%] left-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-pm-green shadow-[0_10px_30px_rgba(0,0,0,0.4)]" aria-hidden>
-          <Image src="/brand/logo-green.png" alt="" width={36} height={36} className="size-9 rounded-[10px]" />
+          <Image src="/brand/pape-emblem-256.png" alt="" width={36} height={36} className="size-9 rounded-[10px] border border-white/15" />
         </span>
         <a
           href={directionsUrl(mosque)}

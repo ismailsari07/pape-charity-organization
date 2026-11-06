@@ -15,13 +15,13 @@ const MINT = "#7fd1ae";
 const MUTED = "#a9bab3";
 
 export default async function OpengraphImage() {
-  const logo = await readFile(join(process.cwd(), "public/brand/logo-green-1024.png"));
+  const logo = await readFile(join(process.cwd(), "public/brand/pape-emblem-1024.png"));
   const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
 
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", gap: 72, padding: 90, background: BG, color: TEXT }}>
-        <img src={logoSrc} width={400} height={400} alt="" style={{ borderRadius: 88 }} />
+        <img src={logoSrc} width={400} height={400} alt="" style={{ borderRadius: 88, border: "4px solid rgba(255, 255, 255, 0.15)" }} />
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
           <div style={{ fontSize: 26, letterSpacing: 4, color: MINT }}>336 PAPE AVENUE · TORONTO</div>
           <div style={{ fontSize: 92, fontWeight: 700, lineHeight: 1.05, marginTop: 22 }}>Pape Camii</div>
