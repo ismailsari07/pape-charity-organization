@@ -1,11 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { t } from "@/lib/i18n";
+import { localePath } from "@/lib/i18n/config";
+import { useI18n } from "@/components/i18n/LangProvider";
 
 /** The app's mosque mark on green with the site name, linking home. */
 export default function Logo() {
+  const { lang, t } = useI18n();
   return (
-    <Link href="/" className="flex items-center gap-3" aria-label={t.nav.home}>
+    <Link href={localePath(lang, "/")} className="flex items-center gap-3" aria-label={t.nav.home}>
       <Image src="/brand/logo-green.png" alt="" width={44} height={44} className="size-11 rounded-[12px]" priority />
       <span className="flex flex-col leading-[1.2]">
         <span className="text-[17px] font-extrabold text-pm-text">{t.site.name}</span>

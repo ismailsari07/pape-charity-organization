@@ -1,7 +1,6 @@
-// Every UI string of the public site, in Turkish. English and French get a
-// file of the same shape (Dictionary) later; components never hold text.
-// Texts that come from the database ({tr,en,fr}) are resolved with
-// resolveI18n instead (lib/i18n/index.ts).
+// Every UI string of the public site, in Turkish. en.ts and fr.ts have the same
+// shape (Dictionary); components never hold text. Texts that come from the
+// database ({tr,en,fr}) are resolved with resolveI18n instead (lib/i18n/index.ts).
 
 export const tr = {
   site: {
@@ -17,6 +16,19 @@ export const tr = {
     openMenu: "Menüyü aç",
     closeMenu: "Menüyü kapat",
     home: "Ana sayfa",
+    language: "Dil",
+  },
+  seo: {
+    siteName: "Turkish Islamic Center Canada",
+    description:
+      "Turkish Islamic Center Canada (Pape Camii), Toronto’da 24 saat açık ibadet imkânı, Kur’an dersleri, cemaat buluşmaları ve bağış bilgileri sunar.",
+    ogAlt: "Pape Camii - Turkish Islamic Center Canada",
+    breadcrumbHome: "Ana Sayfa",
+    breadcrumbDonation: "Bağış",
+  },
+  privacy: {
+    title: "Privacy Policy — Gizlilik Politikası",
+    description: "Pape Camii mobil uygulamasının gizlilik politikası. Privacy Policy for the Pape Mosque mobile application.",
   },
   hero: {
     eyebrow: "336 Pape Avenue · Toronto",
@@ -115,6 +127,7 @@ export const tr = {
     give: "Bağış yap",
     noFunds: "Bağış seçenekleri şu an yüklenemedi. Lütfen biraz sonra tekrar deneyin.",
     email: "E-posta",
+    emailPlaceholder: "ornek@eposta.com",
     amount: "Tutar (CAD)",
     kind: "Tür",
     once: "Tek sefer",
@@ -170,10 +183,10 @@ export const tr = {
     photosLabel: "Fotoğraflar",
     all: "Tüm haberler",
     more: "Daha fazla göster",
-    openFullscreen: (i: number, n: number) => `Fotoğraf ${i} / ${n}, tam ekran aç`,
+    openFullscreen: "Fotoğraf {i} / {n}, tam ekran aç",
     previous: "Önceki fotoğraf",
     next: "Sonraki fotoğraf",
-    goTo: (i: number) => `${i}. fotoğrafa git`,
+    goTo: "{i}. fotoğrafa git",
     close: "Kapat",
   },
   prayerPage: {

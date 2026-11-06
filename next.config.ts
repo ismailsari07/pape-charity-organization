@@ -35,6 +35,9 @@ const nextConfig: NextConfig = {
       // announcement detail pages keep their /announcements/[id] URLs.
       { source: "/events", destination: "/community", permanent: true },
       { source: "/announcements", destination: "/community?tab=duyurular", permanent: true },
+      // The same two under the other languages.
+      { source: "/:lang(en|fr)/events", destination: "/:lang/community", permanent: true },
+      { source: "/:lang(en|fr)/announcements", destination: "/:lang/community?tab=duyurular", permanent: true },
     ];
   },
 };

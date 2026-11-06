@@ -1,9 +1,11 @@
-import { t } from "@/lib/i18n";
+import { getDict } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n/config";
 import { Eyebrow } from "@/components/site/SectionHeading";
 import { reveal } from "@/lib/reveal";
 
 /** The App Store button appears only once the panel has links.app_store. */
-export default function AppSection({ appStoreUrl }: { appStoreUrl?: string }) {
+export default function AppSection({ appStoreUrl, lang }: { appStoreUrl?: string; lang: Lang }) {
+  const t = getDict(lang);
   return (
     <section id="uygulama" className="flex scroll-mt-6 flex-col gap-8 lg:flex-row lg:items-center">
       <div className="flex min-w-0 flex-1 flex-col gap-3.5 lg:basis-[420px]">

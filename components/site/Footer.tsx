@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { t } from "@/lib/i18n";
+import { getDict } from "@/lib/i18n";
+import { localePath, type Lang } from "@/lib/i18n/config";
 import type { Features, Links } from "@/lib/content/bundle";
 
-export default function Footer({ features, links }: { features: Features; links: Links }) {
+export default function Footer({ features, links, lang }: { features: Features; links: Links; lang: Lang }) {
+  const t = getDict(lang);
   const linkClass = "text-pm-text-2 transition-colors hover:text-pm-mint-hover";
   return (
     <footer className="mt-20 border-t border-pm-line">
@@ -14,14 +16,14 @@ export default function Footer({ features, links }: { features: Features; links:
         </span>
         <nav className="flex flex-wrap gap-[18px]">
           {features.announcements && (
-            <Link href="/community?tab=duyurular" className={linkClass}>
+            <Link href={localePath(lang, "/community?tab=duyurular")} className={linkClass}>
               {t.footer.announcements}
             </Link>
           )}
-          <Link href="/donation" className={linkClass}>
+          <Link href={localePath(lang, "/donation")} className={linkClass}>
             {t.footer.donate}
           </Link>
-          <Link href="/privacy" className={linkClass}>
+          <Link href={localePath(lang, "/privacy")} className={linkClass}>
             {t.footer.privacy}
           </Link>
           {/* Only when the panel has a link (Content → Links → Instagram). */}

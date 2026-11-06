@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { DATE_LOCALE, t } from "@/lib/i18n";
+import { useI18n } from "@/components/i18n/LangProvider";
 import { torontoDate } from "@/lib/prayer/range";
 import { currentTimetableRow, dayTitle, hijriTitle, prayerClock12, torontoMinutes, type PrayerDay } from "@/lib/prayer/display";
 
@@ -37,6 +37,7 @@ function useMinuteClock(): Date | null {
  * the right day; the server render uses its own date and no highlight.
  */
 export default function TodayTable({ serverToday, days }: Props) {
+  const { lang, t, dateLocale } = useI18n();
   const now = useMinuteClock();
   const date = now ? torontoDate(now) : serverToday;
   const day = days.find((d) => d.date === date);
@@ -51,7 +52,7 @@ export default function TodayTable({ serverToday, days }: Props) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-col gap-0.5">
           <h2 className="text-[13px] font-bold tracking-[1.5px] text-pm-mint uppercase">{t.prayer.todayTitle}</h2>
-          <p className="text-lg font-extrabold text-pm-text">{dayTitle(date, DATE_LOCALE)}</p>
+          <p className="text-lg font-extrabold text-pm-text">{dayTitle(date, dateLocale)}</p>
         </div>
         {hijri && <span className="rounded-full bg-white/[0.07] px-3 py-1.5 text-[13px] font-semibold text-[#c9d8d1]">{hijri}</span>}
       </div>
@@ -81,10 +82,10 @@ export default function TodayTable({ serverToday, days }: Props) {
                       isNow ? "mx-1.5 my-0.5 rounded-[12px] bg-pm-green text-white" : cn("text-pm-text", line),
                     )}
                   >
-                    <span className={cn("flex items-center gap-2", isNow ? "font-extrabold" : "font-semibold")}>
+                    <span className={cn("flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1", isNow ? "font-extrabold" : "font-semibold")}>
                       {t.prayer.names[p.name] ?? p.name}
                       {isNow && (
-                        <span className="rounded-full bg-white/[0.18] px-2 py-0.5 text-[11px] font-extrabold tracking-[0.5px] uppercase">{t.prayer.now}</span>
+                        <span className={cn("rounded-full bg-white/[0.18] py-0.5 text-[11px] font-extrabold uppercase", lang === "fr" ? "px-1.5 tracking-normal sm:px-2 sm:tracking-[0.5px]" : "px-2 tracking-[0.5px]")}>{t.prayer.now}</span>
                       )}
                     </span>
                     <span className={cn("text-right", isNow ? "text-[#e3f4ec]" : "text-pm-text-3")}>{prayerClock12(p.name, p.time)}</span>
@@ -105,7 +106,7 @@ export default function TodayTable({ serverToday, days }: Props) {
                 {t.prayer.jumuah}
               </span>
               {/* Jumu'ah is one time (athan = jama'ah); the Dhuhr rule decides AM/PM. */}
-              <span className="text-base font-extrabold text-pm-gold-soft">{prayerClock12("Dhuhr", day.jumuah)}</span>
+              <span className="shrink-0 text-base font-extrabold whitespace-nowrap text-pm-gold-soft">{prayerClock12("Dhuhr", day.jumuah)}</span>
             </div>
           )}
         </>

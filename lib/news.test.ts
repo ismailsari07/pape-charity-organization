@@ -39,8 +39,10 @@ test("slides are the cover, then the gallery", () => {
 });
 
 test("the date is the stored day whatever the server's time zone", () => {
-  assert.equal(newsDate("2026-10-12"), "12 Ekim 2026");
-  assert.equal(newsDate("2026-01-01"), "1 Ocak 2026");
+  assert.equal(newsDate("2026-10-12", "tr-TR"), "12 Ekim 2026");
+  assert.equal(newsDate("2026-01-01", "tr-TR"), "1 Ocak 2026");
+  assert.equal(newsDate("2026-10-12", "en-CA"), "October 12, 2026");
+  assert.equal(newsDate("2026-10-12", "fr-CA"), "12 octobre 2026");
 });
 
 test("paragraphs split on blank lines", () => {

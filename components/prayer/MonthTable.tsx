@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { DATE_LOCALE, t } from "@/lib/i18n";
+import { useI18n } from "@/components/i18n/LangProvider";
 import { torontoDate } from "@/lib/prayer/range";
 import { prayerClock12, type PrayerDay } from "@/lib/prayer/display";
 import { weekdayOf } from "@/lib/events/schedule";
@@ -10,10 +10,10 @@ import { weekdayOf } from "@/lib/events/schedule";
 /** "6:09" — the column already says which prayer it is; the 12-hour rule decides the hour. */
 const clock = (name: string, stored: string) => prayerClock12(name, stored).replace(/ (AM|PM)$/, "");
 
-function dateParts(iso: string) {
+function dateParts(iso: string, locale: string) {
   const [y, m, d] = iso.split("-").map(Number);
   const at = new Date(Date.UTC(y, m - 1, d, 12));
-  const fmt = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(DATE_LOCALE, { timeZone: "UTC", ...o }).format(at);
+  const fmt = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, { timeZone: "UTC", ...o }).format(at);
   return { day: fmt({ day: "numeric", month: "short" }), weekday: fmt({ weekday: "long" }), weekdayShort: fmt({ weekday: "short" }) };
 }
 
@@ -23,6 +23,7 @@ function dateParts(iso: string) {
  * past days are dropped). Fridays show Jumu'ah in the Öğle column.
  */
 export default function MonthTable({ serverToday, days }: { serverToday: string; days: PrayerDay[] }) {
+  const { t, dateLocale } = useI18n();
   const [today, setToday] = useState<string | null>(null);
   useEffect(() => {
     const tick = () => setToday(torontoDate());
@@ -55,7 +56,7 @@ export default function MonthTable({ serverToday, days }: { serverToday: string;
           {rows.map((d) => {
             const isToday = d.date === today;
             const isFriday = weekdayOf(d.date) === 5;
-            const { day, weekday, weekdayShort } = dateParts(d.date);
+            const { day, weekday, weekdayShort } = dateParts(d.date, dateLocale);
             return (
               <tr key={d.date} aria-current={isToday ? "date" : undefined} className={cn("border-t border-white/[0.06]", isToday && "bg-pm-green text-white")}>
                 <th scope="row" className={cn("sticky left-0 py-2.5 pr-1 pl-3 text-left font-normal sm:px-5 sm:py-3", isToday ? "bg-pm-green" : "bg-pm-card")}>

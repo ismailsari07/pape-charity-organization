@@ -59,8 +59,8 @@ export function newsSlides(n: Pick<PublicNews, "cover" | "photos">): NewsPhoto[]
 }
 
 /** "2026-10-12" → "12 Ekim 2026". The stored day as it is, no time zone involved. */
-export function newsDate(key: string): string {
-  return new Date(`${key}T12:00:00Z`).toLocaleDateString("tr-TR", { timeZone: "UTC", day: "numeric", month: "long", year: "numeric" });
+export function newsDate(key: string, locale: string): string {
+  return new Date(`${key}T12:00:00Z`).toLocaleDateString(locale, { timeZone: "UTC", day: "numeric", month: "long", year: "numeric" });
 }
 
 export function newsParagraphs(body: string): string[] {

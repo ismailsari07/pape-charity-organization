@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { t } from "@/lib/i18n";
+import { getDict } from "@/lib/i18n";
+import { DATE_LOCALES, localePath, type Lang } from "@/lib/i18n/config";
 import { newsDate, newsSlides, type PublicNews } from "@/lib/news";
 import { reveal } from "@/lib/reveal";
 import { cn } from "@/lib/utils";
@@ -7,18 +8,20 @@ import NewsPhotoFrame from "./NewsPhotoFrame";
 
 type Props = {
   news: PublicNews;
+  lang: Lang;
   /** "hero": the home page's card. "grid": /community. */
   variant?: "grid" | "hero";
   priority?: boolean;
   revealDelay?: number;
 };
 
-export default function NewsCard({ news, variant = "grid", priority = false, revealDelay }: Props) {
+export default function NewsCard({ news, lang, variant = "grid", priority = false, revealDelay }: Props) {
+  const t = getDict(lang);
   const hero = variant === "hero";
   const count = newsSlides(news).length;
   return (
     <Link
-      href={`/haberler/${news.id}`}
+      href={localePath(lang, `/haberler/${news.id}`)}
       className={cn("group flex flex-col overflow-hidden border border-pm-line bg-pm-card transition-colors hover:border-pm-mint/40", hero ? "rounded-[22px] lg:rounded-[24px]" : "rounded-[22px]")}
       {...(revealDelay !== undefined ? reveal("up", revealDelay) : {})}
     >
@@ -35,10 +38,10 @@ export default function NewsCard({ news, variant = "grid", priority = false, rev
       <div className={cn("flex flex-col", hero ? "gap-1.5 p-4 lg:px-[22px] lg:py-[18px]" : "gap-1.5 p-3.5 lg:px-4")}>
         {hero ? (
           <span className="text-[11px] font-bold tracking-[1.2px] text-[#ecd28f] uppercase lg:text-xs">
-            {t.news.eyebrow} · {newsDate(news.news_date)}
+            {t.news.eyebrow} · {newsDate(news.news_date, DATE_LOCALES[lang])}
           </span>
         ) : (
-          <span className="text-xs font-bold text-pm-mint">{newsDate(news.news_date)}</span>
+          <span className="text-xs font-bold text-pm-mint">{newsDate(news.news_date, DATE_LOCALES[lang])}</span>
         )}
         <h2 className={cn("leading-[1.25] font-extrabold text-pm-text", hero ? "text-lg lg:text-[21px]" : "text-[15px] sm:text-base")}>{news.title}</h2>
       </div>

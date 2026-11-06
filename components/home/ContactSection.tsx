@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { resolveI18n, t } from "@/lib/i18n";
+import { getDict, resolveI18n } from "@/lib/i18n";
+import { localePath, type Lang } from "@/lib/i18n/config";
 import { directionsUrl, type MosqueInfo } from "@/lib/content/bundle";
 import { Eyebrow } from "@/components/site/SectionHeading";
 import { reveal } from "@/lib/reveal";
@@ -14,7 +15,8 @@ const TILES = ["a", "a", "b", "a", "b", "a", "b", "a", "a", "b", "a", "b"];
  * Mosque card + decorative map block with "Yol tarifi al". Home: short, with a
  * link to /iletisim. /iletisim: the same block at the top (`as="h1"`, no link).
  */
-export default function ContactSection({ mosque, allLink = false, as: Title = "h2" }: { mosque: MosqueInfo; allLink?: boolean; as?: "h1" | "h2" }) {
+export default function ContactSection({ mosque, lang, allLink = false, as: Title = "h2" }: { mosque: MosqueInfo; lang: Lang; allLink?: boolean; as?: "h1" | "h2" }) {
+  const t = getDict(lang);
   const label = "text-[13px] font-bold text-pm-muted uppercase";
   const link = "text-pm-mint transition-colors hover:text-pm-mint-hover";
 
@@ -52,14 +54,14 @@ export default function ContactSection({ mosque, allLink = false, as: Title = "h
               {mosque.hours.map((h, i) => (
                 <dd key={i}>
                   {/* The first row is the general opening; further rows name what they are about. */}
-                  {i === 0 ? resolveI18n(h.value) : `${resolveI18n(h.label)}: ${resolveI18n(h.value)}`}
+                  {i === 0 ? resolveI18n(h.value, lang) : `${resolveI18n(h.label, lang)}: ${resolveI18n(h.value, lang)}`}
                 </dd>
               ))}
             </div>
           )}
         </dl>
         {allLink && (
-          <Link href="/iletisim" className="mt-auto text-[15px] font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
+          <Link href={localePath(lang, "/iletisim")} className="mt-auto text-[15px] font-bold text-pm-mint transition-colors hover:text-pm-mint-hover">
             {t.contact.all} →
           </Link>
         )}

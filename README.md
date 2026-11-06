@@ -6,7 +6,7 @@ Public website of Pape Camii · Kanada Türk İslam Vakfı (Next.js on Vercel).
   the anon key, server-side and cached ~60 s (ISR). The schema and every
   migration live in the **pape-admin** repo; its `CLAUDE.md` is the system
   briefing.
-- **Text:** every UI string is in `lib/i18n/tr.ts` (Turkish for now).
+- **Text:** every UI string is in `lib/i18n/{tr,en,fr}.ts`. Turkish is at the root, English under `/en`, French under `/fr` (`middleware.ts`, `lib/i18n/config.ts`).
 - **Must keep working:** the prayer refresh cron (`/api/prayer/refresh`,
   `vercel.json`), `/api/prayer/today`, Stripe donations (`/donation`,
   `/api/checkout`, `/api/stripe-webhook`), `/api/unsubscribe`, `/privacy`,
