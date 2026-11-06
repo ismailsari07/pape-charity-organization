@@ -210,6 +210,10 @@ export const tr = {
     note: "Artık bizden e-posta duyuruları almayacaksınız.",
     help: "Bir yanlışlık olduğunu düşünüyorsanız lütfen bizimle iletişime geçin.",
   },
+  account: {
+    confirmedTitle: "E-postanız onaylandı",
+    confirmedText: "Uygulamaya dönüp giriş yapabilirsiniz.",
+  },
   notFound: {
     eyebrow: "404",
     title: "Sayfa bulunamadı",

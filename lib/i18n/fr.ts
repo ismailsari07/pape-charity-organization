@@ -206,6 +206,10 @@ export const fr: Dictionary = {
     note: "Vous ne recevrez plus nos annonces par courriel.",
     help: "Si vous croyez qu'il s'agit d'une erreur, veuillez communiquer avec nous.",
   },
+  account: {
+    confirmedTitle: "Votre courriel est confirmé",
+    confirmedText: "Retournez dans l'application et connectez-vous.",
+  },
   notFound: {
     eyebrow: "404",
     title: "Page introuvable",

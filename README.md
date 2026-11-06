@@ -10,7 +10,10 @@ Public website of Pape Camii · Kanada Türk İslam Vakfı (Next.js on Vercel).
 - **Must keep working:** the prayer refresh cron (`/api/prayer/refresh`,
   `vercel.json`), `/api/prayer/today`, Stripe donations (`/donation`,
   `/api/checkout`, `/api/stripe-webhook`), `/api/unsubscribe`, `/privacy`,
-  `/announcements`.
+  `/announcements`, `/hesap/onaylandi` (the app's email-confirmation fallback).
+- **Email logo:** `public/email/logo.png` (192 px) is a fixed URL for emails,
+  `https://papemosque.ca/email/logo.png`. Never rename or move it; update the
+  image in place. It is a copy, independent of the favicon and icon files.
 - **Design reference:** `docs/design/website-home/index.html`.
 
 ```bash
