@@ -206,6 +206,10 @@ export const en: Dictionary = {
     note: "You will no longer receive announcement emails from us.",
     help: "If you think this is a mistake, please contact us.",
   },
+  account: {
+    confirmedTitle: "Your email is confirmed",
+    confirmedText: "Go back to the app and sign in.",
+  },
   notFound: {
     eyebrow: "404",
     title: "Page not found",
